@@ -66,6 +66,14 @@ N_REPEATS: int = 10
 CV_SEED: int = 42
 THRESHOLD: float = 0.5
 
+# Nested Cross-Validation and Tuning Parameters (Step 3)
+# Projected serial time was 106.3 min (> 30 min threshold), so reduced to 5 repeats per spec.
+N_REPEATS_NESTED: int = 5
+INNER_SPLITS: int = 3
+INNER_REPEATS: int = 2
+CALIB_SPLITS: int = 5
+SPACES: list[str] = ["auto", "quick"]
+
 
 _FEATURE_SETS_CACHE: dict[str, list[str]] | None = None
 

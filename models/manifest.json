@@ -1,0 +1,25 @@
+{
+  "git_commit": "ba9f7f6d289210aff22246a8e0dc8705a06e3750",
+  "git_dirty": true,
+  "timestamp_utc": "2026-10-13T22:00:24.429799+00:00",
+  "python_version": "3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]",
+  "package_versions": {
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2"
+  },
+  "files": {
+    "models/auto_CAD.joblib": "e278cc1eddf845c30fb565dacb36fe5aee838b342438cedecf809a54d5a5c490",
+    "models/quick_CAD.joblib": "5d0206b6c6a2871fbd821d54168bedf8d58a4df32307f9eb2664b4eb33e79b1f",
+    "models/auto_LAD.joblib": "c496252441cecb4c905759c5656f7fbf8964c5ffe23f45d54cb3fa7775be0a27",
+    "models/quick_LAD.joblib": "0e1a8291cf25ed533c1341a847eb9e4ab09bbc64a6247a5f415acddb8bf14a07",
+    "models/auto_LCX.joblib": "f507b21e0d67c1d641191c28b5eec2be971055c66706c19462709cbd6c570653",
+    "models/quick_LCX.joblib": "ee6c9b5f7ef218e1295953da3e329abd47a97f8b67e90b606e8db24484fea15a",
+    "models/auto_RCA.joblib": "bdcfaf0667993cdc071ad37046125653aff2a14caf810ddc02aa5faa37be288e",
+    "models/quick_RCA.joblib": "c7b7528f6b990cc16e953b880133828dfa4362b6a0ffc151097d6d27cc84fedc",
+    "models/feature_stats.json": "83c4aad6a792f84f9ce33994efa40583a7e29ae14028a258de45c080898c8520"
+  }
+}

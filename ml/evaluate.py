@@ -275,36 +275,16 @@ def run_evaluation() -> dict[str, Any]:
     elapsed_total = time.perf_counter() - start_time
     print(f"\nTotal evaluation completed in: {elapsed_total:.2f} seconds.")
 
-    # Retrieve environment and metadata for reproducibility
-    git_hash = "unknown"
-    try:
-        git_hash = (
-            subprocess.run(
-                ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-            )
-            .stdout.strip()
-        )
-    except Exception:
-        pass
+    from ml.utils import run_metadata
 
-    import joblib
-    import matplotlib
-    import scipy
-    import sklearn
-
-    package_versions = {
-        "scikit-learn": sklearn.__version__,
-        "numpy": np.__version__,
-        "pandas": pd.__version__,
-        "scipy": scipy.__version__,
-        "joblib": joblib.__version__,
-        "matplotlib": matplotlib.__version__,
-    }
+    env_meta = run_metadata()
 
     metadata = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "git_commit": git_hash,
-        "package_versions": package_versions,
+        "timestamp_utc": env_meta["timestamp_utc"],
+        "git_commit": env_meta["git_commit"],
+        "git_dirty": env_meta["git_dirty"],
+        "python_version": env_meta["python_version"],
+        "package_versions": env_meta["package_versions"],
         "config": {
             "n_splits": N_SPLITS,
             "n_repeats": N_REPEATS,

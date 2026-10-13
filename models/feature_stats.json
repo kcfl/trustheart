@@ -1,0 +1,497 @@
+{
+  "Age": {
+    "min": 30.0,
+    "max": 86.0,
+    "median": 58.0,
+    "mean": 58.897689768976896,
+    "std": 10.39227750453444,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Weight": {
+    "min": 48.0,
+    "max": 120.0,
+    "median": 74.0,
+    "mean": 73.83168316831683,
+    "std": 11.987357556913805,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Length": {
+    "min": 140.0,
+    "max": 188.0,
+    "median": 165.0,
+    "mean": 164.7161716171617,
+    "std": 9.327661411852311,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Sex": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 1.0,
+    "mean": 0.5808580858085809,
+    "std": 0.49423489903366175,
+    "is_binary": true,
+    "encoding_note": "Binary encoding: Male=1, Fmale=0"
+  },
+  "BMI": {
+    "min": 18.115412710007302,
+    "max": 40.90065778377467,
+    "median": 26.775510204081634,
+    "mean": 27.248338858149047,
+    "std": 4.098865084776586,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "DM": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.297029702970297,
+    "std": 0.4577056470917884,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "HTN": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 1.0,
+    "mean": 0.5907590759075908,
+    "std": 0.49250718693294226,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Current Smoker": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.2079207920792079,
+    "std": 0.4064911641758194,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "EX-Smoker": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.033003300330033,
+    "std": 0.17894065571361206,
+    "is_binary": true,
+    "encoding_note": "Binary clinical indicator: 1=present, 0=absent"
+  },
+  "FH": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.15841584158415842,
+    "std": 0.3657344946035515,
+    "is_binary": true,
+    "encoding_note": "Binary clinical indicator: 1=present, 0=absent"
+  },
+  "Obesity": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 1.0,
+    "mean": 0.6963696369636964,
+    "std": 0.4605855997577133,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "CRF": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.019801980198019802,
+    "std": 0.1395497504252442,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "CVA": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0165016501650165,
+    "std": 0.12760519292790792,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Airway disease": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.036303630363036306,
+    "std": 0.18735400555465276,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Thyroid Disease": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0231023102310231,
+    "std": 0.15047698805811643,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "CHF": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0033003300330033004,
+    "std": 0.0574484989621426,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "DLP": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.3696369636963696,
+    "std": 0.4835049328456893,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "BP": {
+    "min": 90.0,
+    "max": 190.0,
+    "median": 130.0,
+    "mean": 129.55445544554456,
+    "std": 18.938105135143886,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "PR": {
+    "min": 50.0,
+    "max": 110.0,
+    "median": 70.0,
+    "mean": 75.14191419141915,
+    "std": 8.91180066124266,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Edema": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.039603960396039604,
+    "std": 0.19534951250833327,
+    "is_binary": true,
+    "encoding_note": "Binary clinical indicator: 1=present, 0=absent"
+  },
+  "Weak Peripheral Pulse": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0165016501650165,
+    "std": 0.12760519292790795,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Lung rales": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.036303630363036306,
+    "std": 0.18735400555465273,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Systolic Murmur": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.1353135313531353,
+    "std": 0.34262400575500757,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Diastolic Murmur": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0297029702970297,
+    "std": 0.17004745410260413,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Typical Chest Pain": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 1.0,
+    "mean": 0.5412541254125413,
+    "std": 0.4991195009875263,
+    "is_binary": true,
+    "encoding_note": "Binary clinical indicator: 1=present, 0=absent"
+  },
+  "Dyspnea": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.44224422442244227,
+    "std": 0.4974746621634894,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Function Class": {
+    "min": 0.0,
+    "max": 3.0,
+    "median": 0.0,
+    "mean": 0.6633663366336634,
+    "std": 1.0320419005827184,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Atypical": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.3069306930693069,
+    "std": 0.46198336293742764,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "Nonanginal": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.052805280528052806,
+    "std": 0.22401451223944846,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "LowTH Ang": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.006600660066006601,
+    "std": 0.08110982416280911,
+    "is_binary": true,
+    "encoding_note": "Binary clinical indicator: 1=present, 0=absent"
+  },
+  "Q Wave": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.052805280528052806,
+    "std": 0.22401451223944846,
+    "is_binary": true,
+    "encoding_note": "Binary ECG finding: presence=1, absence=0"
+  },
+  "St Elevation": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0462046204620462,
+    "std": 0.2102752478208748,
+    "is_binary": true,
+    "encoding_note": "Binary ECG finding: presence=1, absence=0"
+  },
+  "St Depression": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.23432343234323433,
+    "std": 0.4242759172820571,
+    "is_binary": true,
+    "encoding_note": "Binary ECG finding: presence=1, absence=0"
+  },
+  "Tinversion": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.297029702970297,
+    "std": 0.4577056470917884,
+    "is_binary": true,
+    "encoding_note": "Binary ECG finding: presence=1, absence=0"
+  },
+  "LVH": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.066006600660066,
+    "std": 0.24870437773781925,
+    "is_binary": true,
+    "encoding_note": "Binary ECG finding: presence=1, absence=0"
+  },
+  "Poor R Progression": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0297029702970297,
+    "std": 0.17004745410260413,
+    "is_binary": true,
+    "encoding_note": "Binary indicator: Y=1, N=0"
+  },
+  "BBB_LBBB": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.0429042904290429,
+    "std": 0.20297656068331946,
+    "is_binary": true,
+    "encoding_note": "One-hot indicator: LBBB=1, else=0 (baseline N=0)"
+  },
+  "BBB_RBBB": {
+    "min": 0.0,
+    "max": 1.0,
+    "median": 0.0,
+    "mean": 0.026402640264026403,
+    "std": 0.16059470270233786,
+    "is_binary": true,
+    "encoding_note": "One-hot indicator: RBBB=1, else=0 (baseline N=0)"
+  },
+  "FBS": {
+    "min": 62.0,
+    "max": 400.0,
+    "median": 98.0,
+    "mean": 119.18481848184818,
+    "std": 52.07965276703074,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "CR": {
+    "min": 0.5,
+    "max": 2.2,
+    "median": 1.0,
+    "mean": 1.0556105610561057,
+    "std": 0.264296279451307,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "TG": {
+    "min": 37.0,
+    "max": 1050.0,
+    "median": 122.0,
+    "mean": 150.34323432343234,
+    "std": 97.95945072085185,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "LDL": {
+    "min": 18.0,
+    "max": 232.0,
+    "median": 100.0,
+    "mean": 104.64356435643565,
+    "std": 35.39668788292359,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "HDL": {
+    "min": 15.9,
+    "max": 111.0,
+    "median": 39.0,
+    "mean": 40.23399339933993,
+    "std": 10.55907692571349,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "BUN": {
+    "min": 6.0,
+    "max": 52.0,
+    "median": 16.0,
+    "mean": 17.501650165016503,
+    "std": 6.956760772568413,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "ESR": {
+    "min": 1.0,
+    "max": 90.0,
+    "median": 15.0,
+    "mean": 19.462046204620464,
+    "std": 15.936475044964782,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "HB": {
+    "min": 8.9,
+    "max": 17.6,
+    "median": 13.2,
+    "mean": 13.153465346534654,
+    "std": 1.6104520583998867,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "K": {
+    "min": 3.0,
+    "max": 6.6,
+    "median": 4.2,
+    "mean": 4.230693069306931,
+    "std": 0.4582017632143438,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Na": {
+    "min": 128.0,
+    "max": 156.0,
+    "median": 141.0,
+    "mean": 140.996699669967,
+    "std": 3.807885117982797,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "WBC": {
+    "min": 3700.0,
+    "max": 18000.0,
+    "median": 7100.0,
+    "mean": 7562.046204620462,
+    "std": 2413.739323339799,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Lymph": {
+    "min": 7.0,
+    "max": 60.0,
+    "median": 32.0,
+    "mean": 32.399339933993396,
+    "std": 9.972591556076441,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Neut": {
+    "min": 32.0,
+    "max": 89.0,
+    "median": 60.0,
+    "mean": 60.148514851485146,
+    "std": 10.182493226947498,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "PLT": {
+    "min": 25.0,
+    "max": 742.0,
+    "median": 210.0,
+    "mean": 221.4884488448845,
+    "std": 60.79619927480209,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "EF-TTE": {
+    "min": 15.0,
+    "max": 60.0,
+    "median": 50.0,
+    "mean": 47.23102310231023,
+    "std": 8.927194182365653,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "Region RWMA": {
+    "min": 0.0,
+    "max": 4.0,
+    "median": 0.0,
+    "mean": 0.6204620462046204,
+    "std": 1.1325309160780648,
+    "is_binary": false,
+    "encoding_note": "Numeric continuous / clinical laboratory measurement"
+  },
+  "VHD": {
+    "min": 0.0,
+    "max": 3.0,
+    "median": 1.0,
+    "mean": 0.7788778877887789,
+    "std": 0.7550817211196638,
+    "is_binary": false,
+    "encoding_note": "Ordinal encoding: N=0, mild=1, Moderate=2, Severe=3"
+  }
+}
