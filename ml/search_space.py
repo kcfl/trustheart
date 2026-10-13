@@ -103,20 +103,22 @@ def build_estimator(config: Config) -> BaseEstimator:
 
 
 def build_all_configs() -> list[Config]:
-    """Generate the full list of 18 configurations (9 compact, 9 full).
+    """Generate the full list of 22 configurations (11 compact, 11 full).
 
     Returns
     -------
     list[Config]
-        List of 18 Config objects.
+        List of 22 Config objects.
     """
+    from ml.config import LR_C_GRID
+
     configs: list[Config] = []
-    lr_c_values = [0.01, 0.03, 0.1, 0.3, 1.0]
+    lr_c_values = list(LR_C_GRID)
     rf_leaves = [2, 5]
     rf_max_features = ["sqrt", 0.3]
 
     for f_set in ["compact", "full"]:
-        # 5 LR configs
+        # 7 LR configs
         for c in lr_c_values:
             name = f"{f_set}|LR|C={c}"
             configs.append(
@@ -153,7 +155,7 @@ def get_space_configs(space: str) -> list[Config]:
     Parameters
     ----------
     space : str
-        'auto' (all 18 configs: compact + full) or 'quick' (9 compact configs only).
+        'auto' (all 22 configs: compact + full) or 'quick' (11 compact configs only).
 
     Returns
     -------

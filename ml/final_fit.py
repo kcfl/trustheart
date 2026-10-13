@@ -247,7 +247,7 @@ def fit_and_save_final_models() -> dict[str, Any]:
 
     # 4. Save models/final_selection.md
     md_lines = [
-        "# TrustHeart 3D - Step 3: Final Model Selection & Calibration",
+        "# TrustHeart 3D - Step 5: Final Model Selection & Calibration",
         "",
         "Final models selected using the 1-SE simplicity heuristic on full dataset (303 samples, 6 inner folds).",
         "",

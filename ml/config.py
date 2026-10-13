@@ -66,17 +66,19 @@ N_REPEATS: int = 10
 CV_SEED: int = 42
 THRESHOLD: float = 0.5
 
-# Nested Cross-Validation and Tuning Parameters (Step 3)
-# Projected serial time was 106.3 min (> 30 min threshold), so reduced to 5 repeats per spec.
-N_REPEATS_NESTED: int = 5
+# Nested Cross-Validation and Tuning Parameters (Step 3 & 5)
+N_REPEATS_NESTED: int = 10
 INNER_SPLITS: int = 3
 INNER_REPEATS: int = 2
 CALIB_SPLITS: int = 5
 SPACES: list[str] = ["auto", "quick"]
+LR_C_GRID: list[float] = [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0]
 
-# Trust Layer & Stability Parameters (Step 4)
+# Trust Layer & Stability Parameters (Step 4 & 5)
 BOOTSTRAPS: int = 30
 STAB_TOPK: int = 5
+STAB_TOPK_FULL: int = 5
+STAB_TOPK_COMPACT: int = 3
 STAB_STABLE_FREQ: float = 0.80
 STAB_STABLE_SIGN: float = 0.90
 STAB_MODERATE_FREQ: float = 0.50

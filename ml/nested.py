@@ -201,10 +201,10 @@ def run_nested_cv() -> dict[str, Any]:
     n_samples = len(raw_df)
 
     print("\n" + "=" * 70)
-    print(" TRUSTHEART 3D - STEP 3: NESTED CROSS-VALIDATION & CALIBRATION")
+    print(" TRUSTHEART 3D - STEP 5: NESTED CROSS-VALIDATION & CALIBRATION")
     print("=" * 70)
     print(f"Dataset Size:           {n_samples} samples")
-    print(f"Search Spaces:          {SPACES} (auto=18 configs, quick=9 configs)")
+    print(f"Search Spaces:          {SPACES} (auto={len(ALL_CONFIGS)} configs, quick={len([c for c in ALL_CONFIGS if c.featureset == 'compact'])} configs)")
     print(f"Outer CV:               {N_REPEATS_NESTED} repeats x {N_SPLITS} folds = {n_outer_folds} outer folds")
     print(f"Inner CV:               {INNER_REPEATS} repeats x {INNER_SPLITS} folds = 6 inner folds per config")
     print(f"Calibration:            {CALIB_SPLITS}-fold stratified Platt scaling on outer-train")
@@ -239,6 +239,7 @@ def run_nested_cv() -> dict[str, Any]:
     # for both spaces and both raw / calibrated predictions
     oof_arrays: dict[str, np.ndarray] = {}
     selection_history: dict[str, list[dict[str, Any]]] = {}
+    per_fold_selections: dict[str, list[dict[str, Any]]] = {t: [] for t in TARGETS}
 
     for space in SPACES:
         for target in TARGETS:
@@ -255,6 +256,18 @@ def run_nested_cv() -> dict[str, Any]:
         r = res["repeat_idx"]
         test_idx = res["test_idx"]
         t = res["target_name"]
+
+        auto_cfg = res["space_outputs"]["auto"]["selected_config"]
+        quick_cfg = res["space_outputs"]["quick"]["selected_config"]
+        per_fold_selections[t].append(
+            {
+                "fold_idx": k,
+                "repeat_idx": r,
+                "auto_config": auto_cfg,
+                "quick_config": quick_cfg,
+                "identical": (auto_cfg == quick_cfg),
+            }
+        )
 
         for space in SPACES:
             sp_res = res["space_outputs"][space]
@@ -383,6 +396,11 @@ def run_nested_cv() -> dict[str, Any]:
                 "diff": nested_auto_auc - best_s2_auc,
             }
 
+    identical_fractions: dict[str, float] = {}
+    for t in TARGETS:
+        items = per_fold_selections[t]
+        identical_fractions[t] = float(np.mean([1.0 if x["identical"] else 0.0 for x in items])) if items else 0.0
+
     metadata = {
         **run_metadata(),
         "config": {
@@ -397,6 +415,8 @@ def run_nested_cv() -> dict[str, Any]:
         },
         "results": metrics_by_space_target,
         "step2_comparison": step2_comparison,
+        "selection_identical_fraction": identical_fractions,
+        "selection_per_fold": per_fold_selections,
         "elapsed_seconds": round(elapsed_eval, 2),
     }
 
@@ -429,6 +449,19 @@ def save_reports_and_artifacts(eval_output: dict[str, Any]) -> None:
     np.savez_compressed(npz_path, **npz_data)
     print(f"Saved nested OOF predictions to: {npz_path}")
 
+    # Save models/nested_selection.json
+    sel_path = models_dir / "nested_selection.json"
+    with open(sel_path, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "selection_identical_fraction": metadata["selection_identical_fraction"],
+                "selection_per_fold": metadata["selection_per_fold"],
+            },
+            f,
+            indent=2,
+        )
+    print(f"Saved nested selection JSON to: {sel_path}")
+
     # 2. Save reports/nested_results.json
     json_path = reports_dir / "nested_results.json"
     with open(json_path, "w", encoding="utf-8") as f:
@@ -442,7 +475,7 @@ def save_reports_and_artifacts(eval_output: dict[str, Any]) -> None:
     s2 = metadata["step2_comparison"]
 
     md_lines: list[str] = [
-        "# TrustHeart 3D - Step 3: Nested Cross-Validation & Calibration Results",
+        "# TrustHeart 3D - Step 5: Nested Cross-Validation & Calibration Results",
         "",
         f"- **Timestamp (UTC)**: {metadata['timestamp_utc']}",
         f"- **Git Commit**: `{metadata['git_commit']}` (dirty: {metadata['git_dirty']})",

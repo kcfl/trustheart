@@ -94,3 +94,24 @@ def test_load_model_tamper_detection(tmp_path: Path) -> None:
     # Attempting to load from tampered directory must raise ValueError
     with pytest.raises(ValueError, match="Integrity check failed"):
         load_model("auto", "CAD", models_dir=tmp_path)
+
+
+def test_manifest_verifies_every_listed_file() -> None:
+    """Verify that models/manifest.json verifies for every single listed file."""
+    manifest_path = Path("models/manifest.json")
+    assert manifest_path.exists(), f"Manifest missing at: {manifest_path}"
+
+    with open(manifest_path, encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    files_dict = manifest.get("files", {})
+    assert len(files_dict) >= 10, f"Expected at least 10 files in manifest, got {len(files_dict)}"
+
+    for rel_path_str, expected_hash in files_dict.items():
+        file_path = Path(rel_path_str)
+        assert file_path.exists(), f"Manifest lists file that does not exist on disk: {file_path}"
+        actual_hash = _compute_sha256(file_path)
+        assert actual_hash == expected_hash, (
+            f"SHA-256 verification failed for {rel_path_str}: expected {expected_hash}, got {actual_hash}"
+        )
+

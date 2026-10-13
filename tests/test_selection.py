@@ -37,10 +37,12 @@ def test_complexity_key_hierarchy() -> None:
 def test_complexity_key_tiebreaks() -> None:
     """Verify tie-breaker ordering for LR (smaller C) and RF (larger leaf, then sqrt vs 0.3)."""
     # For LR, smaller C is simpler
+    lr_c0001 = Config("compact|LR|C=0.001", "compact", "LR", {"C": 0.001})
+    lr_c0003 = Config("compact|LR|C=0.003", "compact", "LR", {"C": 0.003})
     lr_c001 = Config("compact|LR|C=0.01", "compact", "LR", {"C": 0.01})
     lr_c010 = Config("compact|LR|C=0.1", "compact", "LR", {"C": 0.1})
     lr_c100 = Config("compact|LR|C=1.0", "compact", "LR", {"C": 1.0})
-    assert complexity_key(lr_c001) < complexity_key(lr_c010) < complexity_key(lr_c100)
+    assert complexity_key(lr_c0001) < complexity_key(lr_c0003) < complexity_key(lr_c001) < complexity_key(lr_c010) < complexity_key(lr_c100)
 
     # For RF, larger min_samples_leaf is simpler (use -min_samples_leaf)
     rf_leaf5 = Config("compact|RF|leaf=5|feat=sqrt", "compact", "RF", {"min_samples_leaf": 5, "max_features": "sqrt"})
@@ -105,3 +107,31 @@ def test_select_config_tie_breaking() -> None:
 
     selected = select_config(scores, [cfg2, cfg1])
     assert selected.name == cfg1.name
+
+
+def test_config_counts_and_grid() -> None:
+    """Verify total configs, compact/full splits, LR grid values, and RF configs."""
+    from ml.config import LR_C_GRID
+    from ml.search_space import ALL_CONFIGS, get_space_configs
+
+    # Total 22 configs
+    assert len(ALL_CONFIGS) == 22
+    compact_cfgs = [c for c in ALL_CONFIGS if c.featureset == "compact"]
+    full_cfgs = [c for c in ALL_CONFIGS if c.featureset == "full"]
+    assert len(compact_cfgs) == 11
+    assert len(full_cfgs) == 11
+
+    # Search spaces
+    assert len(get_space_configs("auto")) == 22
+    assert len(get_space_configs("quick")) == 11
+
+    # LR C grid has 7 values
+    expected_c = [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0]
+    assert list(LR_C_GRID) == expected_c
+
+    for f_set in ["compact", "full"]:
+        lr_cfgs = [c for c in ALL_CONFIGS if c.featureset == f_set and c.model == "LR"]
+        rf_cfgs = [c for c in ALL_CONFIGS if c.featureset == f_set and c.model == "RF"]
+        assert len(lr_cfgs) == 7
+        assert len(rf_cfgs) == 4
+        assert [c.params["C"] for c in lr_cfgs] == expected_c

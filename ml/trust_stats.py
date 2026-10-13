@@ -17,6 +17,8 @@ from ml.config import (
     STAB_STABLE_FREQ,
     STAB_STABLE_SIGN,
     STAB_TOPK,
+    STAB_TOPK_FULL,
+    STAB_TOPK_COMPACT,
     TARGETS,
 )
 from ml.similar import loo_evidence_auc
@@ -70,6 +72,19 @@ def compute_trust_stats(
     oof_data = np.load(oof_path)
     lift_by_target: dict[str, dict[str, Any]] = {}
 
+    # Load selection identical fraction from nested results / selection JSON
+    nested_sel_file = models_path / "nested_selection.json"
+    nested_res_file = reports_path / "nested_results.json"
+    sel_identical_map: dict[str, float] = {}
+    if nested_sel_file.exists():
+        with open(nested_sel_file, encoding="utf-8") as f:
+            sel_data = json.load(f)
+            sel_identical_map = sel_data.get("selection_identical_fraction", {})
+    elif nested_res_file.exists():
+        with open(nested_res_file, encoding="utf-8") as f:
+            res_data = json.load(f)
+            sel_identical_map = res_data.get("selection_identical_fraction", {})
+
     for target in TARGETS:
         y_target = oof_data[f"labels|{target}"] if f"labels|{target}" in oof_data else oof_data["labels"][:, TARGETS.index(target)]
         auto_cal_reps = oof_data[f"auto|{target}|cal"]
@@ -93,10 +108,13 @@ def compute_trust_stats(
             "p2_5": float(np.percentile(diffs_arr, 2.5)),
             "p97_5": float(np.percentile(diffs_arr, 97.5)),
             "std": float(np.std(diffs_arr, ddof=1)),
+            "selection_identical_fraction": float(sel_identical_map.get(target, 0.0)),
             "auto_mean": float(np.mean(auto_aucs)),
             "quick_mean": float(np.mean(quick_aucs)),
             "diffs_per_repeat": [float(d) for d in diffs],
         }
+
+    lift_by_target["lift_note"] = "when auto and quick select the same config the paired difference is exactly 0 by construction"
 
     # 3. LOO evidence AUCs from k-NN
     print("Computing Leave-One-Out (LOO) evidence AUCs for compact and full feature sets...")
@@ -123,10 +141,14 @@ def compute_trust_stats(
             t_res = stability_data["results"][space][target]
             stability_tags_by_space_target[space][target] = {
                 "config_name": t_res["config_name"],
+                "topk_used": t_res.get("topk_used", STAB_TOPK_FULL),
                 "features": {
                     f_name: {
                         "tag": f_info["tag"],
+                        "tag_v1": f_info.get("tag_v1", f_info["tag"]),
+                        "topk_used": f_info.get("topk_used", t_res.get("topk_used", STAB_TOPK_FULL)),
                         "top_k_freq": f_info["top_k_freq"],
+                        "top_k_freq_v1": f_info.get("top_k_freq_v1", f_info["top_k_freq"]),
                         "sign_consistency": f_info["sign_consistency"],
                         "majority_direction": f_info["majority_direction"],
                         "mean_importance": f_info["mean_importance"],
@@ -142,6 +164,8 @@ def compute_trust_stats(
         "n_similar_shown": N_SIMILAR_SHOWN,
         "bootstraps": BOOTSTRAPS,
         "stab_topk": STAB_TOPK,
+        "stab_topk_full": STAB_TOPK_FULL,
+        "stab_topk_compact": STAB_TOPK_COMPACT,
         "stab_stable_freq": STAB_STABLE_FREQ,
         "stab_stable_sign": STAB_STABLE_SIGN,
         "stab_moderate_freq": STAB_MODERATE_FREQ,

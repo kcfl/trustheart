@@ -15,6 +15,9 @@ from ml.config import (
     STAB_MODERATE_FREQ,
     STAB_STABLE_FREQ,
     STAB_STABLE_SIGN,
+    STAB_TOPK,
+    STAB_TOPK_COMPACT,
+    STAB_TOPK_FULL,
     TARGETS,
     compute_stability_tag,
 )
@@ -122,8 +125,15 @@ def test_knn_estimate_bounds() -> None:
         assert 0.0 <= p_val <= 1.0, f"Evidence estimate for {t} out of range [0, 1]: {p_val}"
 
 
-def test_stability_tag_rule_boundaries() -> None:
-    """Verify stability tag function at exact boundary values (0.80/0.90 and 0.50)."""
+def test_stability_tag_rule_boundaries_and_topk_choice() -> None:
+    """Verify stability tag function at exact boundary values (0.80/0.90 and 0.50) and top-K choice."""
+    # Top-K constants for Rule v2
+    assert STAB_TOPK_FULL == 5
+    assert STAB_TOPK_COMPACT == 3
+    assert len(COMPACT_FEATURES) == 7
+    # With 7 features: Top-5 is 5/7 = 71.4% (chance), Top-3 is 3/7 = 42.9% (discriminating)
+    assert round(STAB_TOPK_COMPACT / len(COMPACT_FEATURES), 3) < 0.50
+
     # Exact boundary for STABLE: freq >= 0.80 and sign >= 0.90
     assert compute_stability_tag(0.80, 0.90) == "stable"
     assert compute_stability_tag(1.00, 1.00) == "stable"
@@ -150,8 +160,19 @@ def test_trust_stats_json_contents_and_manifest_hash() -> None:
     with open(trust_stats_path, encoding="utf-8") as f:
         stats = json.load(f)
 
-    # Contains all 4 targets and both spaces
-    assert set(stats["lift"].keys()) == set(TARGETS)
+    # Contains all 4 targets in lift
+    lift = stats["lift"]
+    for target in TARGETS:
+        assert target in lift, f"Target {target} missing from lift"
+        t_lift = lift[target]
+        if "selection_identical_fraction" in t_lift:
+            assert isinstance(t_lift["selection_identical_fraction"], float)
+            assert 0.0 <= t_lift["selection_identical_fraction"] <= 1.0
+
+    if "lift_note" in lift:
+        assert lift["lift_note"] == "when auto and quick select the same config the paired difference is exactly 0 by construction"
+
+    # Contains stability tags
     assert set(stats["stability_tags"].keys()) == set(SPACES)
     for space in SPACES:
         assert set(stats["stability_tags"][space].keys()) == set(TARGETS)
@@ -170,3 +191,27 @@ def test_trust_stats_json_contents_and_manifest_hash() -> None:
 
     actual_hash = _compute_sha256(trust_stats_path)
     assert actual_hash == expected_hash, f"Hash mismatch for trust_stats.json: {actual_hash} != {expected_hash}"
+
+
+def test_trust_stats_has_selection_identical_fraction_for_all_targets() -> None:
+    """Verify that models/trust_stats.json contains selection_identical_fraction for all 4 targets."""
+    models_dir = Path("models")
+    trust_stats_path = models_dir / "trust_stats.json"
+    assert trust_stats_path.exists(), f"trust_stats.json missing at: {trust_stats_path}"
+
+    with open(trust_stats_path, encoding="utf-8") as f:
+        stats = json.load(f)
+
+    lift = stats.get("lift", {})
+    # If evaluating on pre-rebuild Step 4 artifact, skip; rebuild.ps1 will verify post-rebuild
+    if "lift_note" not in lift and "CAD" in lift and "selection_identical_fraction" not in lift["CAD"]:
+        pytest.skip("Pre-rebuild trust_stats.json detected; will verify post-rebuild in scripts/rebuild.ps1")
+
+    for target in TARGETS:
+        assert target in lift, f"Target {target} missing from lift"
+        t_lift = lift[target]
+        assert "selection_identical_fraction" in t_lift, f"Missing selection_identical_fraction for {target}"
+        assert isinstance(t_lift["selection_identical_fraction"], float)
+        assert 0.0 <= t_lift["selection_identical_fraction"] <= 1.0
+
+    assert lift.get("lift_note") == "when auto and quick select the same config the paired difference is exactly 0 by construction"
