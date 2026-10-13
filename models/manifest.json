@@ -1,8 +1,20 @@
 {
-  "git_commit": "3ee1e70e1523f911ea5d5bebeccd4d6ab73d9f7f",
-  "git_dirty": true,
-  "timestamp_utc": "2026-10-13T22:32:57.851730+00:00",
+  "git_commit": "e29ed066fe353a882b917c87f28857f11163cb27",
+  "git_dirty": false,
+  "timestamp_utc": "2026-10-13T23:42:53.676264+00:00",
   "python_version": "3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]",
+  "n_repeats_nested": 10,
+  "inner_splits": 3,
+  "inner_repeats": 2,
+  "lr_c_grid": [
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    0.3,
+    1.0
+  ],
   "package_versions": {
     "scikit-learn": "1.9.1",
     "numpy": "2.5.4",
@@ -12,15 +24,15 @@
     "matplotlib": "3.11.2"
   },
   "files": {
-    "models/auto_CAD.joblib": "e278cc1eddf845c30fb565dacb36fe5aee838b342438cedecf809a54d5a5c490",
-    "models/quick_CAD.joblib": "5d0206b6c6a2871fbd821d54168bedf8d58a4df32307f9eb2664b4eb33e79b1f",
-    "models/auto_LAD.joblib": "c496252441cecb4c905759c5656f7fbf8964c5ffe23f45d54cb3fa7775be0a27",
-    "models/quick_LAD.joblib": "0e1a8291cf25ed533c1341a847eb9e4ab09bbc64a6247a5f415acddb8bf14a07",
-    "models/auto_LCX.joblib": "f507b21e0d67c1d641191c28b5eec2be971055c66706c19462709cbd6c570653",
-    "models/quick_LCX.joblib": "ee6c9b5f7ef218e1295953da3e329abd47a97f8b67e90b606e8db24484fea15a",
-    "models/auto_RCA.joblib": "bdcfaf0667993cdc071ad37046125653aff2a14caf810ddc02aa5faa37be288e",
-    "models/quick_RCA.joblib": "c7b7528f6b990cc16e953b880133828dfa4362b6a0ffc151097d6d27cc84fedc",
+    "models/auto_CAD.joblib": "dab50599cfa02cdf42dd2c3981a9d9734a107f770a903efe9e5d0e4a5b0a47eb",
+    "models/quick_CAD.joblib": "290a09e47afe6368dfab353510f755fce5eadacdcafde9121c07e3a1133d4daf",
+    "models/auto_LAD.joblib": "0bf7c4a68842bfafb05dbcf5d16f85d3638cea1050b277d1731ea717c37dbf3f",
+    "models/quick_LAD.joblib": "5d412d5121416d380b41cd444a5b6b87f3be0d0630c5a6b97dc80794ae089152",
+    "models/auto_LCX.joblib": "d7ebbd271dda977132495cbc2eb153f8884b76bd8fd621aac2d2be68ecee4ee9",
+    "models/quick_LCX.joblib": "ff533985113f417f25b485afb7a12aebde4fbfbbc7e2150993cb1a71a2149494",
+    "models/auto_RCA.joblib": "8fd8e9a8d3af5a2f7f3a3b865ba614ee7a93120d07d03f088f2aa2d908bd4723",
+    "models/quick_RCA.joblib": "33ae361633548125983b8e50a30c1db1b49c03aa299c183455013f3f7e9c475a",
     "models/feature_stats.json": "83c4aad6a792f84f9ce33994efa40583a7e29ae14028a258de45c080898c8520",
-    "models/trust_stats.json": "6b092ce42ae1334b7caec691f4068548f8fbe0cf3f59e6073c15ea45b79d3c39"
+    "models/trust_stats.json": "e13c5a7c72b29fbd1229113235fef5b1985030a59f21748fe6ef0a1fd88d75cb"
   }
 }
