@@ -1,0 +1,189 @@
+{
+  "raw_shape": [
+    303,
+    59
+  ],
+  "missing_values_total": 0,
+  "duplicate_rows_count": 0,
+  "num_encoded_feature_columns": 56,
+  "targets": {
+    "CAD": {
+      "count_0_normal": 87,
+      "count_1_positive": 216,
+      "total": 303,
+      "prevalence_pct": 71.29
+    },
+    "LAD": {
+      "count_0_normal": 126,
+      "count_1_positive": 177,
+      "total": 303,
+      "prevalence_pct": 58.42
+    },
+    "LCX": {
+      "count_0_normal": 184,
+      "count_1_positive": 119,
+      "total": 303,
+      "prevalence_pct": 39.27
+    },
+    "RCA": {
+      "count_0_normal": 189,
+      "count_1_positive": 114,
+      "total": 303,
+      "prevalence_pct": 37.62
+    }
+  },
+  "demographics": {
+    "age_min": 30,
+    "age_max": 86,
+    "age_mean": 58.9,
+    "sex_counts": {
+      "Male": 176,
+      "Fmale": 127
+    }
+  },
+  "raw_string_columns_unique_values": {
+    "Sex": [
+      "Male",
+      "Fmale"
+    ],
+    "Obesity": [
+      "Y",
+      "N"
+    ],
+    "CRF": [
+      "N",
+      "Y"
+    ],
+    "CVA": [
+      "N",
+      "Y"
+    ],
+    "Airway disease": [
+      "N",
+      "Y"
+    ],
+    "Thyroid Disease": [
+      "N",
+      "Y"
+    ],
+    "CHF": [
+      "N",
+      "Y"
+    ],
+    "DLP": [
+      "Y",
+      "N"
+    ],
+    "Weak Peripheral Pulse": [
+      "N",
+      "Y"
+    ],
+    "Lung rales": [
+      "N",
+      "Y"
+    ],
+    "Systolic Murmur": [
+      "N",
+      "Y"
+    ],
+    "Diastolic Murmur": [
+      "N",
+      "Y"
+    ],
+    "Dyspnea": [
+      "N",
+      "Y"
+    ],
+    "Atypical": [
+      "N",
+      "Y"
+    ],
+    "Nonanginal": [
+      "N",
+      "Y"
+    ],
+    "Exertional CP": [
+      "N"
+    ],
+    "LowTH Ang": [
+      "N",
+      "Y"
+    ],
+    "LVH": [
+      "N",
+      "Y"
+    ],
+    "Poor R Progression": [
+      "N",
+      "Y"
+    ],
+    "BBB": [
+      "N",
+      "LBBB",
+      "RBBB"
+    ],
+    "VHD": [
+      "N",
+      "mild",
+      "Severe",
+      "Moderate"
+    ],
+    "LAD": [
+      "Stenotic",
+      "Normal"
+    ],
+    "LCX": [
+      "Normal",
+      "Stenotic"
+    ],
+    "RCA": [
+      "Stenotic",
+      "Normal"
+    ],
+    "Cath": [
+      "CAD",
+      "Normal"
+    ]
+  },
+  "target_consistency_check": {
+    "formula": "CAD == max(LAD, LCX, RCA)",
+    "matching_rows": 302,
+    "total_rows": 303,
+    "match_rate_pct": 99.67,
+    "mismatch_count": 1,
+    "mismatch_rows": [
+      {
+        "index": 93,
+        "Cath": "Normal",
+        "LAD": "Stenotic",
+        "LCX": "Normal",
+        "RCA": "Normal",
+        "CAD_binary": 0,
+        "max_artery_binary": 1
+      }
+    ]
+  },
+  "joint_artery_patterns_3bit": {
+    "000": 86,
+    "111": 63,
+    "100": 57,
+    "110": 33,
+    "101": 24,
+    "001": 17,
+    "010": 13,
+    "011": 10
+  },
+  "compact_features_check": {
+    "all_present": true,
+    "expected_features": [
+      "Age",
+      "Sex",
+      "Typical Chest Pain",
+      "Atypical",
+      "Nonanginal",
+      "DM",
+      "HTN"
+    ],
+    "missing_features": []
+  }
+}
