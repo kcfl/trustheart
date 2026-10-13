@@ -215,3 +215,25 @@ def load_features(df: pd.DataFrame) -> pd.DataFrame:
     assert_no_leak(feat_df.columns)
 
     return feat_df
+
+
+def drop_constant_columns(X: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+    """Drop zero-variance (constant) columns from feature dataframe.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        Input feature dataframe.
+
+    Returns
+    -------
+    tuple[pd.DataFrame, list[str]]
+        Cleaned dataframe without constant columns, and list of dropped column names.
+    """
+    dropped_list = [col for col in X.columns if X[col].nunique(dropna=False) <= 1]
+    if dropped_list:
+        print(f"Dropped constant column(s) ({len(dropped_list)}): {dropped_list}")
+    else:
+        print("No constant columns detected.")
+    X_clean = X.drop(columns=dropped_list).copy()
+    return X_clean, dropped_list

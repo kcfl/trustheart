@@ -4,3 +4,6 @@ openpyxl
 scikit-learn
 pytest
 pyyaml
+joblib
+matplotlib
+scipy
