@@ -1,0 +1,1320 @@
+{
+  "git_commit": "3ee1e70e1523f911ea5d5bebeccd4d6ab73d9f7f",
+  "git_dirty": true,
+  "timestamp_utc": "2026-10-13T22:32:57.851730+00:00",
+  "python_version": "3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]",
+  "package_versions": {
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2"
+  },
+  "thresholds_used": {
+    "coherence_tolerance": 1e-09,
+    "knn_k_evidence": 15,
+    "n_similar_shown": 5,
+    "bootstraps": 30,
+    "stab_topk": 5,
+    "stab_stable_freq": 0.8,
+    "stab_stable_sign": 0.9,
+    "stab_moderate_freq": 0.5
+  },
+  "coherence_summary": {
+    "auto": {
+      "n_repeats": 5,
+      "n_samples": 303,
+      "pct_below_lower": {
+        "mean": 23.102310231023104,
+        "std": 2.480741976629193,
+        "min": 20.462046204620464,
+        "max": 26.732673267326735
+      },
+      "pct_above_upper": {
+        "mean": 0.7260726072607261,
+        "std": 0.4303103897823531,
+        "min": 0.33003300330033003,
+        "max": 1.3201320132013201
+      },
+      "pct_coherent": {
+        "mean": 76.17161716171617,
+        "std": 2.506947724730421,
+        "min": 72.27722772277228,
+        "max": 78.54785478547855
+      },
+      "auc_before": {
+        "mean": 0.9238133248190719,
+        "std": 0.004094273450926876,
+        "min": 0.9174648786717753,
+        "max": 0.928693060876969
+      },
+      "auc_after": {
+        "mean": 0.9266443167305237,
+        "std": 0.0036330096187097314,
+        "min": 0.9218018305661985,
+        "max": 0.9311941251596425
+      },
+      "brier_before": {
+        "mean": 0.09664681378452708,
+        "std": 0.0018454701116885062,
+        "min": 0.09459738442191193,
+        "max": 0.09943686584907308
+      },
+      "brier_after": {
+        "mean": 0.09347554201287633,
+        "std": 0.0024117326086837915,
+        "min": 0.0909412807515983,
+        "max": 0.09680107088383035
+      },
+      "auc_lower_bound_score": {
+        "mean": 0.9151660280970626,
+        "std": 0.0048491187695287805,
+        "min": 0.9091634738186463,
+        "max": 0.9212430821626225
+      },
+      "auc_diff": 0.0028309919114518634,
+      "brier_diff": -0.0031712717716507466
+    },
+    "quick": {
+      "n_repeats": 5,
+      "n_samples": 303,
+      "pct_below_lower": {
+        "mean": 15.70957095709571,
+        "std": 1.0845991237726054,
+        "min": 14.521452145214523,
+        "max": 17.16171617161716
+      },
+      "pct_above_upper": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "pct_coherent": {
+        "mean": 84.2904290429043,
+        "std": 1.0845991237726031,
+        "min": 82.83828382838284,
+        "max": 85.47854785478548
+      },
+      "auc_before": {
+        "mean": 0.8980523627075352,
+        "std": 0.0036970708462505165,
+        "min": 0.8932258407833121,
+        "max": 0.9018731375053215
+      },
+      "auc_after": {
+        "mean": 0.8984035759897828,
+        "std": 0.004380261865044344,
+        "min": 0.8936515538527033,
+        "max": 0.9034163473818645
+      },
+      "brier_before": {
+        "mean": 0.10809454390644599,
+        "std": 0.0017059965363602461,
+        "min": 0.10625025792702095,
+        "max": 0.11012785899559731
+      },
+      "brier_after": {
+        "mean": 0.10763724988799475,
+        "std": 0.0020584626937474567,
+        "min": 0.1052759113934379,
+        "max": 0.11047814470871606
+      },
+      "auc_lower_bound_score": {
+        "mean": 0.8921775223499362,
+        "std": 0.0014105008176967925,
+        "min": 0.8904320987654322,
+        "max": 0.8937845891868881
+      },
+      "auc_diff": 0.00035121328224763104,
+      "brier_diff": -0.0004572940184512375
+    }
+  },
+  "lift": {
+    "CAD": {
+      "paired_mean": 0.025760962111536823,
+      "p2_5": 0.023592486164325143,
+      "p97_5": 0.027964027245636458,
+      "std": 0.0020216468900160077,
+      "auto_mean": 0.9238133248190719,
+      "quick_mean": 0.8980523627075352,
+      "diffs_per_repeat": [
+        0.027990634312473395,
+        0.027724563644104028,
+        0.02532992762877817,
+        0.024239037888463155,
+        0.023520647083865365
+      ]
+    },
+    "LAD": {
+      "paired_mean": 0.04303649896870232,
+      "p2_5": 0.03758855708008246,
+      "p97_5": 0.05192359429647555,
+      "std": 0.005963287279640837,
+      "auto_mean": 0.8302753116312438,
+      "quick_mean": 0.7872388126625414,
+      "diffs_per_repeat": [
+        0.03735091023226611,
+        0.03972737871042964,
+        0.0414312617702447,
+        0.0438525692762981,
+        0.052820374854273044
+      ]
+    },
+    "LCX": {
+      "paired_mean": 0.000520643039824642,
+      "p2_5": 0.0,
+      "p97_5": 0.002342893679210889,
+      "std": 0.0011641932290600298,
+      "auto_mean": 0.7371848739495798,
+      "quick_mean": 0.7366642309097552,
+      "diffs_per_repeat": [
+        0.0,
+        0.00260321519912321,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "RCA": {
+      "paired_mean": -0.002608372783811408,
+      "p2_5": -0.010628422909124769,
+      "p97_5": 0.0,
+      "std": 0.005097163963338142,
+      "auto_mean": 0.7375475726352919,
+      "quick_mean": 0.7401559454191033,
+      "diffs_per_repeat": [
+        0.0,
+        -0.0010210711965098485,
+        -0.0003248862897985427,
+        0.0,
+        -0.011695906432748648
+      ]
+    }
+  },
+  "loo_evidence_aucs": {
+    "compact": {
+      "CAD": 0.8682418050234142,
+      "LAD": 0.7532284100080711,
+      "LCX": 0.6949214468396055,
+      "RCA": 0.6923094773971966
+    },
+    "full": {
+      "CAD": 0.8961792252022135,
+      "LAD": 0.8070352434759215,
+      "LCX": 0.6649616368286446,
+      "RCA": 0.7256335282651072
+    }
+  },
+  "stability_tags": {
+    "auto": {
+      "CAD": {
+        "config_name": "full|LR|C=0.01",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 0.8,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.183441
+          },
+          "Weight": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": -1,
+            "mean_importance": 0.035002
+          },
+          "Length": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6667,
+            "majority_direction": -1,
+            "mean_importance": 0.021046
+          },
+          "Sex": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.050241
+          },
+          "BMI": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": -1,
+            "mean_importance": 0.039992
+          },
+          "DM": {
+            "tag": "unstable",
+            "top_k_freq": 0.3667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.14472
+          },
+          "HTN": {
+            "tag": "moderate",
+            "top_k_freq": 0.7,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.165946
+          },
+          "Current Smoker": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8667,
+            "majority_direction": 1,
+            "mean_importance": 0.045774
+          },
+          "EX-Smoker": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6333,
+            "majority_direction": 1,
+            "mean_importance": 0.012754
+          },
+          "FH": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.058362
+          },
+          "Obesity": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6,
+            "majority_direction": -1,
+            "mean_importance": 0.028087
+          },
+          "CRF": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.012632
+          },
+          "CVA": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.5667,
+            "majority_direction": -1,
+            "mean_importance": 0.009582
+          },
+          "Airway disease": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.019933
+          },
+          "Thyroid Disease": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6333,
+            "majority_direction": -1,
+            "mean_importance": 0.01013
+          },
+          "CHF": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7667,
+            "majority_direction": 1,
+            "mean_importance": 0.002355
+          },
+          "DLP": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8667,
+            "majority_direction": -1,
+            "mean_importance": 0.041925
+          },
+          "BP": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.093826
+          },
+          "PR": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.073333
+          },
+          "Edema": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.5667,
+            "majority_direction": -1,
+            "mean_importance": 0.013819
+          },
+          "Weak Peripheral Pulse": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.01298
+          },
+          "Lung rales": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9,
+            "majority_direction": 1,
+            "mean_importance": 0.013037
+          },
+          "Systolic Murmur": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.5667,
+            "majority_direction": -1,
+            "mean_importance": 0.020266
+          },
+          "Diastolic Murmur": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.027938
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.331014
+          },
+          "Dyspnea": {
+            "tag": "unstable",
+            "top_k_freq": 0.1333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.097731
+          },
+          "Function Class": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.056199
+          },
+          "Atypical": {
+            "tag": "stable",
+            "top_k_freq": 0.9333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.205003
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.073053
+          },
+          "LowTH Ang": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": 1,
+            "mean_importance": 0.006637
+          },
+          "Q Wave": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.037572
+          },
+          "St Elevation": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.035012
+          },
+          "St Depression": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.075434
+          },
+          "Tinversion": {
+            "tag": "unstable",
+            "top_k_freq": 0.4,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.147306
+          },
+          "LVH": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": 1,
+            "mean_importance": 0.014907
+          },
+          "Poor R Progression": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.024193
+          },
+          "BBB_LBBB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": -1,
+            "mean_importance": 0.020212
+          },
+          "BBB_RBBB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6333,
+            "majority_direction": -1,
+            "mean_importance": 0.010677
+          },
+          "FBS": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.067225
+          },
+          "CR": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": 1,
+            "mean_importance": 0.03142
+          },
+          "TG": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.077998
+          },
+          "LDL": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": -1,
+            "mean_importance": 0.025701
+          },
+          "HDL": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7,
+            "majority_direction": -1,
+            "mean_importance": 0.027009
+          },
+          "BUN": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": 1,
+            "mean_importance": 0.017027
+          },
+          "ESR": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.061782
+          },
+          "HB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.030316
+          },
+          "K": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.077613
+          },
+          "Na": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": -1,
+            "mean_importance": 0.033187
+          },
+          "WBC": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": 1,
+            "mean_importance": 0.02504
+          },
+          "Lymph": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": -1,
+            "mean_importance": 0.03708
+          },
+          "Neut": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.039987
+          },
+          "PLT": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": -1,
+            "mean_importance": 0.036456
+          },
+          "EF-TTE": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.086569
+          },
+          "Region RWMA": {
+            "tag": "moderate",
+            "top_k_freq": 0.6333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.155499
+          },
+          "VHD": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8667,
+            "majority_direction": -1,
+            "mean_importance": 0.039272
+          }
+        }
+      },
+      "LAD": {
+        "config_name": "full|RF|leaf=5|feat=sqrt",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 0.8,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.034981
+          },
+          "Weight": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": -1,
+            "mean_importance": 0.007429
+          },
+          "Length": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": 1,
+            "mean_importance": 0.006852
+          },
+          "Sex": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.005027
+          },
+          "BMI": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": -1,
+            "mean_importance": 0.009646
+          },
+          "DM": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": 1,
+            "mean_importance": 0.002965
+          },
+          "HTN": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.008339
+          },
+          "Current Smoker": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.002353
+          },
+          "EX-Smoker": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.5333,
+            "majority_direction": 1,
+            "mean_importance": 0.000132
+          },
+          "FH": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": 1,
+            "mean_importance": 0.001199
+          },
+          "Obesity": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8333,
+            "majority_direction": -1,
+            "mean_importance": 0.001463
+          },
+          "CRF": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.1333,
+            "majority_direction": 1,
+            "mean_importance": 2.1e-05
+          },
+          "CVA": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.1,
+            "majority_direction": -1,
+            "mean_importance": 1.1e-05
+          },
+          "Airway disease": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.3333,
+            "majority_direction": 1,
+            "mean_importance": 4.9e-05
+          },
+          "Thyroid Disease": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.4,
+            "majority_direction": -1,
+            "mean_importance": 0.000147
+          },
+          "CHF": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.0,
+            "majority_direction": 0,
+            "mean_importance": 0.0
+          },
+          "DLP": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": -1,
+            "mean_importance": 0.003675
+          },
+          "BP": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.009522
+          },
+          "PR": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.011137
+          },
+          "Edema": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": 1,
+            "mean_importance": 0.000346
+          },
+          "Weak Peripheral Pulse": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.1333,
+            "majority_direction": -1,
+            "mean_importance": 1.7e-05
+          },
+          "Lung rales": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7667,
+            "majority_direction": 1,
+            "mean_importance": 0.00025
+          },
+          "Systolic Murmur": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.5333,
+            "majority_direction": 1,
+            "mean_importance": 0.00059
+          },
+          "Diastolic Murmur": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7333,
+            "majority_direction": -1,
+            "mean_importance": 0.000454
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.081032
+          },
+          "Dyspnea": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": -1,
+            "mean_importance": 0.00395
+          },
+          "Function Class": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6667,
+            "majority_direction": 1,
+            "mean_importance": 0.002688
+          },
+          "Atypical": {
+            "tag": "moderate",
+            "top_k_freq": 0.7667,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.033951
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.003545
+          },
+          "LowTH Ang": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.0333,
+            "majority_direction": 1,
+            "mean_importance": 4e-06
+          },
+          "Q Wave": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9,
+            "majority_direction": 1,
+            "mean_importance": 0.000984
+          },
+          "St Elevation": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.000819
+          },
+          "St Depression": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.00459
+          },
+          "Tinversion": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.011438
+          },
+          "LVH": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7,
+            "majority_direction": 1,
+            "mean_importance": 0.000301
+          },
+          "Poor R Progression": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6667,
+            "majority_direction": 1,
+            "mean_importance": 0.000224
+          },
+          "BBB_LBBB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.6333,
+            "majority_direction": -1,
+            "mean_importance": 0.000154
+          },
+          "BBB_RBBB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.3333,
+            "majority_direction": 1,
+            "mean_importance": 4.4e-05
+          },
+          "FBS": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.009714
+          },
+          "CR": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8667,
+            "majority_direction": 1,
+            "mean_importance": 0.008972
+          },
+          "TG": {
+            "tag": "unstable",
+            "top_k_freq": 0.1,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.013797
+          },
+          "LDL": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7667,
+            "majority_direction": 1,
+            "mean_importance": 0.007586
+          },
+          "HDL": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 0.7667,
+            "majority_direction": -1,
+            "mean_importance": 0.006893
+          },
+          "BUN": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7,
+            "majority_direction": 1,
+            "mean_importance": 0.005047
+          },
+          "ESR": {
+            "tag": "unstable",
+            "top_k_freq": 0.1333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.017688
+          },
+          "HB": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.7333,
+            "majority_direction": -1,
+            "mean_importance": 0.005869
+          },
+          "K": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8,
+            "majority_direction": 1,
+            "mean_importance": 0.006431
+          },
+          "Na": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 0.9667,
+            "majority_direction": -1,
+            "mean_importance": 0.007665
+          },
+          "WBC": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9333,
+            "majority_direction": 1,
+            "mean_importance": 0.011417
+          },
+          "Lymph": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.013821
+          },
+          "Neut": {
+            "tag": "unstable",
+            "top_k_freq": 0.1333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.017794
+          },
+          "PLT": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.9,
+            "majority_direction": -1,
+            "mean_importance": 0.007705
+          },
+          "EF-TTE": {
+            "tag": "stable",
+            "top_k_freq": 0.9667,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.045634
+          },
+          "Region RWMA": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.041111
+          },
+          "VHD": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 0.8667,
+            "majority_direction": 1,
+            "mean_importance": 0.004124
+          }
+        }
+      },
+      "LCX": {
+        "config_name": "compact|LR|C=0.03",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.342569
+          },
+          "Sex": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.201122
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.375025
+          },
+          "Atypical": {
+            "tag": "unstable",
+            "top_k_freq": 0.1,
+            "sign_consistency": 0.5,
+            "majority_direction": -1,
+            "mean_importance": 0.046628
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.1667,
+            "sign_consistency": 0.9,
+            "majority_direction": -1,
+            "mean_importance": 0.047411
+          },
+          "DM": {
+            "tag": "stable",
+            "top_k_freq": 0.9333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.169975
+          },
+          "HTN": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 0.9333,
+            "majority_direction": 1,
+            "mean_importance": 0.150168
+          }
+        }
+      },
+      "RCA": {
+        "config_name": "compact|LR|C=0.01",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.137888
+          },
+          "Sex": {
+            "tag": "stable",
+            "top_k_freq": 0.8667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.136127
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.173697
+          },
+          "Atypical": {
+            "tag": "stable",
+            "top_k_freq": 0.8333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.132483
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.058874
+          },
+          "DM": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.2091
+          },
+          "HTN": {
+            "tag": "unstable",
+            "top_k_freq": 0.3667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.089248
+          }
+        }
+      }
+    },
+    "quick": {
+      "CAD": {
+        "config_name": "compact|LR|C=0.01",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.224742
+          },
+          "Sex": {
+            "tag": "unstable",
+            "top_k_freq": 0.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.068435
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.386008
+          },
+          "Atypical": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.233757
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.1,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.090511
+          },
+          "DM": {
+            "tag": "stable",
+            "top_k_freq": 0.9667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.179503
+          },
+          "HTN": {
+            "tag": "stable",
+            "top_k_freq": 0.9333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.201958
+          }
+        }
+      },
+      "LAD": {
+        "config_name": "compact|LR|C=0.01",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 0.9667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.189054
+          },
+          "Sex": {
+            "tag": "moderate",
+            "top_k_freq": 0.7,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.100885
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.300889
+          },
+          "Atypical": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.197709
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.3333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.071193
+          },
+          "DM": {
+            "tag": "unstable",
+            "top_k_freq": 0.2667,
+            "sign_consistency": 0.8667,
+            "majority_direction": 1,
+            "mean_importance": 0.058173
+          },
+          "HTN": {
+            "tag": "moderate",
+            "top_k_freq": 0.7333,
+            "sign_consistency": 0.9667,
+            "majority_direction": 1,
+            "mean_importance": 0.101846
+          }
+        }
+      },
+      "LCX": {
+        "config_name": "compact|LR|C=0.03",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.342569
+          },
+          "Sex": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.201122
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.375025
+          },
+          "Atypical": {
+            "tag": "unstable",
+            "top_k_freq": 0.1,
+            "sign_consistency": 0.5,
+            "majority_direction": -1,
+            "mean_importance": 0.046628
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.1667,
+            "sign_consistency": 0.9,
+            "majority_direction": -1,
+            "mean_importance": 0.047411
+          },
+          "DM": {
+            "tag": "stable",
+            "top_k_freq": 0.9333,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.169975
+          },
+          "HTN": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 0.9333,
+            "majority_direction": 1,
+            "mean_importance": 0.150168
+          }
+        }
+      },
+      "RCA": {
+        "config_name": "compact|LR|C=0.01",
+        "features": {
+          "Age": {
+            "tag": "stable",
+            "top_k_freq": 0.9,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.137888
+          },
+          "Sex": {
+            "tag": "stable",
+            "top_k_freq": 0.8667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.136127
+          },
+          "Typical Chest Pain": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.173697
+          },
+          "Atypical": {
+            "tag": "stable",
+            "top_k_freq": 0.8333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.132483
+          },
+          "Nonanginal": {
+            "tag": "unstable",
+            "top_k_freq": 0.0333,
+            "sign_consistency": 1.0,
+            "majority_direction": -1,
+            "mean_importance": 0.058874
+          },
+          "DM": {
+            "tag": "stable",
+            "top_k_freq": 1.0,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.2091
+          },
+          "HTN": {
+            "tag": "unstable",
+            "top_k_freq": 0.3667,
+            "sign_consistency": 1.0,
+            "majority_direction": 1,
+            "mean_importance": 0.089248
+          }
+        }
+      }
+    }
+  }
+}

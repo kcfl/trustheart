@@ -1,7 +1,7 @@
 {
-  "git_commit": "ba9f7f6d289210aff22246a8e0dc8705a06e3750",
+  "git_commit": "3ee1e70e1523f911ea5d5bebeccd4d6ab73d9f7f",
   "git_dirty": true,
-  "timestamp_utc": "2026-10-13T22:00:24.429799+00:00",
+  "timestamp_utc": "2026-10-13T22:32:57.851730+00:00",
   "python_version": "3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]",
   "package_versions": {
     "scikit-learn": "1.9.1",
@@ -20,6 +20,7 @@
     "models/quick_LCX.joblib": "ee6c9b5f7ef218e1295953da3e329abd47a97f8b67e90b606e8db24484fea15a",
     "models/auto_RCA.joblib": "bdcfaf0667993cdc071ad37046125653aff2a14caf810ddc02aa5faa37be288e",
     "models/quick_RCA.joblib": "c7b7528f6b990cc16e953b880133828dfa4362b6a0ffc151097d6d27cc84fedc",
-    "models/feature_stats.json": "83c4aad6a792f84f9ce33994efa40583a7e29ae14028a258de45c080898c8520"
+    "models/feature_stats.json": "83c4aad6a792f84f9ce33994efa40583a7e29ae14028a258de45c080898c8520",
+    "models/trust_stats.json": "6b092ce42ae1334b7caec691f4068548f8fbe0cf3f59e6073c15ea45b79d3c39"
   }
 }

@@ -7,3 +7,4 @@ pyyaml
 joblib
 matplotlib
 scipy
+shap

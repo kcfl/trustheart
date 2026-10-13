@@ -12,5 +12,5 @@ venv/
 ENV/
 
 # Models & Reports artifacts
-models/*.joblib
+models/.nested_cache/
 reports/*.png

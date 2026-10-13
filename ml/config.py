@@ -74,6 +74,30 @@ INNER_REPEATS: int = 2
 CALIB_SPLITS: int = 5
 SPACES: list[str] = ["auto", "quick"]
 
+# Trust Layer & Stability Parameters (Step 4)
+BOOTSTRAPS: int = 30
+STAB_TOPK: int = 5
+STAB_STABLE_FREQ: float = 0.80
+STAB_STABLE_SIGN: float = 0.90
+STAB_MODERATE_FREQ: float = 0.50
+KNN_K_EVIDENCE: int = 15
+N_SIMILAR_SHOWN: int = 5
+
+
+def compute_stability_tag(top_k_freq: float, sign_consistency: float) -> str:
+    """Classify feature importance stability tag.
+
+    Tag rule:
+    - 'stable' if top_k_freq >= STAB_STABLE_FREQ and sign_consistency >= STAB_STABLE_SIGN
+    - 'moderate' if top_k_freq >= STAB_MODERATE_FREQ (and not stable)
+    - otherwise 'unstable'
+    """
+    if top_k_freq >= STAB_STABLE_FREQ and sign_consistency >= STAB_STABLE_SIGN:
+        return "stable"
+    if top_k_freq >= STAB_MODERATE_FREQ:
+        return "moderate"
+    return "unstable"
+
 
 _FEATURE_SETS_CACHE: dict[str, list[str]] | None = None
 
