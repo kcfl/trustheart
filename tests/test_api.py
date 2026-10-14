@@ -48,8 +48,13 @@ def test_1_health_ok(client: TestClient) -> None:
     data = res.json()
     assert data["status"] == "ok"
     assert data["models_verified"] is True
-    assert "ml-v1" in data["model_version"]
-    assert "git_commit" in data and len(data["git_commit"]) > 0
+
+    with open("models/manifest.json", "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    manifest_commit = manifest["git_commit"]
+
+    assert data["git_commit"] == manifest_commit
+    assert data["model_version"] == f"ml-v1 ({manifest_commit})"
     assert "disclaimer" in data and "Decision support" in data["disclaimer"]
 
 
@@ -57,10 +62,19 @@ def test_1_health_ok(client: TestClient) -> None:
 # Test 2: Metadata Endpoint
 # ---------------------------------------------------------------------------
 def test_2_meta_modes_and_features(client: TestClient) -> None:
-    """Test 2: GET /api/meta has 54 full features, 7 quick, all with groups, BBB as one feature."""
+    """Test 2: GET /api/meta has 54 full features, 7 quick, bands, BBB as one feature."""
     res = client.get("/api/meta")
     assert res.status_code == 200
     data = res.json()
+
+    # Verify probability bands
+    assert "bands" in data
+    bands = data["bands"]
+    assert len(bands) == 3
+    assert [b["name"] for b in bands] == ["lower", "intermediate", "higher"]
+    assert bands[0] == {"name": "lower", "min": 0.0, "max": 0.30}
+    assert bands[1] == {"name": "intermediate", "min": 0.30, "max": 0.60}
+    assert bands[2] == {"name": "higher", "min": 0.60, "max": 1.0}
 
     # Verify mode definitions
     modes = data["modes"]
@@ -522,6 +536,7 @@ def test_12_security_headers_and_cors(client: TestClient) -> None:
     # Valid allowed origin
     res_allowed = client.get("/api/health", headers={"Origin": "http://localhost:5173"})
     assert res_allowed.headers.get("access-control-allow-origin") == "http://localhost:5173"
+    assert "access-control-allow-credentials" not in res_allowed.headers
 
     # Disallowed origin
     res_disallowed = client.get("/api/health", headers={"Origin": "http://malicious-site.com"})
@@ -686,4 +701,36 @@ def test_17_openapi_contract_drift() -> None:
     assert disk_schema == active_schema, (
         "docs/openapi.json differs from app.openapi()! Run scripts/dump_openapi.py to update."
     )
+
+
+# ---------------------------------------------------------------------------
+# Test 18: Probability Bands Boundary Agreement
+# ---------------------------------------------------------------------------
+def test_18_probability_bands_boundary_agreement(client: TestClient) -> None:
+    """Test 18: /api/meta bands agree with get_probability_band at boundary values."""
+    res = client.get("/api/meta")
+    assert res.status_code == 200
+    bands = res.json()["bands"]
+
+    def classify_via_meta_bands(p: float) -> str:
+        for b in bands:
+            # min inclusive, max exclusive (for top band max inclusive)
+            if b["name"] == "higher":
+                if b["min"] <= p <= b["max"]:
+                    return b["name"]
+            else:
+                if b["min"] <= p < b["max"]:
+                    return b["name"]
+        raise ValueError(f"Probability {p} not covered by meta bands")
+
+    test_points = [0.2999, 0.30, 0.5999, 0.60]
+    expected_bands = ["lower", "intermediate", "intermediate", "higher"]
+
+    for p, expected in zip(test_points, expected_bands):
+        fn_band = get_probability_band(p)
+        meta_band = classify_via_meta_bands(p)
+        assert fn_band == expected, f"get_probability_band({p}) gave {fn_band}, expected {expected}"
+        assert meta_band == expected, f"meta bands classification of {p} gave {meta_band}, expected {expected}"
+        assert fn_band == meta_band, f"Mismatch at boundary {p}: get_probability_band={fn_band} vs meta={meta_band}"
+
 

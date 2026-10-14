@@ -1,9 +1,10 @@
 import type { PredictResponse, TargetPrediction } from '../api/client'
-import { BAND_LABELS, BANDS_SENTENCE, riskColor } from '../theme'
+import { type BandMetaItem, buildBandLabels, BANDS_SENTENCE, riskColor } from '../theme'
 
 interface ResultsPanelProps {
   result: PredictResponse | null
   error: string | null
+  bands?: BandMetaItem[]
 }
 
 const TARGET_ORDER = ['CAD', 'LAD', 'LCX', 'RCA'] as const
@@ -14,7 +15,7 @@ const TARGET_FULL_NAMES: Record<string, string> = {
   RCA: 'Right Coronary Artery',
 }
 
-export function ResultsPanel({ result, error }: ResultsPanelProps) {
+export function ResultsPanel({ result, error, bands }: ResultsPanelProps) {
   if (error) {
     return (
       <section className="results-panel error-state" aria-label="Prediction Results">
@@ -40,6 +41,7 @@ export function ResultsPanel({ result, error }: ResultsPanelProps) {
   }
 
   const { predictions, consistency, imputed, warnings, oof_estimate, oof_estimate_note, disclaimer, limitations } = result
+  const bandLabels = buildBandLabels(bands)
 
   return (
     <section className="results-panel" aria-label="Prediction Results">
@@ -52,7 +54,7 @@ export function ResultsPanel({ result, error }: ResultsPanelProps) {
 
           const percentStr = (pred.display_probability * 100).toFixed(1) + '%'
           const swatchColor = riskColor(pred.display_probability)
-          const bandLabel = BAND_LABELS[pred.display_band] || pred.display_band
+          const bandLabel = bandLabels[pred.display_band] || pred.display_band
 
           return (
             <article key={targetKey} className="target-card">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
+  type BandMetaItem,
   type FeatureMetaItem,
   type HealthResponse,
   type PredictResponse,
@@ -20,6 +21,7 @@ import { type FormState, formToPredictRequest, sampleToForm } from './lib/payloa
 export function App() {
   const [health, setHealth] = useState<HealthResponse | null>(null)
   const [metaFeatures, setMetaFeatures] = useState<FeatureMetaItem[]>([])
+  const [metaBands, setMetaBands] = useState<BandMetaItem[]>([])
   const [samples, setSamples] = useState<SampleItem[]>([])
   const [loadingInitial, setLoadingInitial] = useState<boolean>(true)
   const [initError, setInitError] = useState<string | null>(null)
@@ -27,6 +29,7 @@ export function App() {
   const [mode, setMode] = useState<'quick' | 'full'>('quick')
   const [formState, setFormState] = useState<FormState>({})
   const [caseId, setCaseId] = useState<number | null>(null)
+  const [isSampleEdited, setIsSampleEdited] = useState<boolean>(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const [predictLoading, setPredictLoading] = useState<boolean>(false)
@@ -48,6 +51,7 @@ export function App() {
 
         setHealth(healthData)
         setMetaFeatures(metaData.features || [])
+        setMetaBands(metaData.bands || [])
         setSamples(samplesData.samples || [])
         setInitError(null)
       } catch (err) {
@@ -75,6 +79,7 @@ export function App() {
     const { formState: newFormState, caseId: newCaseId } = sampleToForm(sample)
     setFormState(newFormState)
     setCaseId(newCaseId)
+    setIsSampleEdited(false)
     setFieldErrors({})
     setPredictError(null)
   }
@@ -82,6 +87,7 @@ export function App() {
   const handleClear = () => {
     setFormState({})
     setCaseId(null)
+    setIsSampleEdited(false)
     setFieldErrors({})
     setPredictResult(null)
     setPredictError(null)
@@ -92,6 +98,10 @@ export function App() {
       ...prev,
       [featureName]: value,
     }))
+    if (caseId !== null) {
+      setCaseId(null)
+      setIsSampleEdited(true)
+    }
     if (fieldErrors[featureName]) {
       setFieldErrors((prev) => {
         const next = { ...prev }
@@ -155,6 +165,12 @@ export function App() {
               disabled={predictLoading}
             />
 
+            {isSampleEdited && (
+              <div className="sample-edited-notice" role="status">
+                Edited: dataset comparison (out-of-fold estimate, case exclusion) is off.
+              </div>
+            )}
+
             <PatientForm
               mode={mode}
               metaFeatures={metaFeatures}
@@ -168,7 +184,7 @@ export function App() {
 
           {/* Right / Results column */}
           <div className="results-column">
-            <ResultsPanel result={predictResult} error={predictError} />
+            <ResultsPanel result={predictResult} error={predictError} bands={metaBands} />
           </div>
         </div>
       </main>

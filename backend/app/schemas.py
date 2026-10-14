@@ -138,11 +138,21 @@ class ModeDefinition(StrictBaseModel):
     features: list[str]
 
 
+class BandMetaItem(StrictBaseModel):
+    """Display probability band boundary specification."""
+
+    name: str
+    min: float
+    max: float
+
+
 class MetaResponse(StrictBaseModel):
     """Complete metadata response schema."""
 
     modes: dict[str, ModeDefinition]
     features: list[FeatureMetaItem]
+    bands: list[BandMetaItem]
+
 
 
 # ---------------------------------------------------------------------------

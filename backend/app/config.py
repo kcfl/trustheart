@@ -27,6 +27,12 @@ BAND_LOWER_THRESHOLD: float = 0.30
 BAND_HIGHER_THRESHOLD: float = 0.60
 BANDS_NOTE: str = "Bands are display categories, not clinical thresholds."
 
+PROBABILITY_BANDS: list[dict[str, Any]] = [
+    {"name": "lower", "min": 0.0, "max": BAND_LOWER_THRESHOLD},
+    {"name": "intermediate", "min": BAND_LOWER_THRESHOLD, "max": BAND_HIGHER_THRESHOLD},
+    {"name": "higher", "min": BAND_HIGHER_THRESHOLD, "max": 1.0},
+]
+
 
 def get_probability_band(p: float) -> str:
     """Classify probability into display-only category."""

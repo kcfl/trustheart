@@ -1,4 +1,12 @@
 # A4 HTTP Smoke Test Script
+
+# Abort if port 8000 is already in use BEFORE starting
+$existing = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+if ($existing) {
+    Write-Error "ABORT: Port 8000 is already in use by PID $($existing.OwningProcess[0]). Cannot run smoke test."
+    exit 1
+}
+
 $proc = Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -File scripts\run_api.ps1" -PassThru -WindowStyle Hidden
 Write-Host "Started API process with PID: $($proc.Id)"
 
@@ -13,6 +21,7 @@ for ($i = 0; $i -lt 30; $i++) {
 
 if (-not $ready) {
     Write-Error "Server did not start within 15 seconds"
+    taskkill /PID $proc.Id /T /F 2>$null | Out-Null
     Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
     exit 1
 }
@@ -46,16 +55,21 @@ try {
     Write-Host "access-control-allow-origin header: $(if ($hasAcao) { $hasAcao } else { '<NONE>' })"
 }
 finally {
-    Write-Host "`n--- A4.5 Stopping server process and confirming port free ---"
-    Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-    Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue | ForEach-Object {
-        Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+    Write-Host "`n--- A4.5 Stopping started process tree and confirming port free ---"
+    if ($proc -and -not $proc.HasExited) {
+        # Stop ONLY the process and child processes started by this script (never kill by port)
+        taskkill /PID $proc.Id /T /F 2>$null | Out-Null
+        Start-Sleep -Milliseconds 500
+        if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+        }
     }
     Start-Sleep -Seconds 1
-    $conn = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
+    $conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
     if ($conn) {
-        Write-Host "WARNING: Port 8000 is still in use by PID $($conn.OwningProcess)"
+        Write-Host "WARNING: Port 8000 is still listening by PID $($conn.OwningProcess[0])"
     } else {
         Write-Host "Port 8000 is free: CONFIRMED"
     }
 }
+

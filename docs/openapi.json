@@ -1,6 +1,31 @@
 {
   "components": {
     "schemas": {
+      "BandMetaItem": {
+        "additionalProperties": false,
+        "description": "Display probability band boundary specification.",
+        "properties": {
+          "max": {
+            "title": "Max",
+            "type": "number"
+          },
+          "min": {
+            "title": "Min",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "min",
+          "max"
+        ],
+        "title": "BandMetaItem",
+        "type": "object"
+      },
       "ConsistencyInfo": {
         "additionalProperties": false,
         "description": "Fr\u00e9chet coherence analysis results for CAD vs vessel probabilities.",
@@ -257,6 +282,13 @@
         "additionalProperties": false,
         "description": "Complete metadata response schema.",
         "properties": {
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/BandMetaItem"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
           "features": {
             "items": {
               "$ref": "#/components/schemas/FeatureMetaItem"
@@ -274,7 +306,8 @@
         },
         "required": [
           "modes",
-          "features"
+          "features",
+          "bands"
         ],
         "title": "MetaResponse",
         "type": "object"

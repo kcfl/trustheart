@@ -1,0 +1,19 @@
+ M backend/app/config.py
+ M backend/app/main.py
+ M backend/app/schemas.py
+ M backend/app/service.py
+ M docs/openapi.json
+ M frontend/package.json
+ M frontend/src/App.tsx
+ M frontend/src/api/client.ts
+ M frontend/src/api/schema.d.ts
+ M frontend/src/components/ResultsPanel.tsx
+ M frontend/src/components/components.test.tsx
+ M frontend/src/lib/payload.test.ts
+ M frontend/src/lib/payload.ts
+ M frontend/src/theme.test.ts
+ M frontend/src/theme.ts
+ M scripts/smoke_test.ps1
+ M tests/test_api.py
+?? docs/verification/
+?? scripts/verify_artifacts.py

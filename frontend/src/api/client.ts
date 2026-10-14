@@ -10,6 +10,7 @@ export type PredictRequest = components['schemas']['PredictRequest']
 export type PredictResponse = components['schemas']['PredictResponse']
 export type TargetPrediction = components['schemas']['TargetPrediction']
 export type FeatureMetaItem = components['schemas']['FeatureMetaItem']
+export type BandMetaItem = components['schemas']['BandMetaItem']
 
 export class ApiError extends Error {
   status?: number

@@ -69,6 +69,17 @@ const mockFeatures: FeatureMetaItem[] = [
     training_max: 120,
     training_median: 73,
   },
+  {
+    name: 'Function Class',
+    label: 'Function Class',
+    kind: 'ordinal',
+    group: 'Symptoms',
+    in_quick: false,
+    training: { min: 0, max: 3, median: 0 },
+    training_min: 0,
+    training_max: 3,
+    training_median: 0,
+  },
 ]
 
 describe('payload.ts formToPredictRequest and sampleToForm', () => {
@@ -116,6 +127,24 @@ describe('payload.ts formToPredictRequest and sampleToForm', () => {
     const resValid = formToPredictRequest('quick', { Age: '58.5' }, null, mockFeatures)
     expect(resValid.errors).toEqual({})
     expect(resValid.request?.inputs['Age']).toBe(58.5)
+  })
+
+  it('parses ordinal numeric features like Function Class with Number and rejects non-finite', () => {
+    // 1. Valid integer string parses to number (never sent as string)
+    const resValid = formToPredictRequest('full', { 'Function Class': '2' }, null, mockFeatures)
+    expect(resValid.errors).toEqual({})
+    expect(resValid.request?.inputs['Function Class']).toBe(2)
+    expect(typeof resValid.request?.inputs['Function Class']).toBe('number')
+
+    // 2. Non-finite string is rejected with a field error
+    const resInvalid = formToPredictRequest('full', { 'Function Class': 'invalid_class' }, null, mockFeatures)
+    expect(resInvalid.request).toBeNull()
+    expect(resInvalid.errors['Function Class']).toBe('Must be a valid finite number')
+
+    // 3. Infinity is rejected
+    const resInf = formToPredictRequest('full', { 'Function Class': 'Infinity' }, null, mockFeatures)
+    expect(resInf.request).toBeNull()
+    expect(resInf.errors['Function Class']).toBe('Must be a valid finite number')
   })
 
   it('enforces quick vs full feature omission', () => {

@@ -20,10 +20,12 @@ from backend.app.config import (
     FEATURE_GROUPS,
     FULL_HUMAN_FEATURES,
     LIMITATIONS,
+    PROBABILITY_BANDS,
     QUICK_FEATURES,
     get_probability_band,
 )
 from backend.app.schemas import (
+    BandMetaItem,
     ConsistencyInfo,
     ContributionItem,
     FeatureMetaItem,
@@ -275,7 +277,11 @@ class ModelService:
             ),
         }
 
-        return MetaResponse(modes=modes, features=features_meta)
+        return MetaResponse(
+            modes=modes,
+            features=features_meta,
+            bands=[BandMetaItem(**b) for b in PROBABILITY_BANDS],
+        )
 
     def get_samples(self) -> SamplesResponse:
         """Return the precomputed 4 representative patient profiles."""

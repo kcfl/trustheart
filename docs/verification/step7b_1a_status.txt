@@ -1,0 +1,2 @@
+?? docs/verification/
+?? scripts/verify_artifacts.py

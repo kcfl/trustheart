@@ -77,13 +77,6 @@ export function formToPredictRequest(
       } else {
         errors[feature.name] = 'Must be Yes, No, or Unknown'
       }
-    } else if (feature.kind === 'continuous') {
-      const num = Number(trimmed)
-      if (!Number.isFinite(num)) {
-        errors[feature.name] = 'Must be a valid finite number'
-      } else {
-        inputs[feature.name] = num
-      }
     } else if (feature.name === 'Sex') {
       const lower = trimmed.toLowerCase()
       if (lower === 'male') {
@@ -109,8 +102,15 @@ export function formToPredictRequest(
         errors[feature.name] = 'Must be N, mild, Moderate, Severe, or Unknown'
       }
     } else {
-      // Categorical or ordinal
-      inputs[feature.name] = trimmed
+      // For every kind except categorical-with-string-values (Sex, BBB, VHD),
+      // parse with Number and reject non-finite (including ordinal numeric features such as Function Class);
+      // never send numeric features as strings.
+      const num = Number(trimmed)
+      if (!Number.isFinite(num)) {
+        errors[feature.name] = 'Must be a valid finite number'
+      } else {
+        inputs[feature.name] = num
+      }
     }
   }
 

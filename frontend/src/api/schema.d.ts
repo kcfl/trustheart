@@ -109,6 +109,18 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
+         * BandMetaItem
+         * @description Display probability band boundary specification.
+         */
+        BandMetaItem: {
+            /** Max */
+            max: number;
+            /** Min */
+            min: number;
+            /** Name */
+            name: string;
+        };
+        /**
          * ConsistencyInfo
          * @description Fréchet coherence analysis results for CAD vs vessel probabilities.
          */
@@ -229,6 +241,8 @@ export interface components {
          * @description Complete metadata response schema.
          */
         MetaResponse: {
+            /** Bands */
+            bands: components["schemas"]["BandMetaItem"][];
             /** Features */
             features: components["schemas"]["FeatureMetaItem"][];
             /** Modes */

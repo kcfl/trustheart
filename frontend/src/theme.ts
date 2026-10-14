@@ -4,10 +4,52 @@
 
 export const BANDS_SENTENCE = 'Bands are display categories, not clinical thresholds.'
 
+export interface BandMetaItem {
+  name: string
+  min: number
+  max: number
+}
+
+/**
+ * Format a human-readable display label for a single risk probability band.
+ * Lower band (< max%), intermediate band (min% - max%), higher band (>= min%).
+ */
+export function formatBandLabel(band: BandMetaItem): string {
+  const cap = band.name.charAt(0).toUpperCase() + band.name.slice(1)
+  const minPct = Math.round(band.min * 100)
+  const maxPct = Math.round(band.max * 100)
+  if (band.min <= 0 && band.max < 1) {
+    return `${cap} (< ${maxPct}%)`
+  }
+  if (band.max >= 1) {
+    return `${cap} (>= ${minPct}%)`
+  }
+  return `${cap} (${minPct}% - ${maxPct}%)`
+}
+
+/**
+ * Build a lookup map of band name -> display label from /api/meta bands.
+ */
+export function buildBandLabels(bands?: BandMetaItem[]): Record<string, string> {
+  if (!bands || bands.length === 0) {
+    return {
+      lower: 'Lower',
+      intermediate: 'Intermediate',
+      higher: 'Higher',
+    }
+  }
+  const labels: Record<string, string> = {}
+  for (const b of bands) {
+    labels[b.name] = formatBandLabel(b)
+  }
+  return labels
+}
+
+// Fallback band labels without hardcoded percentages
 export const BAND_LABELS: Record<'lower' | 'intermediate' | 'higher', string> = {
-  lower: 'Lower (< 20%)',
-  intermediate: 'Intermediate (20% - 50%)',
-  higher: 'Higher (> 50%)',
+  lower: 'Lower',
+  intermediate: 'Intermediate',
+  higher: 'Higher',
 }
 
 interface RGB {
