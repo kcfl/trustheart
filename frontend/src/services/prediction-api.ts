@@ -25,6 +25,7 @@ import type {
   TrustBlock,
   PredictWarning,
   ProbabilityBand,
+  TargetPrediction,
 } from "./api-types";
 import { targets, targetNames } from "./api-types";
 
@@ -65,6 +66,7 @@ export interface PredictionResult {
   modelVersion: string;
   disclaimer: string;
   limitations: string[];
+  predictions: Record<Target, TargetPrediction>;
   rawResponse: PredictResponse;
 }
 
@@ -72,13 +74,42 @@ export interface PredictionAdapter<TInput> {
   predict(input: TInput, signal?: AbortSignal): Promise<PredictionResult>;
 }
 
-export class ApiValidationError extends Error {
-  fieldErrors: Record<string, string>;
+export type PredictionErrorKind =
+  | "validation"
+  | "rate_limit"
+  | "bad_request"
+  | "forbidden"
+  | "payload_too_large"
+  | "server_error"
+  | "service_unavailable"
+  | "network"
+  | "parse"
+  | "abort";
 
-  constructor(message: string, fieldErrors: Record<string, string>) {
+export class PredictionApiError extends Error {
+  kind: PredictionErrorKind;
+  fieldErrors?: Record<string, string>;
+  retryAfter?: number;
+  status?: number;
+
+  constructor(
+    message: string,
+    kind: PredictionErrorKind,
+    options?: { fieldErrors?: Record<string, string>; retryAfter?: number; status?: number },
+  ) {
     super(message);
+    this.name = "PredictionApiError";
+    this.kind = kind;
+    this.fieldErrors = options?.fieldErrors;
+    this.retryAfter = options?.retryAfter;
+    this.status = options?.status;
+  }
+}
+
+export class ApiValidationError extends PredictionApiError {
+  constructor(message: string, fieldErrors: Record<string, string>) {
+    super(message, "validation", { fieldErrors, status: 422 });
     this.name = "ApiValidationError";
-    this.fieldErrors = fieldErrors;
   }
 }
 
@@ -197,6 +228,7 @@ export function parsePredictionResponse(value: unknown): PredictionResult {
     modelVersion: data.model_version || "ml-v1",
     disclaimer: data.disclaimer || "Decision support / educational use only.",
     limitations: data.limitations || [],
+    predictions: data.predictions,
     rawResponse: data,
   };
 }
@@ -232,9 +264,26 @@ export async function requestPrediction(
       signal: controller.signal,
     });
 
+    if (response.status === 429) {
+      const retryHeader = response.headers.get("Retry-After");
+      const seconds = retryHeader ? parseInt(retryHeader, 10) : undefined;
+      const msg = seconds && !isNaN(seconds)
+        ? `Too many requests. Please retry in ${seconds}s.`
+        : "Too many requests. Please try again later.";
+      throw new PredictionApiError(msg, "rate_limit", {
+        retryAfter: seconds && !isNaN(seconds) ? seconds : undefined,
+        status: 429,
+      });
+    }
+
     if (response.status === 422) {
-      const errBody = await response.json().catch(() => null);
-      const detail = errBody?.detail;
+      let detail: unknown = null;
+      try {
+        const errBody = await response.json();
+        detail = errBody?.detail;
+      } catch {
+        detail = await response.text().catch(() => null);
+      }
       const fieldErrors = parse422Errors(detail);
       throw new ApiValidationError(
         typeof detail === "string" ? detail : "Validation failed. Please check the highlighted inputs.",
@@ -242,43 +291,99 @@ export async function requestPrediction(
       );
     }
 
-    if (response.status === 429) {
-      const retryHeader = response.headers.get("Retry-After");
-      const seconds = retryHeader ? parseInt(retryHeader, 10) : null;
-      const msg = seconds && !isNaN(seconds)
-        ? `Too many requests. Please retry in ${seconds} seconds.`
-        : "Too many requests. Please try again later.";
-      throw new Error(msg);
-    }
-
-    if (response.status === 413) {
-      throw new Error("Request payload is too large. Please shorten your inputs.");
-    }
-
-    if (response.status >= 500) {
-      throw new Error("Internal server error occurred on the model service. Please try again.");
-    }
-
     if (!response.ok) {
-      const errBody = await response.json().catch(() => null);
-      const detail = errBody?.detail || `HTTP ${response.status}`;
-      throw new Error(`Analysis failed (${detail}). Please try again.`);
+      let errorDetail = "";
+      try {
+        const errBody = await response.json();
+        errorDetail = typeof errBody?.detail === "string" ? errBody.detail : JSON.stringify(errBody?.detail || errBody || "");
+      } catch {
+        errorDetail = await response.text().catch(() => "");
+      }
+
+      if (response.status === 400) {
+        throw new PredictionApiError(
+          `Invalid request (400)${errorDetail ? `: ${errorDetail}` : ". Check your submitted inputs."}`,
+          "bad_request",
+          { status: 400 },
+        );
+      }
+
+      if (response.status === 403) {
+        throw new PredictionApiError(
+          "Access forbidden (403). You do not have permission to access the prediction service.",
+          "forbidden",
+          { status: 403 },
+        );
+      }
+
+      if (response.status === 413) {
+        throw new PredictionApiError(
+          "Request payload is too large (413). Please shorten your inputs.",
+          "payload_too_large",
+          { status: 413 },
+        );
+      }
+
+      if (response.status === 500) {
+        throw new PredictionApiError(
+          "Internal server error (500) on the prediction service. Please try again later.",
+          "server_error",
+          { status: 500 },
+        );
+      }
+
+      if (response.status === 502) {
+        throw new PredictionApiError(
+          "Bad gateway (502). The prediction backend is temporarily unreachable.",
+          "service_unavailable",
+          { status: 502 },
+        );
+      }
+
+      if (response.status === 503) {
+        throw new PredictionApiError(
+          "Service unavailable (503). The prediction engine is starting up or under maintenance.",
+          "service_unavailable",
+          { status: 503 },
+        );
+      }
+
+      throw new PredictionApiError(
+        `Prediction failed with status ${response.status}${errorDetail ? `: ${errorDetail}` : ""}.`,
+        "server_error",
+        { status: response.status },
+      );
     }
 
-    const data = await response.json();
+    let data: unknown;
+    try {
+      data = await response.json();
+    } catch {
+      throw new PredictionApiError(
+        "The model service returned malformed or unreadable JSON.",
+        "parse",
+      );
+    }
+
     return parsePredictionResponse(data);
   } catch (error) {
     if (controller.signal.aborted || signal?.aborted) {
       throw new DOMException("Cancelled", "AbortError");
     }
-    if (error instanceof ApiValidationError) {
+    if (error instanceof PredictionApiError) {
       throw error;
     }
     if (error instanceof TypeError) {
-      throw new Error("Unable to reach the model service. Check your connection and retry.");
+      throw new PredictionApiError(
+        "Unable to reach the model service. Check your connection and retry.",
+        "network",
+      );
     }
     if (error instanceof SyntaxError) {
-      throw new Error("The model service returned unreadable data. Please try again.");
+      throw new PredictionApiError(
+        "The model service returned malformed or unreadable data. Please try again.",
+        "parse",
+      );
     }
     throw error;
   } finally {

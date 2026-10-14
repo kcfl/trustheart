@@ -26,6 +26,7 @@ import {
   ApiValidationError,
 } from "../services/prediction-api";
 import type { ClinicalInputs, InputErrors } from "../services/prediction-api";
+import type { SamplesResponse, SamplePatient } from "../services/api-types";
 import {
   CLINICAL_GROUPS,
   HARD_FEATURE_RANGES,
@@ -92,7 +93,7 @@ export default function Analysis() {
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") return;
       if (e instanceof ApiValidationError) {
-        setErrors(e.fieldErrors);
+        setErrors(e.fieldErrors || {});
         setFailure(e.message);
       } else if (e instanceof Error) {
         setFailure(e.message);
@@ -111,44 +112,46 @@ export default function Analysis() {
 
   const loadSampleP10 = async () => {
     try {
-      const res = await fetch("/api/samples");
-      if (res.ok) {
-        const data = await res.json();
-        const p10 = data.samples?.find((s: { label: string }) => s.label === "p10");
-        if (p10?.inputs) {
-          const sampleInputs: ClinicalInputs = {
-            mode: inputs.mode || "quick",
-            Age: String(p10.inputs.Age ?? "47"),
-            Sex: String(p10.inputs.Sex ?? "Male"),
-            chestPain: p10.inputs["Typical Chest Pain"]
-              ? "Typical"
-              : p10.inputs.Atypical
-                ? "Atypical"
-                : p10.inputs.Nonanginal
-                  ? "Non-anginal"
-                  : "None",
-            DM: p10.inputs.DM ? "Yes" : "No",
-            HTN: p10.inputs.HTN ? "Yes" : "No",
-          };
-          // If full mode, also map other fields
-          for (const [k, v] of Object.entries(p10.inputs)) {
-            if (["Age", "Sex", "Typical Chest Pain", "Atypical", "Nonanginal", "DM", "HTN"].includes(k)) continue;
-            if (typeof v === "boolean") {
-              sampleInputs[k] = v ? "Yes" : "No";
-            } else if (v !== null && v !== undefined) {
-              sampleInputs[k] = String(v);
-            }
-          }
-          setInputs(sampleInputs);
-          setErrors({});
-          setResult(null);
-          return;
+      setFailure("");
+      const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+      const res = await fetch(`${base}/api/samples`);
+      if (!res.ok) {
+        throw new Error(`Failed to load sample profiles (HTTP ${res.status}).`);
+      }
+      const data: SamplesResponse = await res.json();
+      const p10: SamplePatient | undefined = data.samples?.find((s: SamplePatient) => s.label === "p10");
+      if (!p10?.inputs) {
+        throw new Error("Sample p10 was not found in response.");
+      }
+      const sampleInputs: ClinicalInputs = {
+        mode: inputs.mode || "quick",
+        Age: String(p10.inputs.Age ?? "47"),
+        Sex: String(p10.inputs.Sex ?? "Male"),
+        chestPain: p10.inputs["Typical Chest Pain"]
+          ? "Typical"
+          : p10.inputs.Atypical
+            ? "Atypical"
+            : p10.inputs.Nonanginal
+              ? "Non-anginal"
+              : "None",
+        DM: p10.inputs.DM ? "Yes" : "No",
+        HTN: p10.inputs.HTN ? "Yes" : "No",
+      };
+      // If full mode, also map other fields
+      for (const [k, v] of Object.entries(p10.inputs)) {
+        if (["Age", "Sex", "Typical Chest Pain", "Atypical", "Nonanginal", "DM", "HTN"].includes(k)) continue;
+        if (typeof v === "boolean") {
+          sampleInputs[k] = v ? "Yes" : "No";
+        } else if (v !== null && v !== undefined) {
+          sampleInputs[k] = String(v);
         }
       }
-    } catch {
-      // Fallback to exampleInputs if network/dev proxy not up yet
+      setInputs(sampleInputs);
+      setErrors({});
+      setResult(null);
+    } catch (err) {
+      setFailure(err instanceof Error ? err.message : "Failed to load sample p10 data.");
     }
-    fillExample();
   };
 
   return (

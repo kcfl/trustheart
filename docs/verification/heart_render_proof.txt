@@ -1,0 +1,24 @@
+[
+  {
+    "mode": "desktop",
+    "viewport": "1280x800",
+    "domDimensions": "586x390",
+    "bufferDimensions": "586x390",
+    "totalPixels": 228540,
+    "renderedPixels": 60416,
+    "pctDrawn": "26.44%",
+    "screenshot": "heart_desktop.png",
+    "status": "PASS"
+  },
+  {
+    "mode": "mobile",
+    "viewport": "390x844",
+    "domDimensions": "322x380",
+    "bufferDimensions": "322x380",
+    "totalPixels": 122360,
+    "renderedPixels": 57017,
+    "pctDrawn": "46.60%",
+    "screenshot": "heart_mobile.png",
+    "status": "PASS"
+  }
+]

@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import quickFixture from "../../../docs/verification/live_predict_quick.json";
+import fullFixture from "../../../docs/verification/live_predict_full.json";
 import {
   liveAdapter,
   emptyInputs,
@@ -7,6 +9,7 @@ import {
   requestPrediction,
   validateClinicalInputs,
   ApiValidationError,
+  PredictionApiError,
   parse422Errors,
 } from "./prediction-api";
 import type { PredictResponse, PredictRequest } from "./api-types";
@@ -325,11 +328,49 @@ describe("Live API request utility", () => {
       }),
     );
     await expect(requestPrediction(validPayload)).rejects.toThrow(
-      "Too many requests. Please retry in 25 seconds.",
+      "Too many requests. Please retry in 25s.",
     );
   });
 
-  it("maps 413 Payload Too Large into friendly error", async () => {
+  it("maps 400 Bad Request into PredictionApiError with kind bad_request", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({ detail: "Malformed parameter" }),
+      }),
+    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("bad_request");
+      expect((err as PredictionApiError).status).toBe(400);
+    }
+  });
+
+  it("maps 403 Forbidden into PredictionApiError with kind forbidden", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        json: async () => ({ detail: "Forbidden" }),
+      }),
+    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("forbidden");
+      expect((err as PredictionApiError).status).toBe(403);
+    }
+  });
+
+  it("maps 413 Payload Too Large into PredictionApiError with kind payload_too_large", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -338,23 +379,93 @@ describe("Live API request utility", () => {
         json: async () => ({ detail: "Payload too large" }),
       }),
     );
-    await expect(requestPrediction(validPayload)).rejects.toThrow(
-      "Request payload is too large",
-    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("payload_too_large");
+      expect((err as PredictionApiError).status).toBe(413);
+    }
   });
 
-  it("maps 500 Internal Server Error cleanly", async () => {
+  it("maps 500 Internal Server Error into PredictionApiError with kind server_error", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: false,
         status: 500,
-        json: async () => ({ detail: "Server error" }),
+        json: async () => ({ detail: "Internal error" }),
       }),
     );
-    await expect(requestPrediction(validPayload)).rejects.toThrow(
-      "Internal server error",
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("server_error");
+      expect((err as PredictionApiError).status).toBe(500);
+    }
+  });
+
+  it("maps 502 Bad Gateway and 503 Service Unavailable into service_unavailable", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        json: async () => ({ detail: "Service starting up" }),
+      }),
     );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("service_unavailable");
+      expect((err as PredictionApiError).status).toBe(503);
+    }
+  });
+
+  it("handles non-JSON error bodies gracefully without crashing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 502,
+        json: async () => {
+          throw new SyntaxError("Unexpected token < in JSON");
+        },
+        text: async () => "<html><body>502 Bad Gateway</body></html>",
+      }),
+    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("service_unavailable");
+    }
+  });
+
+  it("wraps malformed JSON response bodies into parse PredictionApiError", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => {
+          throw new SyntaxError("Unexpected token in JSON at position 0");
+        },
+      }),
+    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("parse");
+    }
   });
 
   it("handles network failure cleanly without fallback to fake demo numbers", async () => {
@@ -362,9 +473,13 @@ describe("Live API request utility", () => {
       "fetch",
       vi.fn().mockRejectedValue(new TypeError("Failed to fetch")),
     );
-    await expect(requestPrediction(validPayload)).rejects.toThrow(
-      "Unable to reach the model service",
-    );
+    try {
+      await requestPrediction(validPayload);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(PredictionApiError);
+      expect((err as PredictionApiError).kind).toBe("network");
+    }
   });
 
   it("supports cancellation via AbortSignal", async () => {
@@ -373,5 +488,70 @@ describe("Live API request utility", () => {
     await expect(
       requestPrediction(validPayload, "/api/predict", controller.signal),
     ).rejects.toHaveProperty("name", "AbortError");
+  });
+});
+
+describe("Live JSON fixture schema regression tests", () => {
+  it("validates live_predict_quick.json matches all UI-consumed fields", () => {
+    expect(quickFixture).toBeDefined();
+    const parsed = parsePredictionResponse(quickFixture);
+
+    expect(parsed.mode).toBe("quick");
+    expect(typeof parsed.modelVersion).toBe("string");
+    expect(parsed.modelVersion.length).toBeGreaterThan(0);
+    expect(typeof parsed.disclaimer).toBe("string");
+    expect(parsed.disclaimer.length).toBeGreaterThan(0);
+
+    // Consistency
+    expect(["ok", "raised", "lowered"]).toContain(parsed.consistency.status);
+    expect(typeof parsed.consistency.lower).toBe("number");
+    expect(typeof parsed.consistency.upper).toBe("number");
+    expect(typeof parsed.consistency.p_cad_model).toBe("number");
+    expect(typeof parsed.consistency.p_cad_adjusted).toBe("number");
+
+    // Targets
+    for (const t of ["CAD", "LAD", "LCX", "RCA"] as const) {
+      expect(parsed.display_probabilities[t]).toBeGreaterThanOrEqual(0);
+      expect(parsed.display_probabilities[t]).toBeLessThanOrEqual(1);
+      expect(parsed.calibrated_probabilities[t]).toBeGreaterThanOrEqual(0);
+      expect(parsed.calibrated_probabilities[t]).toBeLessThanOrEqual(1);
+      expect(typeof parsed.adjusted[t]).toBe("boolean");
+      expect(["lower", "intermediate", "higher"]).toContain(parsed.display_bands[t]);
+      expect(typeof parsed.base[t]).toBe("number");
+      expect(typeof parsed.logit_model[t]).toBe("number");
+      expect(Array.isArray(parsed.contributions[t])).toBe(true);
+    }
+
+    // Trust
+    expect(Array.isArray(parsed.similar_patients)).toBe(true);
+    expect(parsed.similar_patients.length).toBeGreaterThan(0);
+    const firstPatient = parsed.similar_patients[0];
+    expect(typeof firstPatient.case_id).toBe("number");
+    expect(typeof firstPatient.distance).toBe("number");
+    expect(typeof firstPatient.age_band).toBe("string");
+    expect(typeof firstPatient.sex).toBe("string");
+    expect(typeof firstPatient.outcomes.CAD).toBe("number");
+  });
+
+  it("validates live_predict_full.json matches all UI-consumed fields", () => {
+    expect(fullFixture).toBeDefined();
+    const parsed = parsePredictionResponse(fullFixture);
+
+    expect(parsed.mode).toBe("full");
+    expect(typeof parsed.modelVersion).toBe("string");
+    expect(typeof parsed.disclaimer).toBe("string");
+
+    // Check full-mode contributions
+    expect(parsed.contributions.CAD.length).toBeGreaterThanOrEqual(5);
+    const contrib = parsed.contributions.CAD[0];
+    expect(typeof contrib.feature).toBe("string");
+    expect(typeof contrib.contribution).toBe("number");
+    expect(["up", "down"]).toContain(contrib.direction);
+    expect(typeof contrib.imputed).toBe("boolean");
+
+    // Check model info
+    expect(parsed.model_info.CAD.config_name).toContain("full");
+    expect(parsed.model_info.CAD.n_features).toBe(54);
+    expect(parsed.model_info.CAD.features_used).toHaveLength(54);
   });
 });

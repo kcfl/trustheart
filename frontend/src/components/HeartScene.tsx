@@ -63,7 +63,7 @@ export default function HeartScene({ compact = false }: { compact?: boolean }) {
           antialias: true,
           alpha: true,
           powerPreference: "low-power",
-          preserveDrawingBuffer: false,
+          preserveDrawingBuffer: true,
         });
       } catch {
         setState("error");
