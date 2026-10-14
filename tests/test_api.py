@@ -9,13 +9,17 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from scipy.special import expit, logit
 
 from backend.app.config import FULL_HUMAN_FEATURES, QUICK_FEATURES
 from backend.app.main import app
 from backend.app.security import reset_rate_limiter
 from backend.app.service import ModelService, get_model_service
+from ml.config import VHD_ORDINAL_MAPPING
+from ml.predict import predict_one
 
 
 @pytest.fixture
@@ -53,7 +57,7 @@ def test_1_health_ok(client: TestClient) -> None:
 # Test 2: Metadata Endpoint
 # ---------------------------------------------------------------------------
 def test_2_meta_modes_and_features(client: TestClient) -> None:
-    """Test 2: GET /api/meta has 55 full features, 7 quick, all with groups, BBB as one feature."""
+    """Test 2: GET /api/meta has 54 full features, 7 quick, all with groups, BBB as one feature."""
     res = client.get("/api/meta")
     assert res.status_code == 200
     data = res.json()
@@ -63,12 +67,13 @@ def test_2_meta_modes_and_features(client: TestClient) -> None:
     assert "quick" in modes and "full" in modes
     assert modes["quick"]["n_features"] == 7
     assert len(modes["quick"]["features"]) == 7
-    assert modes["full"]["n_features"] == 55
-    assert len(modes["full"]["features"]) == 55
+    assert modes["full"]["n_features"] == 54
+    assert len(modes["full"]["features"]) == 54
 
     # Verify feature list
     features = data["features"]
-    assert len(features) == 55, f"Expected 55 features in meta list, got {len(features)}"
+    assert len(features) == 54, f"Expected 54 features in meta list, got {len(features)}"
+    assert "Exertional CP" not in [f["name"] for f in features]
 
     # Check BBB is present as exactly ONE feature
     bbb_features = [f for f in features if f["name"] == "BBB"]
@@ -98,24 +103,33 @@ def test_2_meta_modes_and_features(client: TestClient) -> None:
 # Test 3: Demo Samples Endpoint
 # ---------------------------------------------------------------------------
 def test_3_samples_structure_and_counts(client: TestClient) -> None:
-    """Test 3: GET /api/samples returns exactly 4 demo patients with 55 inputs and oof estimates."""
+    """Test 3: GET /api/samples returns exactly 4 demo patients with 54 inputs and oof estimates."""
     res = client.get("/api/samples")
     assert res.status_code == 200
     data = res.json()
     samples = data["samples"]
     assert len(samples) == 4
 
-    expected_labels = {"lower", "intermediate", "higher", "LCX-positive example"}
+    expected_labels = {"p10", "median", "p90", "lcx_positive_near_median"}
     observed_labels = {s["label"] for s in samples}
     assert observed_labels == expected_labels
+
+    expected_label_texts = {
+        "p10": "10th percentile of dataset CAD risk (out-of-fold)",
+        "median": "median of dataset CAD risk (out-of-fold)",
+        "p90": "90th percentile of dataset CAD risk (out-of-fold)",
+        "lcx_positive_near_median": "LCX-positive patient near the median",
+    }
 
     for s in samples:
         assert isinstance(s["case_id"], int)
         assert 0 <= s["case_id"] < 303
-        assert len(s["inputs"]) == 55
+        assert len(s["inputs"]) == 54
         assert "BBB" in s["inputs"]
         assert "Sex" in s["inputs"]
         assert "VHD" in s["inputs"]
+        assert "Exertional CP" not in s["inputs"]
+        assert s["label_text"] == expected_label_texts[s["label"]]
         assert set(s["ground_truth"].keys()) == {"CAD", "LAD", "LCX", "RCA"}
         assert set(s["oof_estimate"].keys()) == {"CAD", "LAD", "LCX", "RCA"}
         for t in ["CAD", "LAD", "LCX", "RCA"]:
@@ -125,48 +139,142 @@ def test_3_samples_structure_and_counts(client: TestClient) -> None:
 # ---------------------------------------------------------------------------
 # Test 4: Prediction Calibration, Coherence, and Exact Linear Identity
 # ---------------------------------------------------------------------------
-def test_4_predict_calibration_coherence_and_linear_identity(
-    client: TestClient, sample_patient_inputs: dict[str, Any]
-) -> None:
-    """Test 4: Probabilities in [0, 1], coherence bounds hold, and exact linear logit decomposition."""
+def _format_inputs_for_model(inputs: dict[str, Any], service: ModelService, feature_list: list[str]) -> pd.DataFrame:
+    filled = dict(inputs)
+    for feat in FULL_HUMAN_FEATURES:
+        if feat not in filled or filled[feat] is None:
+            if feat == "Sex":
+                filled[feat] = "Male" if service.feature_stats["Sex"]["median"] == 1.0 else "Female"
+            elif feat == "VHD":
+                filled[feat] = "N"
+            elif feat == "BBB":
+                filled[feat] = "N"
+            elif feat in service.feature_stats and service.feature_stats[feat].get("is_binary", False):
+                filled[feat] = bool(service.feature_stats[feat]["median"] == 1.0)
+            elif feat in service.feature_stats:
+                filled[feat] = float(service.feature_stats[feat]["median"])
+            else:
+                filled[feat] = 0.0
+
+    row: dict[str, float] = {}
+    for f in feature_list:
+        if f == "Sex":
+            val = filled.get("Sex", "Male")
+            row[f] = 1.0 if str(val).strip().lower() == "male" else 0.0
+        elif f == "VHD":
+            val = filled.get("VHD", "N")
+            row[f] = float(VHD_ORDINAL_MAPPING.get(str(val).strip().lower(), 0))
+        elif f == "BBB_LBBB":
+            val = filled.get("BBB", "N")
+            row[f] = 1.0 if str(val).strip() == "LBBB" else 0.0
+        elif f == "BBB_RBBB":
+            val = filled.get("BBB", "N")
+            row[f] = 1.0 if str(val).strip() == "RBBB" else 0.0
+        elif f in filled:
+            val = filled[f]
+            if isinstance(val, bool):
+                row[f] = 1.0 if val else 0.0
+            else:
+                row[f] = float(val)
+        else:
+            row[f] = 0.0
+    return pd.DataFrame([row])
+
+
+def test_4_predict_calibration_coherence_and_linear_identity(client: TestClient) -> None:
+    """Test 4: Identity holds within 1e-9 across modes, targets, samples + imputed case, matching ml.predict."""
+    samples_res = client.get("/api/samples")
+    assert samples_res.status_code == 200
+    samples = samples_res.json()["samples"]
+
+    # 4 samples + 1 request with 3 imputed features
+    cases: list[dict[str, Any]] = [dict(s["inputs"]) for s in samples]
+    imputed_case = dict(samples[1]["inputs"])
+    del imputed_case["Region RWMA"]
+    del imputed_case["EF-TTE"]
+    del imputed_case["LDL"]
+    cases.append(imputed_case)
+
+    service = get_model_service()
+
     for mode in ["quick", "full"]:
-        req_body = {
-            "mode": mode,
-            "inputs": sample_patient_inputs,
-            "case_id": 125,
-        }
-        res = client.post("/api/predict", json=req_body)
-        assert res.status_code == 200, res.text
-        data = res.json()
+        space = "quick" if mode == "quick" else "auto"
+        for case_inputs in cases:
+            res = client.post("/api/predict", json={"mode": mode, "inputs": case_inputs})
+            assert res.status_code == 200, res.text
+            data = res.json()
+            preds = data["predictions"]
 
-        preds = data["predictions"]
-        for target in ["CAD", "LAD", "LCX", "RCA"]:
-            p_obj = preds[target]
-            p_cal = p_obj["calibrated_probability"]
-            assert 0.0 <= p_cal <= 1.0
-            assert p_obj["band"] in ["lower", "intermediate", "higher"]
+            for target in ["CAD", "LAD", "LCX", "RCA"]:
+                p_obj = preds[target]
+                p_cal = p_obj["calibrated_probability"]
+                assert 0.0 <= p_cal <= 1.0
+                assert p_obj["band"] in ["lower", "intermediate", "higher"]
 
-            # Mathematical exact linear decomposition identity check
-            base = p_obj["base"]
-            top_10_contribs_sum = sum(c["contribution"] for c in p_obj["contributions"])
-            other_total = p_obj["other_total"]
-            reconstructed_logit = base + top_10_contribs_sum + other_total
-            expected_logit = p_obj["logit_model"]
+                # 1. Exact linear decomposition identity check (abs tolerance 1e-9)
+                base = p_obj["base"]
+                sum_contrib = sum(c["contribution"] for c in p_obj["contributions"]) + p_obj["other_total"]
+                logit_model = p_obj["logit_model"]
+                assert math.isclose(base + sum_contrib, logit_model, abs_tol=1e-9), (
+                    f"Mode {mode}, Target {target}: base + sum_contrib ({base + sum_contrib}) "
+                    f"!= logit_model ({logit_model})"
+                )
 
-            assert math.isclose(reconstructed_logit, expected_logit, abs_tol=1e-6), (
-                f"Mode {mode}, Target {target}: Reconstructed {reconstructed_logit} "
-                f"differs from expected logit {expected_logit}"
-            )
+                # 2. expit(logit_model) == calibrated_probability (before coherence) with tolerance 1e-9
+                assert math.isclose(float(expit(logit_model)), p_cal, abs_tol=1e-9), (
+                    f"Mode {mode}, Target {target}: expit(logit) ({float(expit(logit_model))}) != p_cal ({p_cal})"
+                )
 
-        # Fréchet coherence bounds check for CAD
-        consistency = data["consistency"]
-        lower = consistency["lower"]
-        upper = consistency["upper"]
-        p_cad_adj = consistency["p_cad_adjusted"]
+                # 3. calibrated_probability matches ml.predict within 1e-9
+                artifact = service.models[(space, target)]
+                feature_list = artifact["feature_list"]
+                X_df = _format_inputs_for_model(case_inputs, service, feature_list)
+                p_ml = float(predict_one(space, target, X_df)[0])
+                assert math.isclose(p_cal, p_ml, abs_tol=1e-9), (
+                    f"Mode {mode}, Target {target}: p_cal ({p_cal}) != p_ml ({p_ml})"
+                )
 
-        assert lower <= p_cad_adj <= upper + 1e-9
-        assert data["predictions"]["CAD"]["calibrated_probability"] == p_cad_adj
-        assert consistency["status"] in ["ok", "raised", "lowered"]
+            # Fréchet coherence bounds check for CAD
+            consistency = data["consistency"]
+            lower = consistency["lower"]
+            upper = consistency["upper"]
+            p_cad_adj = consistency["p_cad_adjusted"]
+
+            assert lower <= p_cad_adj <= upper + 1e-9
+            assert math.isclose(consistency["p_cad_model"], preds["CAD"]["calibrated_probability"], abs_tol=1e-9)
+            assert consistency["status"] in ["ok", "raised", "lowered"]
+
+
+# ---------------------------------------------------------------------------
+# Test 4b: Raw Probability Platt Scaling Consistency
+# ---------------------------------------------------------------------------
+def test_4b_raw_probability_platt_consistency(client: TestClient) -> None:
+    """Test 4b: Asserts expit(a * logit(raw_probability) + b) == calibrated_probability within 1e-9."""
+    samples_res = client.get("/api/samples")
+    assert samples_res.status_code == 200
+    samples = samples_res.json()["samples"]
+
+    for mode in ["quick", "full"]:
+        export_res = client.get(f"/api/model-export?mode={mode}")
+        assert export_res.status_code == 200
+        export_targets = export_res.json()["targets"]
+
+        for s in samples:
+            res = client.post("/api/predict", json={"mode": mode, "inputs": s["inputs"]})
+            assert res.status_code == 200
+            preds = res.json()["predictions"]
+
+            for target in ["CAD", "LAD", "LCX", "RCA"]:
+                p_obj = preds[target]
+                raw_p = p_obj["raw_probability"]
+                cal_p = p_obj["calibrated_probability"]
+                platt_a = export_targets[target]["platt_a"]
+                platt_b = export_targets[target]["platt_b"]
+
+                expected_cal = float(expit(platt_a * float(logit(raw_p)) + platt_b))
+                assert math.isclose(expected_cal, cal_p, abs_tol=1e-9), (
+                    f"Mode {mode}, Target {target}: expit(a*logit(raw)+b) ({expected_cal}) != cal_p ({cal_p})"
+                )
 
 
 # ---------------------------------------------------------------------------
@@ -311,6 +419,42 @@ def test_8_invalid_input_rejections_422(client: TestClient) -> None:
     r4 = client.post("/api/predict", json={"mode": "quick", "inputs": {"Age": 500}})
     assert r4.status_code == 422
     assert "Age" in r4.text
+
+    # Posting Exertional CP returns 422 with clear message ("not a model input")
+    r5 = client.post(
+        "/api/predict",
+        json={"mode": "quick", "inputs": {"Age": 55, "Exertional CP": True}},
+    )
+    assert r5.status_code == 422
+    assert "not a model input" in r5.text.lower()
+
+
+# ---------------------------------------------------------------------------
+# Test 8b: Important Feature Imputed Warning
+# ---------------------------------------------------------------------------
+def test_8b_important_feature_imputed_warning(client: TestClient) -> None:
+    """Test warning code 'important_feature_imputed' when an important feature is removed."""
+    samples_res = client.get("/api/samples")
+    assert samples_res.status_code == 200
+    sample = dict(samples_res.json()["samples"][1]["inputs"])
+    # Remove 'Region RWMA'
+    del sample["Region RWMA"]
+
+    res = client.post("/api/predict", json={"mode": "full", "inputs": sample})
+    assert res.status_code == 200
+    data = res.json()
+
+    warnings = [
+        w for w in data["warnings"]
+        if w["code"] == "important_feature_imputed"
+        and w.get("feature") == "Region RWMA"
+        and w.get("target") == "LAD"
+    ]
+    assert len(warnings) == 1
+    assert warnings[0]["message"] == (
+        "Missing value was filled with the training median/most frequent value; "
+        "this feature matters for this target."
+    )
 
 
 # ---------------------------------------------------------------------------

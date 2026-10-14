@@ -124,13 +124,13 @@ QUICK_FEATURES: list[str] = [
     "HTN",
 ]
 
-# 55 human-readable full features
+# 54 human-readable full features
 FULL_HUMAN_FEATURES: list[str] = [
     "Age", "Weight", "Length", "Sex", "BMI",
     "DM", "HTN", "Current Smoker", "EX-Smoker", "FH", "Obesity", "CRF", "CVA",
     "Airway disease", "Thyroid Disease", "CHF", "DLP",
     "BP", "PR", "Edema", "Weak Peripheral Pulse", "Lung rales", "Systolic Murmur", "Diastolic Murmur",
-    "Typical Chest Pain", "Dyspnea", "Function Class", "Atypical", "Nonanginal", "Exertional CP", "LowTH Ang",
+    "Typical Chest Pain", "Dyspnea", "Function Class", "Atypical", "Nonanginal", "LowTH Ang",
     "Q Wave", "St Elevation", "St Depression", "Tinversion", "LVH", "Poor R Progression", "BBB",
     "FBS", "CR", "TG", "LDL", "HDL", "BUN", "ESR", "HB", "K", "Na", "WBC", "Lymph", "Neut", "PLT",
     "EF-TTE", "Region RWMA", "VHD",

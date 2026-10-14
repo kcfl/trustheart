@@ -44,13 +44,17 @@ class PredictRequest(StrictBaseModel):
                     f"Data leakage risk: column '{col}' is in LEAK_COLS or contains 'Cath'."
                 )
 
-        # 2. Reject unknown feature names
+        # 2. Reject Exertional CP as not a model input
+        if "Exertional CP" in v:
+            raise ValueError("Feature 'Exertional CP' is not a model input (dropped constant column).")
+
+        # 3. Reject unknown feature names
         known_features = set(FULL_HUMAN_FEATURES)
         unknown = [k for k in v.keys() if k not in known_features]
         if unknown:
             raise ValueError(f"Unknown feature name(s): {unknown}")
 
-        # 3. Validate values and non-finite floats
+        # 4. Validate values and non-finite floats
         for feat, val in v.items():
             if val is None:
                 continue
@@ -148,7 +152,8 @@ class SamplePatient(StrictBaseModel):
     """Demo sample patient record."""
 
     case_id: int
-    label: Literal["lower", "intermediate", "higher", "LCX-positive example"]
+    label: Literal["p10", "median", "p90", "lcx_positive_near_median"]
+    label_text: str
     inputs: dict[str, Any]
     ground_truth: dict[str, int]
     ground_truth_note: str = "dataset angiography labels, demo only"
@@ -201,6 +206,15 @@ class ContributionItem(StrictBaseModel):
     imputed: bool = False
 
 
+class ModelInfo(StrictBaseModel):
+    """Configuration and feature metadata for a fitted target model."""
+
+    config_name: str
+    n_features: int
+    features_used: list[str]
+    source_space: Literal["quick", "auto"]
+
+
 class TargetPrediction(StrictBaseModel):
     """Predicted risk and explainability breakdown for a single target."""
 
@@ -211,6 +225,11 @@ class TargetPrediction(StrictBaseModel):
     contributions: list[ContributionItem]
     other_total: float
     logit_model: float
+    model_info: ModelInfo
+    base_rate: float
+    base_rate_note: str = (
+        "dataset average (angiography-referred patients); not a population prevalence"
+    )
 
 
 class ConsistencyInfo(StrictBaseModel):
@@ -259,6 +278,7 @@ class PredictWarning(StrictBaseModel):
     code: str
     message: str | None = None
     feature: str | None = None
+    target: str | None = None
     value: Any = None
     min: float | None = None
     max: float | None = None

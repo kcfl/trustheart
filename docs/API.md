@@ -48,7 +48,7 @@ Verifies that the backend is operational and that all model artifacts have satis
 ### 2. Feature & Mode Metadata
 `GET /api/meta`
 
-Returns mode specifications (Quick: 7 features; Full: 55 features) and training statistics for all human-readable inputs.
+Returns mode specifications (Quick: 7 features; Full: 54 features) and training statistics for all human-readable inputs. BBB is exposed as a single categorical user-facing feature (`N`, `LBBB`, `RBBB`), and expands internally to two model columns (`BBB_LBBB`, `BBB_RBBB`) for the 55 model inputs. "Exertional CP" is a constant column dropped by the pipeline; submitting it returns HTTP 422 ("not a model input").
 
 #### Response Example (200 OK)
 ```json
@@ -62,8 +62,8 @@ Returns mode specifications (Quick: 7 features; Full: 55 features) and training 
     },
     "full": {
       "name": "full",
-      "description": "Full clinical mode using all 55 features and nested CV-tuned models",
-      "n_features": 55,
+      "description": "Full clinical mode using all 54 features and nested CV-tuned models",
+      "n_features": 54,
       "features": ["Age", "Weight", "Length", "..."]
     }
   },
@@ -104,10 +104,10 @@ Returns mode specifications (Quick: 7 features; Full: 55 features) and training 
 `GET /api/samples`
 
 Retrieves 4 deterministic benchmark patient profiles selected from out-of-fold evaluations:
-- **`lower`**: 10th percentile CAD risk profile (Case ID 293).
-- **`intermediate`**: 50th percentile CAD risk profile (Case ID 125).
-- **`higher`**: 90th percentile CAD risk profile (Case ID 52).
-- **`LCX-positive example`**: 50th percentile profile among verified LCX stenosis cases (Case ID 265).
+- **`p10`**: 10th percentile of dataset CAD risk (out-of-fold) (Case ID 293).
+- **`median`**: median of dataset CAD risk (out-of-fold) (Case ID 125).
+- **`p90`**: 90th percentile of dataset CAD risk (out-of-fold) (Case ID 52).
+- **`lcx_positive_near_median`**: LCX-positive patient near the median (Case ID 265).
 
 #### Response Example (200 OK)
 ```json
@@ -115,7 +115,8 @@ Retrieves 4 deterministic benchmark patient profiles selected from out-of-fold e
   "samples": [
     {
       "case_id": 293,
-      "label": "lower",
+      "label": "p10",
+      "label_text": "10th percentile of dataset CAD risk (out-of-fold)",
       "inputs": {
         "Age": 59,
         "Sex": "Male",
@@ -130,7 +131,7 @@ Retrieves 4 deterministic benchmark patient profiles selected from out-of-fold e
       "ground_truth": { "CAD": 0, "LAD": 0, "LCX": 0, "RCA": 0 },
       "ground_truth_note": "dataset angiography labels, demo only",
       "oof_estimate": { "CAD": 0.1099, "LAD": 0.1652, "LCX": 0.1678, "RCA": 0.1478 },
-      "oof_estimate_note": "out-of-fold: this patient was not in the training data of the model that produced it"
+      "oof_estimate_note": "out-of-fold: this patient was held out during nested CV. Main probabilities come from the all-data model (in-sample for this patient)."
     }
   ]
 }
@@ -187,12 +188,12 @@ Performs multi-artery stenosis inference, applies Fréchet probability bounds to
 ```
 
 #### Response Structure
-- **`predictions`**: Per-target calibrated probabilities, display risk band (`lower`, `intermediate`, `higher`), linear logit `base`, and top 10 feature contributions with direction and stability tags.
+- **`predictions`**: Per-target calibrated probabilities, display risk band (`lower`, `intermediate`, `higher`), linear logit `base`, top 10 feature contributions with direction and stability tags, `model_info` (`config_name`, `n_features`, `features_used` with BBB as one name, `source_space`), and `base_rate` (training prevalence from dataset labels with `base_rate_note`: "dataset average (angiography-referred patients); not a population prevalence").
   - Mathematical identity: $\text{base} + \sum (\text{contributions}) + \text{other\_total} = \text{logit}(p)$.
 - **`consistency`**: Fréchet coherence bounds $\max(P(\text{LAD}), P(\text{LCX}), P(\text{RCA})) \le P(\text{CAD}) \le \min(1, \sum P(\text{vessels}))$, clipping status (`ok`, `raised`, `lowered`), model CAD score, and final adjusted CAD score.
 - **`trust`**: Similar historical patients (5 cases, Euclidean distance on standardized z-scores), empirical k-NN evidence estimate (k=15), leave-one-out AUC, and nested CV lift intervals.
 - **`imputed`**: List of omitted features filled via training medians. If > 30% are imputed, a `low_reliability` warning is added.
-- **`warnings`**: Soft out-of-range checks and data reliability notices.
+- **`warnings`**: Soft out-of-range checks, `important_feature_imputed` warnings (when an imputed feature is in top 5 contributions or tagged `stable`), and data reliability notices.
 
 ---
 

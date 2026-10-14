@@ -32,6 +32,7 @@ from backend.app.schemas import (
     MetaResponse,
     ModeDefinition,
     ModelExportResponse,
+    ModelInfo,
     PredictRequest,
     PredictResponse,
     PredictWarning,
@@ -154,14 +155,14 @@ class ModelService:
         idx_lcx = int(lcx_pos_indices[np.argmin(np.abs(mean_p_cad[lcx_pos_indices] - p50_lcx))])
 
         sample_specs = [
-            (idx_10, "lower"),
-            (idx_50, "intermediate"),
-            (idx_90, "higher"),
-            (idx_lcx, "LCX-positive example"),
+            (idx_10, "p10", "10th percentile of dataset CAD risk (out-of-fold)"),
+            (idx_50, "median", "median of dataset CAD risk (out-of-fold)"),
+            (idx_90, "p90", "90th percentile of dataset CAD risk (out-of-fold)"),
+            (idx_lcx, "lcx_positive_near_median", "LCX-positive patient near the median"),
         ]
 
         self.demo_samples: list[SamplePatient] = []
-        for case_idx, label in sample_specs:
+        for case_idx, label, label_text in sample_specs:
             raw_row = self.raw_df.iloc[case_idx]
             gt_row = self.targets_df.iloc[case_idx]
 
@@ -174,8 +175,6 @@ class ModelService:
                     inputs_dict[col] = str(val).strip()
                 elif col == "BBB":
                     inputs_dict[col] = str(val).strip()
-                elif col == "Exertional CP":
-                    inputs_dict[col] = False
                 elif col in self.feature_stats and self.feature_stats[col].get("is_binary", False):
                     inputs_dict[col] = bool(val == 1 or val == "Y" or val == 1.0)
                 else:
@@ -190,6 +189,7 @@ class ModelService:
                 SamplePatient(
                     case_id=int(case_idx),
                     label=label,
+                    label_text=label_text,
                     inputs=inputs_dict,
                     ground_truth={t: int(gt_row[t]) for t in TARGETS},
                     oof_estimate=oof_est,
@@ -233,10 +233,6 @@ class ModelService:
                 kind = "categorical"
                 allowed = ["N", "LBBB", "RBBB"]
                 t_min, t_max, t_med = 0.0, 1.0, 0.0
-            elif feat == "Exertional CP":
-                kind = "binary"
-                allowed = [False, True]
-                t_min, t_max, t_med = 0.0, 0.0, 0.0
             elif feat in self.feature_stats and self.feature_stats[feat].get("is_binary", False):
                 kind = "binary"
                 allowed = [False, True]
@@ -273,7 +269,7 @@ class ModelService:
             ),
             "full": ModeDefinition(
                 name="full",
-                description="Full clinical mode using all 55 features and nested CV-tuned models",
+                description="Full clinical mode using all 54 features and nested CV-tuned models",
                 n_features=len(FULL_HUMAN_FEATURES),
                 features=list(FULL_HUMAN_FEATURES),
             ),
@@ -381,8 +377,6 @@ class ModelService:
                 filled_inputs[feat] = "N"
             elif feat == "BBB":
                 filled_inputs[feat] = "N"
-            elif feat == "Exertional CP":
-                filled_inputs[feat] = False
             elif feat in self.feature_stats and self.feature_stats[feat].get("is_binary", False):
                 filled_inputs[feat] = bool(self.feature_stats[feat]["median"] == 1.0)
             elif feat in self.feature_stats:
@@ -403,8 +397,6 @@ class ModelService:
                 bbb_str = str(val).strip()
                 numeric_inputs["BBB_LBBB"] = 1.0 if bbb_str == "LBBB" else 0.0
                 numeric_inputs["BBB_RBBB"] = 1.0 if bbb_str == "RBBB" else 0.0
-            elif feat == "Exertional CP":
-                pass  # Constant feature dropped during training
             elif feat in self.feature_stats and self.feature_stats[feat].get("is_binary", False):
                 numeric_inputs[feat] = 1.0 if bool(val) else 0.0
             else:
@@ -484,7 +476,45 @@ class ModelService:
             top_10 = all_contribs[:10]
             other_total = float(sum(item.contribution for item in all_contribs[10:]))
 
+            # Important feature imputed warnings: top 5 by abs contribution or stable
+            for rank, item in enumerate(all_contribs):
+                if item.imputed:
+                    if rank < 5 or item.stability_tag == "stable":
+                        human_feat = "BBB" if item.feature in ["BBB_LBBB", "BBB_RBBB"] else item.feature
+                        if not any(
+                            w.code == "important_feature_imputed"
+                            and w.feature == human_feat
+                            and w.target == target
+                            for w in warnings
+                        ):
+                            warnings.append(
+                                PredictWarning(
+                                    code="important_feature_imputed",
+                                    feature=human_feat,
+                                    target=target,
+                                    message=(
+                                        "Missing value was filled with the training median/most frequent value; "
+                                        "this feature matters for this target."
+                                    ),
+                                )
+                            )
+
             band = get_probability_band(cal_p)
+
+            # Features used with BBB unified as one name
+            features_used: list[str] = []
+            for f in features:
+                f_name = "BBB" if f in ["BBB_LBBB", "BBB_RBBB"] else f
+                if f_name not in features_used:
+                    features_used.append(f_name)
+
+            model_info = ModelInfo(
+                config_name=str(artifact["config_name"]),
+                n_features=len(features_used),
+                features_used=features_used,
+                source_space=artifact["space"],
+            )
+            base_rate = float(self.targets_df[target].mean())
 
             target_predictions[target] = TargetPrediction(
                 raw_probability=raw_p,
@@ -494,6 +524,8 @@ class ModelService:
                 contributions=top_10,
                 other_total=other_total,
                 logit_model=logit_cal,
+                model_info=model_info,
+                base_rate=base_rate,
             )
 
         # 7. Apply Fréchet Coherence Bounds to CAD
@@ -511,10 +543,6 @@ class ModelService:
             p_cad_model=float(cal_p_map["CAD"]),
             p_cad_adjusted=float(p_cad_adj.item() if hasattr(p_cad_adj, "item") else p_cad_adj),
         )
-
-        # Update CAD output probability and band with coherent adjusted score
-        target_predictions["CAD"].calibrated_probability = consistency.p_cad_adjusted
-        target_predictions["CAD"].band = get_probability_band(consistency.p_cad_adjusted)
 
         # 8. Build Trust Block (similar patients, LOO evidence, lift)
         # Determine available columns (non-imputed features of the mode)
