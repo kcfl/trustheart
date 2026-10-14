@@ -1,0 +1,20 @@
+﻿Checking 16 runtime files against .dockerignore and Dockerfile COPY:
+---------------------------------------------------------------------------
+PASS: backend/app/main.py (not ignored, COPY'd)
+PASS: backend/app/routes.py (not ignored, COPY'd)
+PASS: data/raw/extention of Z-Alizadeh sani dataset.xlsx (not ignored, COPY'd)
+PASS: frontend/dist/index.html (not ignored, COPY'd)
+PASS: models/auto_CAD.joblib (not ignored, COPY'd)
+PASS: models/auto_LAD.joblib (not ignored, COPY'd)
+PASS: models/auto_LCX.joblib (not ignored, COPY'd)
+PASS: models/auto_RCA.joblib (not ignored, COPY'd)
+PASS: models/feature_stats.json (not ignored, COPY'd)
+PASS: models/manifest.json (not ignored, COPY'd)
+PASS: models/nested_oof.npz (not ignored, COPY'd)
+PASS: models/quick_CAD.joblib (not ignored, COPY'd)
+PASS: models/quick_LAD.joblib (not ignored, COPY'd)
+PASS: models/quick_LCX.joblib (not ignored, COPY'd)
+PASS: models/quick_RCA.joblib (not ignored, COPY'd)
+PASS: models/trust_stats.json (not ignored, COPY'd)
+---------------------------------------------------------------------------
+ALL 16 RUNTIME FILES PASSED (context verified).

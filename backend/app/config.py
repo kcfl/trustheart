@@ -24,6 +24,10 @@ MAX_REQUEST_BODY_BYTES: int = 20 * 1024
 # Rate limiter: default 60 requests/minute per IP
 RATE_LIMIT_PER_MINUTE: int = int(os.getenv("TRUSTHEART_RATE_LIMIT", "60"))
 
+# Proxy configuration for rate limiting
+TRUST_PROXY_RAW: str = os.getenv("TRUSTHEART_TRUST_PROXY", "false").lower()
+TRUST_PROXY: bool = TRUST_PROXY_RAW in ("true", "1", "yes")
+
 # Display-only Probability Bands
 BAND_LOWER_THRESHOLD: float = 0.30
 BAND_HIGHER_THRESHOLD: float = 0.60

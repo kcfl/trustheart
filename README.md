@@ -93,9 +93,9 @@ Open `http://localhost:8000` in your web browser.
 
 ### 2. Docker Execution (Multi-Stage Container)
 
-The project includes a multi-stage `Dockerfile` that builds the React frontend in `node:22-alpine` and serves both the API and frontend assets via FastAPI on `python:3.12-slim`.
+The project includes a multi-stage `Dockerfile` that builds the React frontend in `node:22-alpine`, installs runtime dependencies from `requirements-runtime.txt`, configures a non-root user (`appuser`), and serves both the API and frontend assets via FastAPI on `python:3.12-slim`.
 
-> **Notice**: The Dockerfile is untested in this environment as Docker is not installed on the host.
+> **Notice**: Docker is not installed on this host environment. The Dockerfile itself is untested on this machine, and `python scripts/check_docker_context.py` only validates the build context (verifying that all 16 runtime files are neither excluded by `.dockerignore` nor omitted from `Dockerfile` COPY directives).
 
 #### Step 1: Build Docker Image
 From the repository root (`e:\iit mandi\trustheart`):

@@ -1000,5 +1000,49 @@ def test_25_raw_asgi_path_traversal_hardening() -> None:
         assert b"n_repeats_nested" not in response_body, f"Path traversal leaked manifest on {p}!"
 
 
+# ---------------------------------------------------------------------------
+# Test 26: Proxy-Aware Rate Limiting (TRUSTHEART_TRUST_PROXY)
+# ---------------------------------------------------------------------------
+def test_26_proxy_aware_rate_limiting(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test 26: Flag off ignores spoofed X-Forwarded-For; flag on extracts client IP from header."""
+    reset_rate_limiter()
+
+    # Case A: TRUSTHEART_TRUST_PROXY = "false" (default: header ignored, rate limit tracks request.client.host)
+    monkeypatch.setenv("TRUSTHEART_TRUST_PROXY", "false")
+    monkeypatch.setenv("TRUSTHEART_RATE_LIMIT", "2")
+
+    r1 = client.get("/api/health", headers={"X-Forwarded-For": "1.1.1.1"})
+    r2 = client.get("/api/health", headers={"X-Forwarded-For": "2.2.2.2"})
+    r3 = client.get("/api/health", headers={"X-Forwarded-For": "3.3.3.3"})
+
+    assert r1.status_code == 200
+    assert r2.status_code == 200
+    # Third request must be blocked under 127.0.0.1 despite varying spoofed X-Forwarded-For headers
+    assert r3.status_code == 429
+    assert "Retry-After" in r3.headers
+
+    # Case B: TRUSTHEART_TRUST_PROXY = "true" (trusted proxy enabled: uses first X-Forwarded-For IP)
+    reset_rate_limiter()
+    monkeypatch.setenv("TRUSTHEART_TRUST_PROXY", "true")
+    monkeypatch.setenv("TRUSTHEART_RATE_LIMIT", "2")
+
+    # Client IP 198.51.100.1 sends 2 requests (with chained proxy hops)
+    r_proxy_1 = client.get("/api/health", headers={"X-Forwarded-For": "198.51.100.1, 10.0.0.1"})
+    r_proxy_2 = client.get("/api/health", headers={"X-Forwarded-For": "198.51.100.1, 10.0.0.2"})
+    assert r_proxy_1.status_code == 200
+    assert r_proxy_2.status_code == 200
+
+    # 3rd request from 198.51.100.1 should hit the rate limit (429)
+    r_proxy_3 = client.get("/api/health", headers={"X-Forwarded-For": "198.51.100.1"})
+    assert r_proxy_3.status_code == 429
+
+    # Distinct client IP 203.0.113.50 should succeed (200)
+    r_other = client.get("/api/health", headers={"X-Forwarded-For": "203.0.113.50, 10.0.0.1"})
+    assert r_other.status_code == 200
+
+    reset_rate_limiter()
+
+
+
 
 

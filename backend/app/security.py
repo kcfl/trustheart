@@ -55,7 +55,19 @@ class SafeLoggingAndSecurityMiddleware(BaseHTTPMiddleware):
                 )
 
         # 2. In-memory IP rate limiter
-        client_ip = request.client.host if request.client else "127.0.0.1"
+        import os
+        trust_proxy = os.getenv("TRUSTHEART_TRUST_PROXY", "false").lower() in ("true", "1", "yes")
+        client_ip = "127.0.0.1"
+        if trust_proxy:
+            xff = request.headers.get("x-forwarded-for")
+            if xff:
+                client_ip = xff.split(",")[0].strip()
+            elif request.client:
+                client_ip = request.client.host
+        else:
+            if request.client:
+                client_ip = request.client.host
+
         now = time.monotonic()
         q = REQUEST_TIMES[client_ip]
 
@@ -64,7 +76,6 @@ class SafeLoggingAndSecurityMiddleware(BaseHTTPMiddleware):
             q.popleft()
 
         # Check rate limit (allow dynamic env override if modified during tests)
-        import os
         current_limit = int(os.getenv("TRUSTHEART_RATE_LIMIT", str(self.rate_limit)))
 
         if len(q) >= current_limit:
