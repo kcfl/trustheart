@@ -1,0 +1,175 @@
+{
+  "PredictResponse": {
+    "predictions": {
+      "additionalProperties": {
+        "$ref": "#/components/schemas/TargetPrediction"
+      },
+      "title": "Predictions",
+      "type": "object"
+    },
+    "consistency": {
+      "$ref": "#/components/schemas/ConsistencyInfo"
+    },
+    "imputed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Imputed",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/components/schemas/PredictWarning"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "disclaimer": {
+      "default": "Decision support / educational use only. Predictions are per-vessel probabilities from a small single-centre dataset and are not a lesion location. Not a substitute for formal diagnostic imaging or clinical judgement.",
+      "title": "Disclaimer",
+      "type": "string"
+    }
+  },
+  "TargetPrediction": {
+    "calibrated_probability": {
+      "title": "Calibrated Probability",
+      "type": "number"
+    },
+    "display_probability": {
+      "title": "Display Probability",
+      "type": "number"
+    },
+    "raw_probability": {
+      "title": "Raw Probability",
+      "type": "number"
+    },
+    "band": {
+      "enum": [
+        "lower",
+        "intermediate",
+        "higher"
+      ],
+      "title": "Band",
+      "type": "string"
+    },
+    "display_band": {
+      "enum": [
+        "lower",
+        "intermediate",
+        "higher"
+      ],
+      "title": "Display Band",
+      "type": "string"
+    },
+    "adjusted": {
+      "title": "Adjusted",
+      "type": "boolean"
+    },
+    "display_note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Display Note"
+    },
+    "base": {
+      "title": "Base",
+      "type": "number"
+    },
+    "base_rate": {
+      "title": "Base Rate",
+      "type": "number"
+    },
+    "base_rate_note": {
+      "default": "dataset average (angiography-referred patients); not a population prevalence",
+      "title": "Base Rate Note",
+      "type": "string"
+    },
+    "contributions": {
+      "items": {
+        "$ref": "#/components/schemas/ContributionItem"
+      },
+      "title": "Contributions",
+      "type": "array"
+    },
+    "other_total": {
+      "title": "Other Total",
+      "type": "number"
+    },
+    "logit_model": {
+      "title": "Logit Model",
+      "type": "number"
+    },
+    "model_info": {
+      "$ref": "#/components/schemas/ModelInfo"
+    }
+  },
+  "ContributionItem": {
+    "feature": {
+      "title": "Feature",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value"
+    },
+    "contribution": {
+      "title": "Contribution",
+      "type": "number"
+    },
+    "direction": {
+      "enum": [
+        "up",
+        "down"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "stability_tag": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Stability Tag"
+    },
+    "imputed": {
+      "default": false,
+      "title": "Imputed",
+      "type": "boolean"
+    }
+  },
+  "ConsistencyInfo": {
+    "status": {
+      "enum": [
+        "ok",
+        "raised",
+        "lowered"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "lower": {
+      "title": "Lower",
+      "type": "number"
+    },
+    "upper": {
+      "title": "Upper",
+      "type": "number"
+    },
+    "p_cad_model": {
+      "title": "P Cad Model",
+      "type": "number"
+    },
+    "p_cad_adjusted": {
+      "title": "P Cad Adjusted",
+      "type": "number"
+    }
+  }
+}

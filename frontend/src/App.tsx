@@ -14,6 +14,7 @@ import { DisclaimerBanner } from './components/DisclaimerBanner'
 import { Header } from './components/Header'
 import { ModeToggle } from './components/ModeToggle'
 import { PatientForm } from './components/PatientForm'
+import { HeartView } from './components/heart/HeartView'
 import { ResultsPanel } from './components/ResultsPanel'
 import { SamplePicker } from './components/SamplePicker'
 import { type FormState, formToPredictRequest, sampleToForm } from './lib/payload'
@@ -184,6 +185,7 @@ export function App() {
 
           {/* Right / Results column */}
           <div className="results-column">
+            <HeartView result={predictResult} bands={metaBands} />
             <ResultsPanel result={predictResult} error={predictError} bands={metaBands} />
           </div>
         </div>

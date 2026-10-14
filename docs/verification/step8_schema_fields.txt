@@ -1,0 +1,92 @@
+﻿{
+  "PredictResponse": {
+    "properties": [
+      "consistency",
+      "disclaimer",
+      "imputed",
+      "limitations",
+      "mode",
+      "model_version",
+      "oof_estimate",
+      "oof_estimate_note",
+      "predictions",
+      "request_id",
+      "trust",
+      "warnings"
+    ],
+    "required": [
+      "request_id",
+      "mode",
+      "model_version",
+      "predictions",
+      "consistency",
+      "trust",
+      "imputed",
+      "warnings"
+    ]
+  },
+  "TargetPrediction": {
+    "properties": [
+      "adjusted",
+      "band",
+      "base",
+      "base_rate",
+      "base_rate_note",
+      "calibrated_probability",
+      "contributions",
+      "display_band",
+      "display_note",
+      "display_probability",
+      "logit_model",
+      "model_info",
+      "other_total",
+      "raw_probability"
+    ],
+    "required": [
+      "raw_probability",
+      "calibrated_probability",
+      "band",
+      "display_probability",
+      "display_band",
+      "adjusted",
+      "base",
+      "contributions",
+      "other_total",
+      "logit_model",
+      "model_info",
+      "base_rate"
+    ]
+  },
+  "ContributionItem": {
+    "properties": [
+      "contribution",
+      "direction",
+      "feature",
+      "imputed",
+      "stability_tag",
+      "value"
+    ],
+    "required": [
+      "feature",
+      "value",
+      "contribution",
+      "direction"
+    ]
+  },
+  "ConsistencyInfo": {
+    "properties": [
+      "lower",
+      "p_cad_adjusted",
+      "p_cad_model",
+      "status",
+      "upper"
+    ],
+    "required": [
+      "status",
+      "lower",
+      "upper",
+      "p_cad_model",
+      "p_cad_adjusted"
+    ]
+  }
+}

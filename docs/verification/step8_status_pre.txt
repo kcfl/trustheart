@@ -1,0 +1,24 @@
+﻿ M frontend/package-lock.json
+ M frontend/package.json
+ M frontend/src/App.tsx
+ M frontend/src/index.css
+ M frontend/src/setupTests.ts
+ M frontend/tsconfig.app.json
+ M frontend/vite.config.ts
+ M frontend/vitest.config.ts
+?? docs/verification/step8_audit.txt
+?? docs/verification/step8_build.txt
+?? docs/verification/step8_git_diff_models.txt
+?? docs/verification/step8_lint.txt
+?? docs/verification/step8_openapi_extract.txt
+?? docs/verification/step8_pytest.txt
+?? docs/verification/step8_schema_fields.txt
+?? docs/verification/step8_status_pre.txt
+?? docs/verification/step8_test.txt
+?? frontend/src/components/heart/
+?? frontend/src/lib/heartCurves.test.ts
+?? frontend/src/lib/heartCurves.ts
+?? frontend/src/lib/useReducedMotion.ts
+?? frontend/src/lib/vesselTheme.test.ts
+?? frontend/src/lib/vesselTheme.ts
+?? frontend/src/lib/webgl.ts

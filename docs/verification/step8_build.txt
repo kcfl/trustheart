@@ -1,0 +1,28 @@
+﻿
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+npm.cmd : [33mYou are using Node.js 20.18.0. Vite requires Node.js version 20.19+ or 22.12+. Please upgrade your 
+Node.js version.[39m
+At line:1 char:1
++ npm.cmd --prefix frontend run build 2>&1 | Out-File -Encoding utf8 do ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33mYou are us...s version.[39m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+Γ£ô 590 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.39 kB Γöé gzip:   0.26 kB
+dist/assets/index-Cfd0mndH.css     19.95 kB Γöé gzip:   4.18 kB
+dist/assets/index-BMr_OyDT.js   1,155.52 kB Γöé gzip: 316.94 kB
+
+[32mΓ£ô built in 355ms[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: 
+https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
