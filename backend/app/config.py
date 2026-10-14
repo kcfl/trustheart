@@ -27,6 +27,7 @@ RATE_LIMIT_PER_MINUTE: int = int(os.getenv("TRUSTHEART_RATE_LIMIT", "60"))
 # Proxy configuration for rate limiting
 TRUST_PROXY_RAW: str = os.getenv("TRUSTHEART_TRUST_PROXY", "false").lower()
 TRUST_PROXY: bool = TRUST_PROXY_RAW in ("true", "1", "yes")
+TRUSTED_PROXY_HOPS: int = int(os.getenv("TRUSTHEART_TRUSTED_PROXY_HOPS", "1"))
 
 # Display-only Probability Bands
 BAND_LOWER_THRESHOLD: float = 0.30

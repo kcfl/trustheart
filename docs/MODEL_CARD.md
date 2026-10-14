@@ -8,7 +8,7 @@
 - **Domain**: Cardiovascular risk assessment and vessel-specific coronary artery stenosis evaluation.
 - **Task**: Multi-target binary classification of overall coronary artery disease (CAD) and vessel-specific stenosis (LAD, LCX, RCA) with stenosis threshold $\ge 50\%$.
 - **Operating Modes**:
-  - **Auto / Full Mode**: Uses the full 54 human-interpretable clinical features (demographics, history, symptoms, exam, ECG, laboratory findings, echocardiography), selecting the simplest model within 1 SE of the best cross-validated AUC.
+  - **Auto / Full Mode**: Uses 55 model features (54 clinical variables with categorical BBB one-hot encoded), selecting the simplest model within 1 SE of the best cross-validated AUC.
   - **Quick Mode**: Requires only 7 bedside clinical features (`Age`, `Sex`, `Typical Chest Pain`, `Atypical`, `Nonanginal`, `DM`, `HTN`).
 - **Intended Users**: Healthcare researchers, educational demonstrations, and clinical decision support study settings.
 - **Out-of-Scope Use**: Emergency department triage, acute coronary syndrome definitive diagnosis, replacing invasive coronary catheterization or computed tomography angiography.

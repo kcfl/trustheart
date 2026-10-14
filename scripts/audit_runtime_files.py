@@ -1,4 +1,4 @@
-"""Audit all files opened inside the repo during backend startup and one /api/predict call."""
+"""Audit all files opened and first-party modules loaded at runtime."""
 
 import os
 import sys
@@ -10,15 +10,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 def audit_hook(event, args):
     if event == "open":
         file_path = args[0]
-        # file_path may be a str, Path, or file descriptor (int)
         if isinstance(file_path, (str, Path)):
             try:
                 p = Path(file_path).resolve()
                 if p.is_relative_to(REPO_ROOT):
                     rel = p.relative_to(REPO_ROOT)
-                    # Filter out .venv, .git, and temporary files
                     parts = rel.parts
-                    if not any(part.startswith(".venv") or part == ".git" or part == "__pycache__" for part in parts):
+                    if not any(part.startswith(".venv") or part in (".git", "__pycache__", "scripts", "tests") for part in parts):
                         opened_files.add(str(rel).replace("\\", "/"))
             except Exception:
                 pass
@@ -27,14 +25,14 @@ sys.addaudithook(audit_hook)
 
 sys.path.insert(0, str(REPO_ROOT))
 
-# Now import backend and run startup and predict
+# Import backend and run startup and predict
 from fastapi.testclient import TestClient
 from backend.app.main import app
 
 def main():
     print("Executing startup and predict under open-audit hook...")
     with TestClient(app) as client:
-        # 1. Health check (triggers lifespan startup if not already run)
+        # 1. Health check (triggers lifespan startup)
         r_health = client.get("/api/health")
         assert r_health.status_code == 200, f"Health check failed: {r_health.text}"
 
@@ -55,16 +53,30 @@ def main():
         r_root = client.get("/")
         assert r_root.status_code == 200
 
+    # Collect first-party modules from sys.modules
+    first_party_modules = set()
+    for mod_name, mod in sys.modules.items():
+        if hasattr(mod, "__file__") and mod.__file__:
+            try:
+                p = Path(mod.__file__).resolve()
+                if p.is_relative_to(REPO_ROOT):
+                    rel = p.relative_to(REPO_ROOT)
+                    parts = rel.parts
+                    if not any(part.startswith(".venv") or part in (".git", "__pycache__", "scripts", "tests") for part in parts):
+                        first_party_modules.add(str(rel).replace("\\", "/"))
+            except Exception:
+                pass
+
+    all_runtime_files = opened_files | first_party_modules
     out_file = REPO_ROOT / "docs" / "verification" / "runtime_files.txt"
     out_file.parent.mkdir(parents=True, exist_ok=True)
 
-    # Sort files
-    sorted_files = sorted(list(opened_files))
+    sorted_files = sorted(list(all_runtime_files))
     with open(out_file, "w", encoding="utf-8") as f:
         for item in sorted_files:
             f.write(item + "\n")
 
-    print(f"Recorded {len(sorted_files)} unique repository files opened during runtime.")
+    print(f"Recorded {len(sorted_files)} unique repository files (data/models + first-party .py) opened/loaded during runtime.")
     for item in sorted_files:
         print(f"  {item}")
 

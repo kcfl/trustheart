@@ -1,4 +1,4 @@
-"""Test running backend under runtime-only virtual environment."""
+"""Test running backend under isolated virtual environment with real response fields."""
 
 import json
 import subprocess
@@ -9,6 +9,29 @@ import urllib.error
 
 PORT = 8004
 BASE_URL = f"http://127.0.0.1:{PORT}"
+
+def print_prediction_results(mode: str, resp_data: dict, status_code: int):
+    print(f"\n--- POST /api/predict (mode: {mode}) ---")
+    print(f"Status: {status_code}")
+    print(f"Mode: {resp_data.get('mode')}")
+
+    preds = resp_data.get("predictions", {})
+    for vessel in ["CAD", "LAD", "LCX", "RCA"]:
+        p = preds.get(vessel, {})
+        disp_p = p.get("display_probability")
+        model_p = p.get("calibrated_probability")
+        adj = p.get("adjusted")
+        band = p.get("band")
+        disp_band = p.get("display_band")
+        print(f"  {vessel}: display_p={disp_p:.4f}, model_p={model_p:.4f}, adjusted={adj}, band={band}, display_band={disp_band}")
+
+    cons = resp_data.get("consistency", {})
+    print(f"  Consistency Status: {cons.get('status')}")
+    print(f"    p_cad_model    : {cons.get('p_cad_model'):.4f}")
+    print(f"    p_cad_adjusted : {cons.get('p_cad_adjusted'):.4f}")
+    print(f"    lower bound    : {cons.get('lower'):.4f}")
+    print(f"    upper bound    : {cons.get('upper'):.4f}")
+    print(f"  Similar Patients Count: {len(resp_data.get('trust', {}).get('similar_patients', []))}")
 
 def main():
     print(f"Starting uvicorn on port {PORT} using python: {sys.executable}")
@@ -71,15 +94,7 @@ def main():
         )
         with urllib.request.urlopen(req_quick, timeout=5) as resp:
             quick_resp = json.loads(resp.read().decode("utf-8"))
-            print("\n--- POST /api/predict (mode: quick) ---")
-            print(f"Status: {resp.status}")
-            print(f"Mode: {quick_resp.get('mode')}")
-            print(f"CAD probability: {quick_resp.get('predictions', {}).get('CAD', {}).get('calibrated_probability')}")
-            print(f"LAD probability: {quick_resp.get('predictions', {}).get('LAD', {}).get('calibrated_probability')}")
-            print(f"LCX probability: {quick_resp.get('predictions', {}).get('LCX', {}).get('calibrated_probability')}")
-            print(f"RCA probability: {quick_resp.get('predictions', {}).get('RCA', {}).get('calibrated_probability')}")
-            print(f"Coherence clipped: {quick_resp.get('trust', {}).get('coherence', {}).get('cad_clipped')}")
-            print(f"Similar count: {len(quick_resp.get('trust', {}).get('similar_patients', []))}")
+            print_prediction_results("quick", quick_resp, resp.status)
 
         # POST /api/predict in full mode
         req_full = urllib.request.Request(
@@ -89,15 +104,7 @@ def main():
         )
         with urllib.request.urlopen(req_full, timeout=5) as resp:
             full_resp = json.loads(resp.read().decode("utf-8"))
-            print("\n--- POST /api/predict (mode: full) ---")
-            print(f"Status: {resp.status}")
-            print(f"Mode: {full_resp.get('mode')}")
-            print(f"CAD probability: {full_resp.get('predictions', {}).get('CAD', {}).get('calibrated_probability')}")
-            print(f"LAD probability: {full_resp.get('predictions', {}).get('LAD', {}).get('calibrated_probability')}")
-            print(f"LCX probability: {full_resp.get('predictions', {}).get('LCX', {}).get('calibrated_probability')}")
-            print(f"RCA probability: {full_resp.get('predictions', {}).get('RCA', {}).get('calibrated_probability')}")
-            print(f"Coherence clipped: {full_resp.get('trust', {}).get('coherence', {}).get('cad_clipped')}")
-            print(f"Similar count: {len(full_resp.get('trust', {}).get('similar_patients', []))}")
+            print_prediction_results("full", full_resp, resp.status)
 
         print("\nAll runtime-test calls PASSED successfully.")
 
@@ -107,7 +114,6 @@ def main():
             proc.wait(timeout=3)
         except subprocess.TimeoutExpired:
             proc.kill()
-
 
 if __name__ == "__main__":
     main()

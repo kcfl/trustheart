@@ -84,6 +84,8 @@ def main():
             except Exception:
                 pass
 
+    n_full_features = final_selection[0]["n_features"]
+
     lines = []
     lines.append("# TrustHeart 3D - Model Card")
     lines.append("")
@@ -95,7 +97,7 @@ def main():
     lines.append("- **Domain**: Cardiovascular risk assessment and vessel-specific coronary artery stenosis evaluation.")
     lines.append("- **Task**: Multi-target binary classification of overall coronary artery disease (CAD) and vessel-specific stenosis (LAD, LCX, RCA) with stenosis threshold $\\ge 50\\%$.")
     lines.append("- **Operating Modes**:")
-    lines.append("  - **Auto / Full Mode**: Uses the full 54 human-interpretable clinical features (demographics, history, symptoms, exam, ECG, laboratory findings, echocardiography), selecting the simplest model within 1 SE of the best cross-validated AUC.")
+    lines.append(f"  - **Auto / Full Mode**: Uses {n_full_features} model features (54 clinical variables with categorical BBB one-hot encoded), selecting the simplest model within 1 SE of the best cross-validated AUC.")
     lines.append("  - **Quick Mode**: Requires only 7 bedside clinical features (`Age`, `Sex`, `Typical Chest Pain`, `Atypical`, `Nonanginal`, `DM`, `HTN`).")
     lines.append("- **Intended Users**: Healthcare researchers, educational demonstrations, and clinical decision support study settings.")
     lines.append("- **Out-of-Scope Use**: Emergency department triage, acute coronary syndrome definitive diagnosis, replacing invasive coronary catheterization or computed tomography angiography.")

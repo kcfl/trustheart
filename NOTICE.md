@@ -24,7 +24,6 @@ The backend production container runs using the following runtime packages (list
 | `anyio` | `4.15.1` | MIT |
 | `click` | `8.5.0` | BSD-3-Clause |
 | `cloudpickle` | `3.1.2` | BSD-3-Clause |
-| `colorama` | `0.4.6` | BSD License |
 | `et_xmlfile` | `2.0.0` | MIT |
 | `fastapi` | `0.143.0` | MIT |
 | `h11` | `0.16.0` | MIT |

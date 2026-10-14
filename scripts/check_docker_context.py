@@ -83,6 +83,12 @@ def main():
     ignore_patterns = parse_dockerignore(dockerignore_path)
     dockerfile_copies = parse_dockerfile_copies(dockerfile_path)
 
+    print("Dockerfile COPY lines considered:")
+    for cp in dockerfile_copies:
+        from_str = f" (from={cp['stage']})" if cp.get("stage") else ""
+        print(f"  COPY{from_str} {cp['src']} -> {cp['dest']}")
+    print("-" * 75)
+
     all_passed = True
     print(f"Checking {len(runtime_files)} runtime files against .dockerignore and Dockerfile COPY:")
     print("-" * 75)

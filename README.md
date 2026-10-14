@@ -16,8 +16,20 @@ To reproduce the entire TrustHeart 3D ML pipeline and regenerate all models, eva
   ```powershell
   py -3.12 -m venv .venv
   .\.venv\Scripts\Activate.ps1
-  pip install -r requirements.lock
   ```
+- **Dependencies (Runtime vs Dev)**:
+  - **Runtime Only** (FastAPI backend + inference server):
+    ```powershell
+    pip install -r requirements-runtime.txt
+    ```
+  - **Development & Testing** (includes pytest, httpx, and test harnesses):
+    ```powershell
+    pip install -r requirements-runtime.txt -r requirements-dev.txt
+    ```
+  - **Full Pipeline Reproduction** (includes training, SHAP, and plotting packages):
+    ```powershell
+    pip install -r requirements.lock
+    ```
 
 ### 2. Dataset Location
 - The dataset file must be placed at:
@@ -110,6 +122,9 @@ docker run -d `
   --name trustheart-app `
   -p 8000:8000 `
   -e CORS_ORIGINS="http://localhost:5173,http://localhost:8000" `
+  -e TRUSTHEART_TRUST_PROXY="false" `
+  -e TRUSTHEART_TRUSTED_PROXY_HOPS="1" `
+  -e TRUSTHEART_RATE_LIMIT="60" `
   trustheart-3d:latest
 ```
 

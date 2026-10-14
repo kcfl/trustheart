@@ -8,7 +8,7 @@ This document outlines the security architecture, threat model, protective contr
 
 | Threat Vector | Potential Impact | Implemented Mitigation | Verification Test |
 |---|---|---|---|
-| **PHI / PII Data Leakage** | Exposure of patient clinical inputs or identifiers | Pure stateless inference; zero persistence; input stripping from all application logs | `test_13_zero_phi_logging_enforcement`, `test_23_body_size_limit_and_zero_body_logging` |
+| **PHI / PII Data Leakage** | Exposure of patient clinical inputs or identifiers | Pure stateless inference; zero persistence; input stripping from all application logs | `test_13_zero_phi_logging_enforcement`, `test_23_body_size_limit_and_zero_body_logging`, `test_27_no_input_echo_or_leakage_beyond_contract` |
 | **Model Artifact Tampering** | Malicious alteration of prediction weights or thresholds | Startup cryptographic verification against SHA-256 manifest; fail-closed execution | `test_15_startup_fails_closed_on_tampering` |
 | **Data Leakage in Inference** | Unfair diagnostic advantage or corrupted evaluation | Strict validator rejections of `LEAK_COLS` and catheterization terms (`Cath`) | `test_8_invalid_input_rejections_422` |
 | **Denial of Service (DoS)** | Exhaustion of server memory via large payloads or request flooding | 20 KB strict request body limit; in-memory sliding window rate limiter | `test_10_rate_limiting_429`, `test_11_request_body_size_limit_413`, `test_26_proxy_aware_rate_limiting` |
@@ -23,7 +23,11 @@ This document outlines the security architecture, threat model, protective contr
 The application strictly guarantees that patient clinical data is processed ephemerally in volatile memory and never persisted:
 - **No Database or Disk Storage**: Patient input records are never written to disk, databases, or caches.
 - **Log Sanitation**: The application logger records strictly HTTP method, route path, status code, and execution duration. Request bodies, patient dictionary keys, clinical values, and case IDs are never formatted into log strings.
-- **Citations**: Enforced by [`test_13_zero_phi_logging_enforcement`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L563-L585) (which sends sentinel floating point values and asserts zero leakage) and [`test_23_body_size_limit_and_zero_body_logging`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L882-L902).
+- **No Input Echoing Beyond Contract**: The response schema never echoes the raw `inputs` dictionary or `case_id`. Unmodeled input features are dropped and never reflected in predictions or contributions.
+- **Citations**:
+  - Enforced by [`test_13_zero_phi_logging_enforcement`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L563-L585) (sentinel floating-point values and case_ids leave zero trace in logs).
+  - Enforced by [`test_23_body_size_limit_and_zero_body_logging`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L876-L896) (payload bodies are never logged).
+  - Enforced by [`test_27_no_input_echo_or_leakage_beyond_contract`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L1076-L1120) (inputs dict is not echoed in responses and unmodeled inputs are absent).
 
 ---
 
@@ -42,7 +46,7 @@ To ensure that machine learning weights, calibrators, and baseline statistics ca
 All incoming payloads are validated via Pydantic schemas in [`backend/app/schemas.py`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py). Unknown attributes and data leakage columns trigger HTTP 422 rejections.
 
 Physiologic and dataset validity bounds defined in `backend/app/schemas.py`:
-- **Continuous and Ordinal Features** ([`backend/app/schemas.py:27-51`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L27-L51)):
+- **Continuous and Ordinal Features** ([`backend/app/schemas.py#L27-L51`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L27-L51)):
   ```python
   HARD_FEATURE_RANGES: dict[str, tuple[float, float]] = {
       "Age": (0.0, 120.0),
@@ -70,12 +74,12 @@ Physiologic and dataset validity bounds defined in `backend/app/schemas.py`:
       "Function Class": (0.0, 3.0),
   }
   ```
-- **Binary Features** ([`backend/app/schemas.py:53-82`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L53-L82)): Validated to `0`, `1`, `True`, or `False`. Non-finite numbers (`NaN`, `Inf`) and invalid integers are rejected.
-- **Categorical Features** ([`backend/app/schemas.py:152-174`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L152-L174)):
+- **Binary Features** ([`backend/app/schemas.py#L53-L82`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L53-L82)): Validated to `0`, `1`, `True`, or `False`. Non-finite numbers (`NaN`, `Inf`) and invalid integers are rejected.
+- **Categorical Features** ([`backend/app/schemas.py#L152-L174`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L152-L174)):
   - `Sex`: `'Male'`, `'Female'`, or numeric `0`/`1`.
   - `VHD`: Restricted to `['N', 'mild', 'Moderate', 'Severe']`.
   - `BBB`: Restricted to `['N', 'LBBB', 'RBBB']`.
-- **Target Leakage Prohibition** ([`backend/app/schemas.py:99-105`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L99-L105)): Rejects `CAD`, `LAD`, `LCX`, `RCA`, or any column containing `'Cath'`.
+- **Target Leakage Prohibition** ([`backend/app/schemas.py#L99-L105`](file:///e:/iit%20mandi/trustheart/backend/app/schemas.py#L99-L105)): Rejects `CAD`, `LAD`, `LCX`, `RCA`, or any column containing `'Cath'`.
 
 ---
 
@@ -84,10 +88,10 @@ Physiologic and dataset validity bounds defined in `backend/app/schemas.py`:
 ### CORS Configuration
 - Controlled via `CORS_ORIGINS` / `TRUSTHEART_ORIGINS` environment variables.
 - Default: `http://localhost:5173,http://127.0.0.1:5173` (no wildcard `*` allowed).
-- Verified by [`test_20_cors_headers_with_origin`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L765-L790).
+- Verified by [`test_20_cors_headers_with_origin`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L772-L797).
 
 ### Content Security Policy (CSP) per Route Type
-Differentiated dynamically in `backend/app/security.py` ([`backend/app/security.py:102-115`](file:///e:/iit%20mandi/trustheart/backend/app/security.py#L102-L115)):
+Differentiated dynamically in `backend/app/security.py` ([`backend/app/security.py#L117-L130`](file:///e:/iit%20mandi/trustheart/backend/app/security.py#L117-L130)):
 - **API & Documentation Routes** (`/api/*`, `/docs`, `/openapi.json`):
   ```http
   Content-Security-Policy: default-src 'none'
@@ -101,35 +105,40 @@ Differentiated dynamically in `backend/app/security.py` ([`backend/app/security.
   - `X-Frame-Options: DENY`
   - `Referrer-Policy: no-referrer`
   - `Cache-Control: no-store` (on `/api/predict`)
+- Verified by [`test_24_csp_headers_per_route_type`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L904-L943).
 
 ### Rate Limiting & Proxy Configuration
 - **Request Body Limit**: Strict 20 KB limit (`MAX_REQUEST_BODY_BYTES = 20 * 1024`). Over-limit payloads return HTTP 413.
 - **Rate Limiting**: Sliding window in-memory limiter tracking requests per 60-second window. Returns HTTP 429 with `Retry-After`.
-- **Proxy Header Security (`TRUSTHEART_TRUST_PROXY`)**:
+- **Proxy Header Security & Anti-Spoofing (`TRUSTHEART_TRUST_PROXY`, `TRUSTHEART_TRUSTED_PROXY_HOPS`)**:
   - `TRUSTHEART_TRUST_PROXY=false` (Default): All `X-Forwarded-For` headers are completely ignored, and rate limiting tracks the socket client IP (`request.client.host`). Prevents header spoofing attacks.
-  - `TRUSTHEART_TRUST_PROXY=true`: Extracts the client IP from the first comma-separated entry of `X-Forwarded-For`.
-  - **WARNING**: `TRUSTHEART_TRUST_PROXY=true` MUST ONLY be enabled when the application runs behind a trusted, properly configured reverse proxy (such as Nginx, Traefik, or an AWS/GCP cloud load balancer) that strips untrusted external client headers. Enabling this flag in direct public exposures permits rate-limit circumvention via spoofed client headers.
+  - `TRUSTHEART_TRUST_PROXY=true`: Extracts client IP using the Nth value from the **RIGHT** of `X-Forwarded-For` (where `N = TRUSTHEART_TRUSTED_PROXY_HOPS`, default `1`).
+  - **Anti-Spoofing Rationale**: In standard reverse-proxy deployments, proxies append the incoming client IP to the right side of `X-Forwarded-For` (`spoofed_ip, real_client_ip`). Selecting the first (left-most) IP allows clients to evade rate limits by rotating fake left-most IPs. Trusting the Nth entry from the right ensures the client IP stamped by the trusted proxy chain is used.
+  - **Fallback**: If `X-Forwarded-For` has fewer entries than `TRUSTHEART_TRUSTED_PROXY_HOPS` or is malformed, the rate limiter falls back to `request.client.host`.
+  - **WARNING**: `TRUSTHEART_TRUST_PROXY=true` MUST ONLY be enabled when the application runs behind a trusted, properly configured reverse proxy (such as Nginx, Traefik, or a cloud load balancer).
 - **Configurable Environment Variables**:
   - `TRUSTHEART_RATE_LIMIT`: Maximum allowed requests per 60-second window per IP (default: `60`).
   - `TRUSTHEART_TRUST_PROXY`: Boolean flag (`true`/`false`) controlling whether `X-Forwarded-For` is parsed (default: `false`).
+  - `TRUSTHEART_TRUSTED_PROXY_HOPS`: Integer number of trusted proxy hops from the right (default: `1`).
   - `CORS_ORIGINS`: Comma-separated list of allowed CORS origins (default: `http://localhost:5173,http://127.0.0.1:5173`).
   - `PORT`: Server bind port (default: `8000`).
   - `TRUSTHEART_MODELS_DIR`: Directory path for model artifacts (default: `models`).
   - `TRUSTHEART_REPORTS_DIR`: Directory path for reports (default: `reports`).
+- Verified by [`test_10_rate_limiting_429`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L502-L520) and [`test_26_proxy_aware_rate_limiting`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L1008-L1070).
 
 ---
 
 ## 6. Static Path Traversal Hardening
 
 To serve the React SPA alongside API endpoints without risk of directory traversal attacks:
-- Static request paths in `backend/app/main.py` ([`backend/app/main.py:101-118`](file:///e:/iit%20mandi/trustheart/backend/app/main.py#L101-L118)) are decoded via `urllib.parse.unquote()` and resolved against the absolute filesystem path via `Path.resolve()`.
+- Static request paths in `backend/app/main.py` ([`backend/app/main.py#L101-L118`](file:///e:/iit%20mandi/trustheart/backend/app/main.py#L101-L118)) are decoded via `urllib.parse.unquote()` and resolved against the absolute filesystem path via `Path.resolve()`.
 - The resolved path is verified via Python 3.9+ `is_relative_to(dist_resolved)`:
   ```python
   candidate = (dist_resolved / unquote(full_path)).resolve()
   if not candidate.is_relative_to(dist_resolved):
       raise HTTPException(status_code=404, detail="File not found")
   ```
-- Verified by [`test_25_raw_asgi_path_traversal_hardening`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L947-L1002), which proves raw ASGI traversal scopes (`/../models/manifest.json`, `/%2e%2e/models/manifest.json`, `/..\\models\\manifest.json`) fail to leak any internal filesystem files.
+- Verified by [`test_25_raw_asgi_path_traversal_hardening`](file:///e:/iit%20mandi/trustheart/tests/test_api.py#L949-L1004), which proves raw ASGI traversal scopes (`/../models/manifest.json`, `/%2e%2e/models/manifest.json`, `/..\\models\\manifest.json`) fail to leak any internal filesystem files.
 
 ---
 

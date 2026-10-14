@@ -1,7 +1,20 @@
+backend/__init__.py
+backend/app/__init__.py
+backend/app/config.py
 backend/app/main.py
 backend/app/routes.py
+backend/app/schemas.py
+backend/app/security.py
+backend/app/service.py
 data/raw/extention of Z-Alizadeh sani dataset.xlsx
 frontend/dist/index.html
+ml/__init__.py
+ml/calibration.py
+ml/coherence.py
+ml/config.py
+ml/data.py
+ml/predict.py
+ml/similar.py
 models/auto_CAD.joblib
 models/auto_LAD.joblib
 models/auto_LCX.joblib

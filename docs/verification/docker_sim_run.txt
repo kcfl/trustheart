@@ -1,0 +1,55 @@
+﻿===========================================================================
+DOCKER CONTEXT SIMULATION
+Notice: Docker is not installed. This script simulates the Docker build context
+by creating an isolated directory containing ONLY files COPY'd by the Dockerfile.
+===========================================================================
+[1/6] Copying Dockerfile context into .docker-sim/ ...
+[2/6] Creating isolated virtual environment in .docker-sim/.venv ...
+[3/6] Installing requirements-runtime.txt into isolated environment ...
+[4/6] Launching uvicorn on port 8005 from working directory E:\iit mandi\trustheart\.docker-sim ...
+[5/6] Executing test requests against simulated Docker environment:
+
+--- GET / (Frontend SPA index.html) ---
+Status: 200
+Content-Type: text/html; charset=utf-8
+CSP: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+Body snippet: <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" con...
+
+--- GET /api/health ---
+Status: 200
+CSP: default-src 'none'
+Response: {
+  "status": "ok",
+  "model_version": "ml-v1 (e29ed066fe353a882b917c87f28857f11163cb27)",
+  "git_commit": "e29ed066fe353a882b917c87f28857f11163cb27",
+  "models_verified": true,
+  "disclaimer": "Decision support / educational use only. Predictions are per-vessel probabilities from a small single-centre dataset and are not a lesion location. Not a substitute for formal diagnostic imaging or clinical judgement."
+}
+
+Fetched sample patient p10 (case_id 293)
+
+--- POST /api/predict (mode: quick) ---
+Status: 200
+Mode: quick
+  CAD: display_p=0.2225, model_p=0.1869, band=lower
+  LAD: display_p=0.2044, model_p=0.2044, band=lower
+  LCX: display_p=0.2225, model_p=0.2225, band=lower
+  RCA: display_p=0.1098, model_p=0.1098, band=lower
+  Consistency status: raised
+
+--- POST /api/predict (mode: full) ---
+Status: 200
+Mode: full
+  CAD: display_p=0.2225, model_p=0.0501, band=lower
+  LAD: display_p=0.0797, model_p=0.0797, band=lower
+  LCX: display_p=0.2225, model_p=0.2225, band=lower
+  RCA: display_p=0.1098, model_p=0.1098, band=lower
+  Consistency status: raised
+
+[6/6] Shutting down simulated server...
+Cleaning up .docker-sim directory ...
+Done. Cleaned up .docker-sim.

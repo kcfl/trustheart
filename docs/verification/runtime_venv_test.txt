@@ -1,4 +1,4 @@
-﻿Starting uvicorn on port 8004 using python: E:\iit mandi\trustheart\.venv-runtime-test\Scripts\python.exe
+﻿Starting uvicorn on port 8004 using python: E:\iit mandi\trustheart\.venv-temp-test\Scripts\python.exe
 --- GET /api/health Response ---
 {
   "status": "ok",
@@ -13,21 +13,29 @@ Fetched sample 0 (label: p10, case_id: 293)
 --- POST /api/predict (mode: quick) ---
 Status: 200
 Mode: quick
-CAD probability: 0.18690538635303863
-LAD probability: 0.20438819144851075
-LCX probability: 0.22248620708923597
-RCA probability: 0.10978148424487105
-Coherence clipped: None
-Similar count: 5
+  CAD: display_p=0.2225, model_p=0.1869, adjusted=True, band=lower, display_band=lower
+  LAD: display_p=0.2044, model_p=0.2044, adjusted=False, band=lower, display_band=lower
+  LCX: display_p=0.2225, model_p=0.2225, adjusted=False, band=lower, display_band=lower
+  RCA: display_p=0.1098, model_p=0.1098, adjusted=False, band=lower, display_band=lower
+  Consistency Status: raised
+    p_cad_model    : 0.1869
+    p_cad_adjusted : 0.2225
+    lower bound    : 0.2225
+    upper bound    : 0.5367
+  Similar Patients Count: 5
 
 --- POST /api/predict (mode: full) ---
 Status: 200
 Mode: full
-CAD probability: 0.05010415825173092
-LAD probability: 0.07974913346462265
-LCX probability: 0.22248620708923597
-RCA probability: 0.10978148424487105
-Coherence clipped: None
-Similar count: 5
+  CAD: display_p=0.2225, model_p=0.0501, adjusted=True, band=lower, display_band=lower
+  LAD: display_p=0.0797, model_p=0.0797, adjusted=False, band=lower, display_band=lower
+  LCX: display_p=0.2225, model_p=0.2225, adjusted=False, band=lower, display_band=lower
+  RCA: display_p=0.1098, model_p=0.1098, adjusted=False, band=lower, display_band=lower
+  Consistency Status: raised
+    p_cad_model    : 0.0501
+    p_cad_adjusted : 0.2225
+    lower bound    : 0.2225
+    upper bound    : 0.4120
+  Similar Patients Count: 5
 
 All runtime-test calls PASSED successfully.
