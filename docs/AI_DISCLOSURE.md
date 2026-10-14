@@ -7,7 +7,7 @@ DRAFT: confirm against the hackathon Submission Guidelines before submitting.
 This document discloses the use of generative AI and automated developer tooling in the conception, development, and verification of the **TrustHeart 3D** project for the **Multimodal AI Hackathon 2026** (Track A).
 
 ### 1. Conceptualization, Prompting & Workflow Planning
-- **Planning & Prompt Engineering**: Architectural workflow design, statistical validation protocol formulation, and step-by-step task breakdown were planned and prompted using **Claude** (Anthropic).
+- **Planning & Workflow Engineering**: Architectural workflow design, statistical validation protocol formulation, and step-by-step task breakdown were designed and directed by the human engineering team.
 - **Human Oversight**: Problem framing, domain adaptation for coronary artery stenosis modeling, selection of the Fréchet coherence bounds formulation, and clinical disclaimer definitions were authored and directed by the human team.
 
 ### 2. Code Generation & Interactive Development

@@ -1,6 +1,6 @@
 # TrustHeart 3D — Frontend Product Requirements Document (PRD)
 
-> **Purpose:** This document is the product and implementation brief for the frontend of TrustHeart 3D. Give it to Claude Code as the primary source of truth before asking it to build the application.
+> **Purpose:** This document is the product and implementation brief for the frontend of TrustHeart 3D. Give it to the development assistant as the primary source of truth before asking it to build the application.
 >
 > **Product type:** Hackathon prototype / educational clinical decision-support interface.
 >
@@ -338,7 +338,7 @@ The frontend is ready for a hackathon demo when:
 - Automated tests and production build pass, or remaining failures are explicitly reported.
 - README documents setup, environment variables, API assumptions, data limitations, and demo mode.
 
-## 12. Instructions to Claude Code
+## 12. Development Guidelines
 
 Act as a **senior frontend engineer, product designer, and creative developer**. Do not merely produce a pretty landing page.
 
