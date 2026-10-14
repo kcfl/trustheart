@@ -63,7 +63,7 @@ def generate_field_map() -> str:
             allowed_range = "N, LBBB, RBBB"
         elif feat == "VHD":
             feat_type = "Categorical (Ordinal)"
-            allowed_range = "N, mild, Moderate, Severe"
+            allowed_range = "N, mild, moderate, severe"
         else:
             feat_type = "Unknown"
             allowed_range = "Unspecified"
@@ -76,7 +76,7 @@ def generate_field_map() -> str:
         elif feat == "BBB":
             form_control = "BBB select (N / LBBB / RBBB)"
         elif feat == "VHD":
-            form_control = "VHD select (N / mild / Moderate / Severe)"
+            form_control = "VHD select (N / mild / moderate / severe)"
         elif feat_type == "Binary":
             form_control = f"{feat} select (Yes / No)"
         else:
@@ -105,7 +105,7 @@ def generate_field_map() -> str:
         "- `CVA` (Cerebrovascular Accident): Backend requires uppercase `CVA`.",
         "- `BP` (Blood Pressure): Backend requires `BP`, not `systolic`.",
         "- `Chol`: Note: `Chol` is NOT a feature in `FULL_HUMAN_FEATURES` (the dataset has `LDL`, `HDL`, `TG`, but no bare `Chol` column; bare cholesterol was a legacy demo field).",
-        "- `VHD` (Valvular Heart Disease): Backend expects casing among `['N', 'mild', 'Moderate', 'Severe']` (case-insensitive parsed to ordinal 0..3).",
+        "- `VHD` (Valvular Heart Disease): Canonical values are `['N', 'mild', 'moderate', 'severe']`. The backend normalizes via `val.strip().lower() in VHD_ORDINAL_MAPPING`, thus both lowercase (`moderate`, `severe`) and title-case variants (`Moderate`, `Severe`) are accepted and encode identically (0.0, 1.0, 2.0, 3.0).",
         "- `BBB` (Bundle Branch Block): Backend expects exact uppercase among `['N', 'LBBB', 'RBBB']`.",
         "- `Sex`: Backend expects exact title-case `Male` or `Female`.",
         "- `Exertional CP`: Dropped constant column; explicitly forbidden from model inputs and rejected by `/api/predict` with HTTP 422.",

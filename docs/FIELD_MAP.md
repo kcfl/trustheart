@@ -60,7 +60,7 @@
 | 51 | `PLT` | Labs | Continuous float | [5.0, 2500.0] | Full only | PLT smooth numeric input |
 | 52 | `EF-TTE` | Echo | Continuous float | [5.0, 95.0] | Full only | EF-TTE smooth numeric input |
 | 53 | `Region RWMA` | Echo | Ordinal integer | [0, 4] | Full only | Region RWMA smooth numeric input |
-| 54 | `VHD` | Echo | Categorical (Ordinal) | N, mild, Moderate, Severe | Full only | VHD select (N / mild / Moderate / Severe) |
+| 54 | `VHD` | Echo | Categorical (Ordinal) | N, mild, moderate, severe | Full only | VHD select (N / mild / moderate / severe) |
 
 ## Summary Statistics
 - **Total human-readable multimodal features**: 54
@@ -79,7 +79,7 @@ Frontend forms must strictly match backend Pydantic field names. Below is the st
 - `CVA` (Cerebrovascular Accident): Backend requires uppercase `CVA`.
 - `BP` (Blood Pressure): Backend requires `BP`, not `systolic`.
 - `Chol`: Note: `Chol` is NOT a feature in `FULL_HUMAN_FEATURES` (the dataset has `LDL`, `HDL`, `TG`, but no bare `Chol` column; bare cholesterol was a legacy demo field).
-- `VHD` (Valvular Heart Disease): Backend expects casing among `['N', 'mild', 'Moderate', 'Severe']` (case-insensitive parsed to ordinal 0..3).
+- `VHD` (Valvular Heart Disease): Canonical values are `['N', 'mild', 'moderate', 'severe']`. The backend normalizes via `val.strip().lower() in VHD_ORDINAL_MAPPING`, thus both lowercase (`moderate`, `severe`) and title-case variants (`Moderate`, `Severe`) are accepted and encode identically (0.0, 1.0, 2.0, 3.0).
 - `BBB` (Bundle Branch Block): Backend expects exact uppercase among `['N', 'LBBB', 'RBBB']`.
 - `Sex`: Backend expects exact title-case `Male` or `Female`.
 - `Exertional CP`: Dropped constant column; explicitly forbidden from model inputs and rejected by `/api/predict` with HTTP 422.

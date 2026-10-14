@@ -5,9 +5,14 @@
     "domDimensions": "586x390",
     "bufferDimensions": "586x390",
     "totalPixels": 228540,
-    "renderedPixels": 60416,
+    "renderedPixelsNormal": 60416,
+    "renderedPixelsHidden": 0,
+    "diffPixels": 58138,
+    "diffPct": "25.44%",
+    "diffThreshold": 5000,
     "pctDrawn": "26.44%",
-    "screenshot": "heart_desktop.png",
+    "screenshotNormal": "heart_desktop.png (heart_normal.png)",
+    "screenshotHidden": "heart_hidden.png",
     "status": "PASS"
   },
   {

@@ -81,11 +81,9 @@ def main():
     vhd_match = re.search(r'name:\s*"VHD"[^}]+options:\s*\[([^\]]+)\]', content)
     if vhd_match:
         vhd_opts = [s.strip().strip('"\'') for s in vhd_match.group(1).split(",")]
-        # Backend accepts lowercase keys from VHD_ORDINAL_MAPPING
-        vhd_keys = set(VHD_ORDINAL_MAPPING.keys())
-        vhd_opts_lower = [s.lower() for s in vhd_opts]
-        vhd_ok = set(vhd_opts_lower) == vhd_keys
-        record_check("VHD categorical options match VHD_ORDINAL_MAPPING", vhd_ok, f"options={vhd_opts}")
+        expected_vhd = ["N", "mild", "moderate", "severe"]
+        vhd_ok = vhd_opts == expected_vhd
+        record_check("VHD categorical options match ['N', 'mild', 'moderate', 'severe']", vhd_ok, f"options={vhd_opts}")
     else:
         record_check("VHD categorical options", False, "not found in form schema")
 

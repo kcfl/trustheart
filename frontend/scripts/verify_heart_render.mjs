@@ -34,8 +34,13 @@ async function verifyHeart() {
     });
     const desktopPage = await desktopContext.newPage();
 
-    console.log("Navigating to /analysis...");
-    await desktopPage.goto("http://127.0.0.1:8000/analysis", { waitUntil: "networkidle" });
+    // Enable E2E preserveDrawingBuffer flag
+    await desktopPage.addInitScript(() => {
+      window.__E2E__ = true;
+    });
+
+    console.log("Navigating to /analysis?e2e=1...");
+    await desktopPage.goto("http://127.0.0.1:8000/analysis?e2e=1", { waitUntil: "networkidle" });
 
     // Click sample p10
     console.log("Loading p10 sample...");
@@ -56,13 +61,14 @@ async function verifyHeart() {
     await desktopPage.getByRole("button", { name: "Run prediction" }).click();
 
     console.log("Waiting for /results navigation and 3D heart canvas...");
-    await desktopPage.waitForURL("**/results", { timeout: 15000 });
+    await desktopPage.waitForURL("**/results*", { timeout: 15000 });
     await desktopPage.waitForSelector(".result-heart canvas, canvas[role='img']", { timeout: 15000 });
 
     // Allow Three.js PMREM and GLTF to render
-    await desktopPage.waitForTimeout(3000);
+    await desktopPage.waitForTimeout(3500);
 
-    const desktopPixelStats = await desktopPage.evaluate(() => {
+    // 1A: Measure normal heart canvas
+    const normalStats = await desktopPage.evaluate(() => {
       const canvas = document.querySelector(".result-heart canvas") || document.querySelector("canvas[role='img']");
       if (!canvas) return { error: "Canvas not found" };
       const rect = canvas.getBoundingClientRect();
@@ -85,6 +91,9 @@ async function verifyHeart() {
         }
       }
 
+      // Store normal pixels globally in window for diffing
+      window.__normalPixels = pixels;
+
       return {
         domWidth: rect.width,
         domHeight: rect.height,
@@ -97,30 +106,115 @@ async function verifyHeart() {
       };
     });
 
-    console.log("Desktop Canvas Stats:", desktopPixelStats);
-    if (desktopPixelStats.error) {
-      throw new Error(`Desktop WebGL check failed: ${desktopPixelStats.error}`);
+    console.log("Desktop Normal Canvas Stats:", normalStats);
+    if (normalStats.error) {
+      throw new Error(`Desktop WebGL check failed: ${normalStats.error}`);
     }
-    if (desktopPixelStats.domWidth === 0 || desktopPixelStats.domHeight === 0) {
+    if (normalStats.domWidth === 0 || normalStats.domHeight === 0) {
       throw new Error("Desktop canvas has 0 DOM dimensions");
     }
-    if (desktopPixelStats.nonZeroCount === 0) {
+    if (normalStats.nonZeroCount === 0) {
       throw new Error("Desktop canvas is completely blank (0 rendered non-zero pixels)");
     }
 
-    const desktopShot = path.join(outDir, "heart_desktop.png");
-    await desktopPage.screenshot({ path: desktopShot });
-    console.log(`Saved desktop screenshot to ${desktopShot}`);
+    // Save normal screenshot
+    const normalShot = path.join(outDir, "heart_desktop.png");
+    await desktopPage.screenshot({ path: normalShot });
+    console.log(`Saved desktop screenshot to ${normalShot}`);
+
+    const normalShotAlt = path.join(outDir, "heart_normal.png");
+    await desktopPage.screenshot({ path: normalShotAlt });
+    console.log(`Saved heart_normal screenshot to ${normalShotAlt}`);
+
+    // 1B: Hide heart mesh and measure difference
+    console.log("Hiding heart mesh via window.__setHeartVisible(false)...");
+    const hideHookResult = await desktopPage.evaluate(() => {
+      if (typeof window.__setHeartVisible === "function") {
+        window.__setHeartVisible(false);
+        return true;
+      }
+      return false;
+    });
+
+    if (!hideHookResult) {
+      throw new Error("window.__setHeartVisible hook was not found on the page");
+    }
+
+    // Wait for canvas to re-render with hidden heart
+    await desktopPage.waitForTimeout(1000);
+
+    // Save hidden screenshot
+    const hiddenShot = path.join(outDir, "heart_hidden.png");
+    await desktopPage.screenshot({ path: hiddenShot });
+    console.log(`Saved heart_hidden screenshot to ${hiddenShot}`);
+
+    // 1C: Compute pixel difference
+    const diffStats = await desktopPage.evaluate(() => {
+      const canvas = document.querySelector(".result-heart canvas") || document.querySelector("canvas[role='img']");
+      if (!canvas) return { error: "Canvas not found" };
+      const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+      if (!gl) return { error: "WebGL context not available" };
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const hiddenPixels = new Uint8Array(w * h * 4);
+      gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, hiddenPixels);
+
+      const normalPixels = window.__normalPixels;
+      if (!normalPixels || normalPixels.length !== hiddenPixels.length) {
+        return { error: "Normal pixels buffer missing or length mismatch" };
+      }
+
+      let diffCount = 0;
+      let hiddenNonZero = 0;
+      for (let i = 0; i < normalPixels.length; i += 4) {
+        if (hiddenPixels[i] !== 0 || hiddenPixels[i + 1] !== 0 || hiddenPixels[i + 2] !== 0) {
+          hiddenNonZero++;
+        }
+        const dr = Math.abs(normalPixels[i] - hiddenPixels[i]);
+        const dg = Math.abs(normalPixels[i + 1] - hiddenPixels[i + 1]);
+        const db = Math.abs(normalPixels[i + 2] - hiddenPixels[i + 2]);
+        if (dr + dg + db > 15) {
+          diffCount++;
+        }
+      }
+
+      return {
+        diffCount,
+        hiddenNonZero,
+        diffPct: (diffCount / (w * h)) * 100,
+      };
+    });
+
+    console.log("Desktop Canvas Diff Stats (Normal vs Hidden):", diffStats);
+    if (diffStats.error) {
+      throw new Error(`Pixel diff failed: ${diffStats.error}`);
+    }
+
+    const DIFF_THRESHOLD = 5000;
+    if (diffStats.diffCount <= DIFF_THRESHOLD) {
+      throw new Error(
+        `Heart mesh hide diff failed: difference (${diffStats.diffCount} px) did not exceed threshold (${DIFF_THRESHOLD} px)`
+      );
+    }
+    console.log(
+      `[PASS] Pixel diff test: ${diffStats.diffCount} pixels differed (${diffStats.diffPct.toFixed(2)}% of canvas, threshold > ${DIFF_THRESHOLD})`
+    );
 
     report.push({
       mode: "desktop",
       viewport: "1280x800",
-      domDimensions: `${desktopPixelStats.domWidth.toFixed(0)}x${desktopPixelStats.domHeight.toFixed(0)}`,
-      bufferDimensions: `${desktopPixelStats.bufferWidth}x${desktopPixelStats.bufferHeight}`,
-      totalPixels: desktopPixelStats.totalPixels,
-      renderedPixels: desktopPixelStats.nonZeroCount,
-      pctDrawn: desktopPixelStats.pctDrawn.toFixed(2) + "%",
-      screenshot: "heart_desktop.png",
+      domDimensions: `${normalStats.domWidth.toFixed(0)}x${normalStats.domHeight.toFixed(0)}`,
+      bufferDimensions: `${normalStats.bufferWidth}x${normalStats.bufferHeight}`,
+      totalPixels: normalStats.totalPixels,
+      renderedPixelsNormal: normalStats.nonZeroCount,
+      renderedPixelsHidden: diffStats.hiddenNonZero,
+      diffPixels: diffStats.diffCount,
+      diffPct: diffStats.diffPct.toFixed(2) + "%",
+      diffThreshold: DIFF_THRESHOLD,
+      pctDrawn: normalStats.pctDrawn.toFixed(2) + "%",
+      screenshotNormal: "heart_desktop.png (heart_normal.png)",
+      screenshotHidden: "heart_hidden.png",
       status: "PASS",
     });
 
@@ -133,8 +227,13 @@ async function verifyHeart() {
     });
     const mobilePage = await mobileContext.newPage();
 
-    console.log("Navigating mobile to /analysis...");
-    await mobilePage.goto("http://127.0.0.1:8000/analysis", { waitUntil: "networkidle" });
+    // Enable E2E preserveDrawingBuffer flag on mobile
+    await mobilePage.addInitScript(() => {
+      window.__E2E__ = true;
+    });
+
+    console.log("Navigating mobile to /analysis?e2e=1...");
+    await mobilePage.goto("http://127.0.0.1:8000/analysis?e2e=1", { waitUntil: "networkidle" });
 
     console.log("Loading p10 sample on mobile...");
     await mobilePage.getByRole("button", { name: "Sample patient (p10)" }).click();
@@ -151,10 +250,10 @@ async function verifyHeart() {
     await mobilePage.getByRole("button", { name: "Run prediction" }).click();
 
     console.log("Waiting for mobile /results navigation and 3D heart canvas...");
-    await mobilePage.waitForURL("**/results", { timeout: 15000 });
+    await mobilePage.waitForURL("**/results*", { timeout: 15000 });
     await mobilePage.waitForSelector(".result-heart canvas, canvas[role='img']", { timeout: 15000 });
 
-    await mobilePage.waitForTimeout(3000);
+    await mobilePage.waitForTimeout(3500);
 
     const mobilePixelStats = await mobilePage.evaluate(() => {
       const canvas = document.querySelector(".result-heart canvas") || document.querySelector("canvas[role='img']");
@@ -219,23 +318,36 @@ async function verifyHeart() {
     });
 
     await mobileContext.close();
-
-    console.log("\n================================================================================");
-    console.log("HEART RENDER PROOF SUMMARY");
-    console.log("================================================================================");
-    for (const r of report) {
-      console.log(`[${r.status}] ${r.mode} (${r.viewport}): DOM ${r.domDimensions}, Buffer ${r.bufferDimensions}, Rendered Pixels: ${r.renderedPixels} (${r.pctDrawn}) -> ${r.screenshot}`);
-    }
-    console.log("================================================================================");
-
-    const reportFile = path.join(repoRoot, "docs", "verification", "heart_render_proof.txt");
-    fs.writeFileSync(reportFile, JSON.stringify(report, null, 2), "utf-8");
+  } catch (err) {
+    console.error("FATAL ERROR in verifyHeart:", err);
+    throw err;
   } finally {
     await browser.close();
   }
+
+  // Save report
+  const proofFile = path.join(repoRoot, "docs", "verification", "heart_render_proof.txt");
+  fs.writeFileSync(proofFile, JSON.stringify(report, null, 2), "utf-8");
+  console.log(`\nWrote heart proof to ${proofFile}`);
+
+  console.log("\n================================================================================");
+  console.log("HEART RENDER PROOF SUMMARY");
+  console.log("================================================================================");
+  report.forEach((r) => {
+    if (r.diffPixels !== undefined) {
+      console.log(
+        `[${r.status}] ${r.mode} (${r.viewport}): DOM ${r.domDimensions}, Buffer ${r.bufferDimensions}, Rendered Pixels: ${r.renderedPixelsNormal} (${r.pctDrawn}) | Diff vs Hidden: ${r.diffPixels} px (${r.diffPct}, threshold > ${r.diffThreshold}) -> ${r.screenshotNormal}, ${r.screenshotHidden}`
+      );
+    } else {
+      console.log(
+        `[${r.status}] ${r.mode} (${r.viewport}): DOM ${r.domDimensions}, Buffer ${r.bufferDimensions}, Rendered Pixels: ${r.renderedPixels} (${r.pctDrawn}) -> ${r.screenshot}`
+      );
+    }
+  });
+  console.log("================================================================================");
 }
 
 verifyHeart().catch((err) => {
-  console.error("FATAL ERROR in verifyHeart:", err);
+  console.error("Verification failed:", err);
   process.exit(1);
 });

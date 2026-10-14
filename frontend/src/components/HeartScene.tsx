@@ -58,12 +58,29 @@ export default function HeartScene({ compact = false }: { compact?: boolean }) {
         visible = true,
         model: THREE.Group | null = null;
       let renderer: THREE.WebGLRenderer;
+      const searchParams =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search)
+          : null;
+      const isTestE2E =
+        Boolean(searchParams?.has("e2e")) ||
+        Boolean(
+          typeof window !== "undefined" &&
+            (window as unknown as { __E2E__?: boolean }).__E2E__,
+        );
+      const hideHeartTest =
+        Boolean(searchParams?.has("hideHeart")) ||
+        Boolean(
+          typeof window !== "undefined" &&
+            (window as unknown as { __HIDE_HEART__?: boolean }).__HIDE_HEART__,
+        );
+
       try {
         renderer = new THREE.WebGLRenderer({
           antialias: true,
           alpha: true,
           powerPreference: "low-power",
-          preserveDrawingBuffer: true,
+          preserveDrawingBuffer: isTestE2E,
         });
       } catch {
         setState("error");
@@ -252,6 +269,17 @@ export default function HeartScene({ compact = false }: { compact?: boolean }) {
               },
             );
           }
+          if (hideHeartTest) {
+            model.visible = false;
+          }
+          if (typeof window !== "undefined") {
+            (window as unknown as { __setHeartVisible?: (v: boolean) => void }).__setHeartVisible = (v: boolean) => {
+              if (model) {
+                model.visible = v;
+                invalidate();
+              }
+            };
+          }
           scene.add(group);
           invalidate();
           resize();
@@ -380,6 +408,9 @@ export default function HeartScene({ compact = false }: { compact?: boolean }) {
         renderer.dispose();
         renderer.domElement.remove();
         actions.current = null;
+        if (typeof window !== "undefined") {
+          delete (window as unknown as { __setHeartVisible?: unknown }).__setHeartVisible;
+        }
       };
     };
     // Paint the usable interface/static anatomy first; defer studio-map and

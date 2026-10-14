@@ -405,7 +405,9 @@ export default function Results() {
 
           {/* Mandatory Clinical Disclaimer */}
           <Notice>
-            <strong>Mandatory Clinical Notice:</strong> {result.disclaimer}{" "}
+            <strong>Mandatory Clinical Notice:</strong>{" "}
+            {result.disclaimer ||
+              "Decision support / educational use only. Predictions are per-vessel probabilities from a small single-centre dataset and are not a lesion location. Not a substitute for formal diagnostic imaging or clinical judgement."}{" "}
             <Link to="/methodology" className="inline-flex items-center gap-1 text-cyan-300 ml-1">
               Review methodology & limitations <ArrowRight size={12} />
             </Link>
