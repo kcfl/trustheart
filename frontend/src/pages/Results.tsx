@@ -190,13 +190,33 @@ export default function Results() {
                 <span className="small-badge">3D EXPLORER</span>
               </div>
               <div className="result-heart">
-                <Heart compact />
+                <Heart
+                  compact
+                  selected={selected}
+                  onSelect={setSelected}
+                  probabilities={result.display_probabilities}
+                  bands={result.display_bands}
+                />
                 <div className="result-heart-label">
                   <Activity size={16} />
                   {selected}: {Math.round(result.display_probabilities[selected] * 100)}%
                   <span>Selected target</span>
                 </div>
               </div>
+
+              {/* Color-coded vessel risk legend */}
+              <div className="vessel-legend" aria-label="Risk band color legend">
+                <span className="legend-item">
+                  <span className="legend-dot dot-lower" /> Lower (&lt;30%)
+                </span>
+                <span className="legend-item">
+                  <span className="legend-dot dot-intermediate" /> Intermediate (30–60%)
+                </span>
+                <span className="legend-item">
+                  <span className="legend-dot dot-higher" /> Higher (&gt;60%)
+                </span>
+              </div>
+
               <div
                 className="artery-selector"
                 aria-label="Select prediction target"
@@ -212,6 +232,9 @@ export default function Results() {
                   </button>
                 ))}
               </div>
+              <p className="vessel-overlay-caption">
+                Vessel overlay is schematic. Colors show per-vessel stenosis probability, not lesion location.
+              </p>
               <p className="anatomy-disclaimer">
                 <Info size={13} /> Anatomical reference only. Probabilities represent
                 per-vessel stenosis likelihood (≥ 50% diameter reduction), not

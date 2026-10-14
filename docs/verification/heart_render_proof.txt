@@ -1,29 +1,33 @@
 [
   {
+    "test": "vessel_render_and_selection",
     "mode": "desktop",
     "viewport": "1280x800",
     "domDimensions": "586x390",
     "bufferDimensions": "586x390",
-    "totalPixels": 228540,
-    "renderedPixelsNormal": 60416,
-    "renderedPixelsHidden": 0,
-    "diffPixels": 58138,
-    "diffPct": "25.44%",
-    "diffThreshold": 5000,
-    "pctDrawn": "26.44%",
-    "screenshotNormal": "heart_desktop.png (heart_normal.png)",
-    "screenshotHidden": "heart_hidden.png",
+    "wholePixelsDrawn": 60416,
+    "ladPixelsDrawn": 137428,
+    "lcxPixelsDrawn": 151084,
+    "rcaPixelsDrawn": 118320,
+    "vesselDiffPixels": 127388,
+    "vesselDiffPct": "55.74%",
+    "vesselDiffThreshold": 2000,
+    "screenshots": [
+      "docs/verification/frontend/vessel_whole.png",
+      "docs/verification/frontend/vessel_lad.png",
+      "docs/verification/frontend/vessel_lcx.png",
+      "docs/verification/frontend/vessel_rca.png"
+    ],
     "status": "PASS"
   },
   {
+    "test": "mobile_render",
     "mode": "mobile",
     "viewport": "390x844",
-    "domDimensions": "322x380",
-    "bufferDimensions": "322x380",
     "totalPixels": 122360,
     "renderedPixels": 57017,
     "pctDrawn": "46.60%",
-    "screenshot": "heart_mobile.png",
+    "screenshot": "docs/verification/frontend/heart_mobile.png",
     "status": "PASS"
   }
 ]

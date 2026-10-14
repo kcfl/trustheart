@@ -8,8 +8,9 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
+import type { HeartSceneProps } from "./HeartScene";
 const Scene = lazy(() => import("./HeartScene"));
-export function Heart({ compact = false }: { compact?: boolean }) {
+export function Heart(props: HeartSceneProps) {
   return (
     <Suspense
       fallback={
@@ -18,7 +19,7 @@ export function Heart({ compact = false }: { compact?: boolean }) {
         </div>
       }
     >
-      <Scene compact={compact} />
+      <Scene {...props} />
     </Suspense>
   );
 }

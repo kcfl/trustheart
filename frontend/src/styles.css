@@ -8183,3 +8183,104 @@ fieldset legend {
     backdrop-filter: blur(10px) saturate(140%);
   }
 }
+
+/* --- Color-Coded Coronary Artery Overlay & Tooltip Styles --- */
+.vessel-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 12px 0 10px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9999px;
+  font-size: 11px;
+  color: var(--color-muted, #94a3b8);
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+}
+.legend-dot.dot-lower {
+  background-color: #22c55e;
+  color: #22c55e;
+}
+.legend-dot.dot-intermediate {
+  background-color: #f59e0b;
+  color: #f59e0b;
+}
+.legend-dot.dot-higher {
+  background-color: #ef4444;
+  color: #ef4444;
+}
+
+.vessel-overlay-caption {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+  margin: 8px 0 4px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.vessel-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f8fafc;
+  font-size: 12px;
+  white-space: nowrap;
+  transform: translate(0, 0);
+  transition: opacity 0.15s ease;
+}
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.tooltip-name {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tooltip-band {
+  font-size: 10px;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+.tooltip-fullname {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+.tooltip-prob {
+  font-size: 11px;
+  color: #e2e8f0;
+}
