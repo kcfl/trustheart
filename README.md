@@ -25,7 +25,10 @@ cd trustheart
 
 # Create and activate virtual environment
 # Windows (PowerShell):
-py -3.12 -m venv .venv
+python -m venv .venv
+# or if using Python launcher or uv:
+# py -3.12 -m venv .venv
+# uv venv --seed --python 3.12 .venv
 .\.venv\Scripts\Activate.ps1
 
 # Linux / macOS:
