@@ -1,0 +1,456 @@
+{
+  "project": "TrustHeart 3D",
+  "handoff_date": "2026-10-14",
+  "status": "Frontend prototype; backend integration required",
+  "start_here": "START_HERE_BACKEND.md",
+  "excluded": [
+    "node_modules",
+    "dist",
+    "browser binaries",
+    "generated screenshots/traces/logs",
+    "local .env files",
+    "secrets"
+  ],
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 330,
+      "sha256": "a00215c7858c65945a6eff1a53d24a78fbbadff8319dd1f5db4d918a2a487732"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 96,
+      "sha256": "6a82cdba07cbf3d74dd596e4ea1a8eed98ea47a5889f4747329abfb4b4943674"
+    },
+    {
+      "path": "CARD-REVEAL.md",
+      "bytes": 2324,
+      "sha256": "bf4902c5ecc5594f1d6018ff06e2a5af60c7cfc1d825aafc37ef2980a5d5b49a"
+    },
+    {
+      "path": "FOOTER-INTEGRATION.md",
+      "bytes": 5902,
+      "sha256": "a62c515adf1d1fef3910f78d26094634e7c0a5774042bc3cf3e3c0a49ee389cd"
+    },
+    {
+      "path": "HORIZONTAL-TEXT-REVEAL.md",
+      "bytes": 1436,
+      "sha256": "0f1e786a68dc4eb0285a0ff5a55a6e0802ae3dbf7d720ebfcd4cdf6e47872959"
+    },
+    {
+      "path": "IMPLEMENTATION.md",
+      "bytes": 7387,
+      "sha256": "24d4a4e1c994632377b94f6e8a6e952ffdf41a98e72d53afd56665e6578fc942"
+    },
+    {
+      "path": "PERFORMANCE.md",
+      "bytes": 2842,
+      "sha256": "a1b20b0399afcb3cd05f30cf4a8e4caa67ca4a9ce1b9380d910a8fb6a0959ffd"
+    },
+    {
+      "path": "PRELOADER.md",
+      "bytes": 2267,
+      "sha256": "e8b53ec530e109a0d0f40a1ff631c88dd60b59d3843c753f9f44214063b1b398"
+    },
+    {
+      "path": "PROGRESSIVE-BLUR.md",
+      "bytes": 4125,
+      "sha256": "494bc320646ceafce5ce5635033e8fe8bce584b3e1609aec64a3a028bd5426ad"
+    },
+    {
+      "path": "PROJECT-CREDIT.md",
+      "bytes": 1737,
+      "sha256": "1d948d3fb7f5f0ff6f3518ab4b4cfb82dcfaf8237d187f6c66cad9f5280818c5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 12680,
+      "sha256": "1b4de8e861d53fbcae23c844f2e0956572a9f10c8aaf5cc245dc94d0a56314e5"
+    },
+    {
+      "path": "SMOOTH-INPUT.md",
+      "bytes": 3773,
+      "sha256": "04b3bbd62fe96083160b4238071ddb89b8b600a59e88e6c1bd65acd066d7566a"
+    },
+    {
+      "path": "START_HERE_BACKEND.md",
+      "bytes": 9937,
+      "sha256": "b7963bbf85c6aefb68d0187b90ccef060651ef9d6141bbf4f3b50049518ad200"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 1909,
+      "sha256": "73171ebbe5a434de0fd67cd157761036896d82053129fbe10ce887542d1a95e8"
+    },
+    {
+      "path": "checks/README.md",
+      "bytes": 256,
+      "sha256": "45c052befee9654323d5c885b490d08eceb7f2899a2cf01800754290563777ce"
+    },
+    {
+      "path": "components.json",
+      "bytes": 425,
+      "sha256": "5465e0dc625c02c9bcdcbf4f7c5bdf1fafbf83f3b53c1dfcebe4202e24dae664"
+    },
+    {
+      "path": "docs/TrustHeart_3D_Frontend_PRD_README.md",
+      "bytes": 19478,
+      "sha256": "510e03320e9d0fb06aeae4d0808146d309f934ac18593acb44841d92ae78c41c"
+    },
+    {
+      "path": "e2e/card-reveal.spec.ts",
+      "bytes": 5353,
+      "sha256": "0dfbaee018aed51e667d42fb86d8e708f340da2ae870b85cdd305ef8db08239b"
+    },
+    {
+      "path": "e2e/footer.spec.ts",
+      "bytes": 5307,
+      "sha256": "3db57df71f4fbcd97958ed07290f6be19f0c4182f5b47ee97002e8990a732628"
+    },
+    {
+      "path": "e2e/glass-motion.spec.ts",
+      "bytes": 3987,
+      "sha256": "57d2383564af05dc17f41b53964362354566cec480c68345c04deaefd399c5ae"
+    },
+    {
+      "path": "e2e/horizontal-text-reveal.spec.ts",
+      "bytes": 5695,
+      "sha256": "0141ec631e16c4f3dc07372cf764627bde8da52be769393110726d0c88e52613"
+    },
+    {
+      "path": "e2e/preloader.spec.ts",
+      "bytes": 7969,
+      "sha256": "788620cfe517b509f4d5e37395513b09c46472908e5ac7cc633e6dc9eae91c00"
+    },
+    {
+      "path": "e2e/progressive-blur.spec.ts",
+      "bytes": 5226,
+      "sha256": "aa73d1e47b2f81d37a8d2becc284154e3653adc91feeda3c66448ebf6375e879"
+    },
+    {
+      "path": "e2e/project-credit.spec.ts",
+      "bytes": 1690,
+      "sha256": "3b9a0a525336f1dbb68d24675e7aac10b016c056216b3c1228c8079dad14b946"
+    },
+    {
+      "path": "e2e/render-performance.spec.ts",
+      "bytes": 5023,
+      "sha256": "468e9c832e642fa1f84b67f9d467f579ecec9e215537eb8749a3d8cf63aeb9db"
+    },
+    {
+      "path": "e2e/smooth-input.spec.ts",
+      "bytes": 8290,
+      "sha256": "c07f5f6d7eab10b35925011c648a80c232e0334c587aceecff74fd9e05922a7b"
+    },
+    {
+      "path": "e2e/workflow.spec.ts",
+      "bytes": 7007,
+      "sha256": "43ff904134d98e4481aec346869f0380d4824da11fae972aa975ec83893cacb1"
+    },
+    {
+      "path": "index.html",
+      "bytes": 755,
+      "sha256": "f3d2c585bd9f9de453e7dac3707ec5947f66254ed4feeb15f267f196b760cf3b"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 103620,
+      "sha256": "6f252a23f30a5e896d2d948f1d5a64e262114cfd04c7f977775cbc76bc16cc9f"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1214,
+      "sha256": "282de67611c2d82512364f9edd85879095d1ee0c1c318e7991e834bb9590efc4"
+    },
+    {
+      "path": "playwright.config.ts",
+      "bytes": 514,
+      "sha256": "b14b18484c2c27fd073d7951223092c51459b1b189c3c73ab8e0b401c467670a"
+    },
+    {
+      "path": "public/favicon.svg",
+      "bytes": 250,
+      "sha256": "ed21c706b9d91f019f0ba46ab1e9feaffa4e6a17a68b8269b18ae55944e1fd91"
+    },
+    {
+      "path": "public/fonts/Anton-LICENSE.txt",
+      "bytes": 4484,
+      "sha256": "ee67e6ee22790b7929f1a3769ca2801d565c64b5a9096942c1adf5596de9c9e4"
+    },
+    {
+      "path": "public/fonts/Archivo-Black-LICENSE.txt",
+      "bytes": 4492,
+      "sha256": "3173acd82f8c6159b5b1037b539fcbd4edff68e65c2ea8b9412b5a5ca97b08ff"
+    },
+    {
+      "path": "public/fonts/Instrument-Serif-LICENSE.txt",
+      "bytes": 4405,
+      "sha256": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521"
+    },
+    {
+      "path": "public/fonts/Inter-LICENSE.txt",
+      "bytes": 4377,
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "public/fonts/Manrope-LICENSE.txt",
+      "bytes": 4387,
+      "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b"
+    },
+    {
+      "path": "public/fonts/Space-Grotesk-LICENSE.txt",
+      "bytes": 4495,
+      "sha256": "564ce565c371c5e5bbf286006565a7c9aa55a9f56e7ca58d56e05d649dd61a72"
+    },
+    {
+      "path": "public/fonts/anton.ttf",
+      "bytes": 170812,
+      "sha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab"
+    },
+    {
+      "path": "public/fonts/anton.woff2",
+      "bytes": 57484,
+      "sha256": "463af7f80be06ce8acebe439acba864e976509180f75ef59cb912462b2f82dea"
+    },
+    {
+      "path": "public/fonts/archivo-black.ttf",
+      "bytes": 90988,
+      "sha256": "dd9a89a019b4849f66ab75455fe7bdf931311042cbb0f0f97acc061539703180"
+    },
+    {
+      "path": "public/fonts/instrument-serif.ttf",
+      "bytes": 64208,
+      "sha256": "fecf4861d5202405b8bd45c683858b6870642a026784fe0dbf88ff55dedee8a0"
+    },
+    {
+      "path": "public/fonts/inter.ttf",
+      "bytes": 876576,
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+    },
+    {
+      "path": "public/fonts/manrope.ttf",
+      "bytes": 164700,
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+    },
+    {
+      "path": "public/fonts/space-grotesk.ttf",
+      "bytes": 136676,
+      "sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+    },
+    {
+      "path": "public/heart-fallback.png",
+      "bytes": 317203,
+      "sha256": "b553abb71c1c8914176393e075b2ee163bc539f4a4cac446b1c4f880f4828ece"
+    },
+    {
+      "path": "public/heart.glb",
+      "bytes": 4194608,
+      "sha256": "0340128fd43409772676b45362e08f2ddc0f1cc292ab3c21fb91f97b432d59bd"
+    },
+    {
+      "path": "scripts/check-project-credit.mjs",
+      "bytes": 1691,
+      "sha256": "6a9f16a59b432fb60a4ab80990523fb9649c90e32ea3b147e4a69281c68e8ed2"
+    },
+    {
+      "path": "src/App.tsx",
+      "bytes": 7219,
+      "sha256": "9888e52ebc6c0e2b342619b825a6aaedd7155356e7fce6298ccd7cd24622e95c"
+    },
+    {
+      "path": "src/components/HeartScene.tsx",
+      "bytes": 16732,
+      "sha256": "b9fb3e35150e31bc7c351014bc7a3a3b2eceaeacdb3de8033c58dd1d645490ed"
+    },
+    {
+      "path": "src/components/NebulaBackdrop.tsx",
+      "bytes": 1791,
+      "sha256": "64e02ed4b3984309594b33f2bf22c3ffbc6c8ff31a511b85716c218fe2d5cc76"
+    },
+    {
+      "path": "src/components/StartupPreloader.tsx",
+      "bytes": 8822,
+      "sha256": "78041e6b585fbf1a6fee6747ed9d825377a8d4170d08bf00331285966a27bf21"
+    },
+    {
+      "path": "src/components/TrustHeartFooter.tsx",
+      "bytes": 3891,
+      "sha256": "c3386a72cd2199d59c6290a3d18f73c0d0ba75e305e43e061bccd2063efc679f"
+    },
+    {
+      "path": "src/components/UI.tsx",
+      "bytes": 3032,
+      "sha256": "3f0bdbc0bb102b6736a1dacf8783e08e03836ce8458de70b17571432715d22b5"
+    },
+    {
+      "path": "src/components/startup-preloader-styles.ts",
+      "bytes": 4101,
+      "sha256": "8f35c8846d23b1efc659e7639c2d05e814131e114a75738e8910fff5213e5c95"
+    },
+    {
+      "path": "src/components/ui/beam-wordmark-footer.test.ts",
+      "bytes": 2457,
+      "sha256": "a7eedc3c6c0efc0966657c2c576b9eb03ee75bc183f6256eabfedc6ca6c0f337"
+    },
+    {
+      "path": "src/components/ui/beam-wordmark-footer.tsx",
+      "bytes": 28377,
+      "sha256": "a1488e5618be9c39b4fbd68bbdb2156c4d8c3a589e4decdc4e0ea748e2a35b0c"
+    },
+    {
+      "path": "src/components/ui/demo.tsx",
+      "bytes": 302,
+      "sha256": "5e8c173f34360e1e1f3d25b7bdc6e802f98443ee6441d775c2af0908c4cfa974"
+    },
+    {
+      "path": "src/components/ui/halftone-nebula.tsx",
+      "bytes": 29405,
+      "sha256": "3b19e1ad77ab7563390dc93ad2de655711cd23b80f10718f1b0ea3265ba49574"
+    },
+    {
+      "path": "src/components/ui/horizontal-text-reveal.test.ts",
+      "bytes": 1447,
+      "sha256": "aca9c8079d9d879fc59c51a565cfb43fd0fd25df2097b5e68daa2d661dc72463"
+    },
+    {
+      "path": "src/components/ui/horizontal-text-reveal.tsx",
+      "bytes": 4520,
+      "sha256": "7681d9672d1418c9cbdaa3284c4015c4681189216c53c86faa2c81ec7201b557"
+    },
+    {
+      "path": "src/components/ui/progressive-blur-demo.tsx",
+      "bytes": 1714,
+      "sha256": "45c8741b0a3937013cba945ee38bf8de8ab75613c1495058f51a2ec044c2f876"
+    },
+    {
+      "path": "src/components/ui/progressive-blur.test.ts",
+      "bytes": 1909,
+      "sha256": "c5246bdd25b4c0f16725541e9c90abef9c24b8cb8016a26fe6a2bf6250ca950d"
+    },
+    {
+      "path": "src/components/ui/progressive-blur.tsx",
+      "bytes": 1914,
+      "sha256": "708df805910e5a83fe44f70fc48de8cdf8df7e9d3b22f983f65cbab3b9d8fed3"
+    },
+    {
+      "path": "src/components/ui/project-credit.test.ts",
+      "bytes": 663,
+      "sha256": "625bbaba83cbf387bd4e708920acf4edd5c191895af93eb414635c1cd966eccb"
+    },
+    {
+      "path": "src/components/ui/project-credit.tsx",
+      "bytes": 824,
+      "sha256": "df68df3dfbf005a2d18dce2844279ad2d5645ea76cf3785c0149b6123395ce71"
+    },
+    {
+      "path": "src/components/ui/rolling-text.tsx",
+      "bytes": 4189,
+      "sha256": "13d267dba1c0fd66548f764eb3c128cb557e6d34802b0cf3c603f5bdd0e8dc99"
+    },
+    {
+      "path": "src/components/ui/smooth-input-demo.tsx",
+      "bytes": 747,
+      "sha256": "f6e8b693789b57fbad273c38daf24c08a6438add76665a065882504a17f689ff"
+    },
+    {
+      "path": "src/components/ui/smooth-input.test.ts",
+      "bytes": 2730,
+      "sha256": "018a355015bdd27c7d325ae04b58352112d0dab02165592b4d7758e4c9f6c83e"
+    },
+    {
+      "path": "src/components/ui/smooth-input.tsx",
+      "bytes": 11716,
+      "sha256": "2210c3b5cede2e5fe03a7a5cf7a5f6897828e13ab9a9d06df6366c8e2b3f306f"
+    },
+    {
+      "path": "src/features/analysis/demo-schema.ts",
+      "bytes": 1562,
+      "sha256": "d47ce900d9347bdcce3dc99e54e32f72d4cdfe3d854946c01e9e174bdd69dd36"
+    },
+    {
+      "path": "src/hooks/use-card-reveal.ts",
+      "bytes": 5416,
+      "sha256": "601dfcef2030cb03ae32f078cf11900ab4f20890808a64cbc42b78bc64cbf988"
+    },
+    {
+      "path": "src/hooks/use-glass-lighting.ts",
+      "bytes": 2299,
+      "sha256": "8bceb2c9efdbc13b70352f99d838aada8090f19f5f3a7bc8ac58ef3da6af1513"
+    },
+    {
+      "path": "src/hooks/use-home-motion.ts",
+      "bytes": 8785,
+      "sha256": "27400f5868425757a4447893d881ab08de78f70e9ace9d207bc624991742a9f3"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "bytes": 168,
+      "sha256": "c4afe23db29651dec75ca5a3098a8bafe35f78cd45d4773d1db1c8001e640623"
+    },
+    {
+      "path": "src/main.tsx",
+      "bytes": 348,
+      "sha256": "9604f9411506dc9a39405bb8c884f27f6f007d43c8f6979f390845eaff9b2832"
+    },
+    {
+      "path": "src/pages/About.tsx",
+      "bytes": 5708,
+      "sha256": "a78e754a11d4a9e34b046b2e1b7474c867e0e47f18c3adcb5e54a20cb7ab6540"
+    },
+    {
+      "path": "src/pages/Analysis.tsx",
+      "bytes": 15959,
+      "sha256": "6c3d53534937a5fcf2896c62f54d9fb1488f8b4fc2edcee6fc89639090960697"
+    },
+    {
+      "path": "src/pages/Explainability.tsx",
+      "bytes": 7354,
+      "sha256": "cbc6e9932644d2d24829808fd7e6ee498d4445454320d893ebbf5322bf78288f"
+    },
+    {
+      "path": "src/pages/Home.tsx",
+      "bytes": 13220,
+      "sha256": "d8d6c5117c55b1c42c9f67ee8d6a65ea8dc97348404e60a35e61dfbe9b8847c3"
+    },
+    {
+      "path": "src/pages/Methodology.tsx",
+      "bytes": 7697,
+      "sha256": "54393d33c0b2adf470dd5662b7499ed2b888b0128c2487eb4cfdebe4c931b845"
+    },
+    {
+      "path": "src/pages/Results.tsx",
+      "bytes": 10452,
+      "sha256": "2341e2dff3a15b77b65e0850da14ac9fee1363e63679da82c0ddc70403050989"
+    },
+    {
+      "path": "src/services/prediction-api.test.ts",
+      "bytes": 5533,
+      "sha256": "669a152e339dcd1cfe2c5e31e6f12899ac5787522b4548403a6ff1aaea687479"
+    },
+    {
+      "path": "src/services/prediction-api.ts",
+      "bytes": 5051,
+      "sha256": "58c9ec0a91bf4fe49c7a8575a44e04f9bbe12cb0c1cfa713f92d5ba2511c904e"
+    },
+    {
+      "path": "src/styles.css",
+      "bytes": 149326,
+      "sha256": "2982e6ee30d4aa8b912a95deefdcb00653e6d7b56c7fc18993d226be9e5025f8"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 571,
+      "sha256": "b8646aec82f69ceb4ae9e24b26acc129c65c4193de42fd5471e28a5b21ff99ed"
+    },
+    {
+      "path": "vite.config.ts",
+      "bytes": 415,
+      "sha256": "f17c739b3f15a3d670ac98d4fa8fc5d4207fc4b23c1059d05326a89060165bfa"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 251,
+      "sha256": "17d601594098cfcefe8b53d76b775edfb15f893cdcd138e7dc661e86d5741702"
+    }
+  ]
+}

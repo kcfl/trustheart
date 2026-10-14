@@ -1,0 +1,25 @@
+================================================================================
+TRUSTHEART 3D - PLAYWRIGHT BROWSER VERIFICATION REPORT
+================================================================================
+Base URL: http://127.0.0.1:8000
+Screenshots directory: E:\iit mandi\trustheart\docs\verification\frontend
+
+ROUTES TESTED:
+  [PASS] / (Home) - 01_home.png
+  [PASS] /analysis - 02_analysis.png
+  [PASS] /analysis (SPA Refresh) - 02b_analysis_refreshed.png
+  [PASS] /results (Quick Mode p10 submission) - 03_results_p10_quick.png
+  [PASS] /explainability (Linear contributions & logit) - 04_explainability.png
+  [PASS] /methodology (Nested CV metrics & facts) - 05_methodology.png
+  [PASS] /about (Safety copy & acknowledgements) - 06_about.png
+  [PASS] /results (Full Mode multimodal submission) - 07_results_full.png
+
+Page Errors (0):
+  NONE
+
+Console Errors (0):
+  NONE
+
+CSP Violations (0):
+  NONE
+================================================================================

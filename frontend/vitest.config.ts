@@ -1,18 +1,6 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
-import viteConfig from './vite.config.ts'
-
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      globals: true,
-      environment: 'jsdom',
-      setupFiles: './src/setupTests.ts',
-      server: {
-        deps: {
-          inline: ['three', '@react-three/fiber', '@react-three/drei'],
-        },
-      },
-    },
-  })
-)
+import { defineConfig } from "vitest/config";
+import { fileURLToPath, URL } from "node:url";
+export default defineConfig({
+  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
+  test: { include: ["src/**/*.test.ts"] },
+});

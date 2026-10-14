@@ -1,0 +1,24 @@
+﻿
+> trustheart-3d@1.0.0 build
+> npm run check:credit && tsc -b && vite build && node scripts/check-project-credit.mjs --production
+
+
+> trustheart-3d@1.0.0 check:credit
+> node scripts/check-project-credit.mjs
+
+Project credit safeguard passed: inspired by SSPRO≡ƒÄÇ
+src/services/prediction-api.test.ts(3,3): error TS2305: Module '"./prediction-api"' has no exported member 'DEMO_PROBABILITIES'.
+src/services/prediction-api.test.ts(57,19): error TS2339: Property 'explanations' does not exist on type 'PredictionResult'.
+src/services/prediction-api.test.ts(95,19): error TS2339: Property 'explanations' does not exist on type 'PredictionResult'.
+src/services/prediction-api.test.ts(101,36): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs
+src/services/prediction-api.test.ts(111,36): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs
+src/services/prediction-api.test.ts(119,36): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs
+src/services/prediction-api.test.ts(134,36): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs
+src/services/prediction-api.test.ts(152,44): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs
+src/services/prediction-api.test.ts(170,36): error TS2345: Argument of type '{}' is not assignable to parameter of type 'PredictRequest'.
+  Type '{}' is missing the following properties from type 'PredictRequest': mode, inputs

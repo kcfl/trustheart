@@ -1,0 +1,37 @@
+﻿
+Name                      Mode   Length
+----                      ----   ------
+checks                    d-----       
+dist                      d-----       
+docs                      d-----       
+e2e                       d-----       
+node_modules              d-----       
+public                    d-----       
+scripts                   d-----       
+src                       d-----       
+test-results              d-----       
+.env.example              -a---- 330   
+.gitignore                -a---- 96    
+CARD-REVEAL.md            -a---- 2324  
+components.json           -a---- 425   
+FOOTER-INTEGRATION.md     -a---- 5902  
+HANDOFF-MANIFEST.json     -a---- 14526 
+HORIZONTAL-TEXT-REVEAL.md -a---- 1436  
+IMPLEMENTATION.md         -a---- 7387  
+index.html                -a---- 755   
+package-lock.json         -a---- 103620
+package.json              -a---- 1214  
+PERFORMANCE.md            -a---- 2842  
+playwright.config.ts      -a---- 514   
+PRELOADER.md              -a---- 2267  
+PROGRESSIVE-BLUR.md       -a---- 4125  
+PROJECT-CREDIT.md         -a---- 1737  
+README.md                 -a---- 12680 
+SMOOTH-INPUT.md           -a---- 3773  
+START_HERE_BACKEND.md     -a---- 9937  
+THIRD_PARTY_NOTICES.md    -a---- 1909  
+tsconfig.json             -a---- 571   
+vite.config.ts            -a---- 415   
+vitest.config.ts          -a---- 251   
+
+

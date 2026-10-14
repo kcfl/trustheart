@@ -1,0 +1,75 @@
+﻿====================================================================================================
+TRUSTHEART 3D — FIELD MAPPING TABLE (OLD DEMO -> REAL BACKEND CONTRACT)
+====================================================================================================
+
+1. QUICK MODE SCREENING FIELDS (All 7 required)
+----------------------------------------------------------------------------------------------------
+UI Field / Old Demo        Backend Field        Kind          Type        Units / Allowed Values               Validation / Physiologic Bounds
+-------------------------  -------------------  ------------  ----------  -----------------------------------  ---------------------------------
+age                        Age                  continuous    number      years                                [0.0, 120.0]
+sex                        Sex                  categorical   string      "Male" | "Female"                    Must be "Male" or "Female"
+(new) Chest pain =         Typical Chest Pain   binary        boolean     true / false                         Mapped from Chest pain control:
+  - "None"                 Atypical             binary        boolean     true / false                         - None: all 3 false
+  - "Typical"              Nonanginal           binary        boolean     true / false                         - Typical: Typical=true, others=false
+  - "Atypical"                                                                                                 - Atypical: Atypical=true, others=false
+  - "Non-anginal"                                                                                              - Non-anginal: Nonanginal=true, others=false
+diabetes                   DM                   binary        boolean     true ("Yes") | false ("No")          Expected boolean or 0/1
+(new) Hypertension         HTN                  binary        boolean     true ("Yes") | false ("No")          Expected boolean or 0/1
+
+* Removed from Quick mode:
+  - systolic: backend does not accept in quick mode (maps to full-mode 'BP')
+  - cholesterol: backend does not accept 'cholesterol' (labs use TG, LDL, HDL)
+  - smoking: backend does not accept in quick mode (maps to full-mode 'Current Smoker')
+
+2. FULL MODE EXPANDABLE FIELDS (All optional; Blank = Omitted / Missing / Imputed)
+----------------------------------------------------------------------------------------------------
+Group                   Backend Field           Kind          Type        Units / Allowed Values           Validation Bounds
+----------------------  ----------------------  ------------  ----------  -------------------------------  ---------------------------------
+Demographics            Weight                  continuous    number      kg                               [10.0, 400.0]
+Demographics            Length                  continuous    number      cm                               [50.0, 260.0]
+Demographics            BMI                     continuous    number      kg/m^2                           [10.0, 100.0]
+History & risk factors  Current Smoker          binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  EX-Smoker               binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  FH                      binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  Obesity                 binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  CRF                     binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  CVA                     binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  Airway disease          binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  Thyroid Disease         binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  CHF                     binary        boolean     true / false                     0 or 1 / boolean
+History & risk factors  DLP                     binary        boolean     true / false                     0 or 1 / boolean
+Vitals & exam           BP                      continuous    number      mmHg                             [30.0, 300.0]
+Vitals & exam           PR                      continuous    number      bpm                              [30.0, 250.0]
+Vitals & exam           Edema                   binary        boolean     true / false                     0 or 1 / boolean
+Vitals & exam           Weak Peripheral Pulse   binary        boolean     true / false                     0 or 1 / boolean
+Vitals & exam           Lung rales              binary        boolean     true / false                     0 or 1 / boolean
+Vitals & exam           Systolic Murmur         binary        boolean     true / false                     0 or 1 / boolean
+Vitals & exam           Diastolic Murmur        binary        boolean     true / false                     0 or 1 / boolean
+Symptoms                Dyspnea                 binary        boolean     true / false                     0 or 1 / boolean
+Symptoms                Function Class          ordinal       number      0, 1, 2, 3                       [0.0, 3.0]
+Symptoms                LowTH Ang               binary        boolean     true / false                     0 or 1 / boolean
+ECG                     Q Wave                  binary        boolean     true / false                     0 or 1 / boolean
+ECG                     St Elevation            binary        boolean     true / false                     0 or 1 / boolean
+ECG                     St Depression           binary        boolean     true / false                     0 or 1 / boolean
+ECG                     Tinversion              binary        boolean     true / false                     0 or 1 / boolean
+ECG                     LVH                     binary        boolean     true / false                     0 or 1 / boolean
+ECG                     Poor R Progression      binary        boolean     true / false                     0 or 1 / boolean
+ECG                     BBB                     categorical   string      "N", "LBBB", "RBBB"              Must be N, LBBB, or RBBB
+Labs                    FBS                     continuous    number      mg/dL                            [20.0, 1200.0]
+Labs                    CR                      continuous    number      mg/dL                            [0.1, 30.0]
+Labs                    TG                      continuous    number      mg/dL                            [10.0, 3000.0]
+Labs                    LDL                     continuous    number      mg/dL                            [5.0, 1000.0]
+Labs                    HDL                     continuous    number      mg/dL                            [5.0, 300.0]
+Labs                    BUN                     continuous    number      mg/dL                            [1.0, 300.0]
+Labs                    ESR                     continuous    number      mm/hr                            [0.0, 200.0]
+Labs                    HB                      continuous    number      g/dL                             [3.0, 25.0]
+Labs                    K                       continuous    number      mEq/L                            [1.0, 10.0]
+Labs                    Na                      continuous    number      mEq/L                            [90.0, 200.0]
+Labs                    WBC                     continuous    number      cells/uL                         [500.0, 150000.0]
+Labs                    Lymph                   continuous    number      %                                [0.0, 100.0]
+Labs                    Neut                    continuous    number      %                                [0.0, 100.0]
+Labs                    PLT                     continuous    number      10^3/uL                          [5.0, 2500.0]
+Echo                    EF-TTE                  continuous    number      %                                [5.0, 95.0]
+Echo                    Region RWMA             ordinal       number      0, 1, 2, 3, 4                    [0.0, 4.0]
+Echo                    VHD                     categorical   string      "N", "mild", "moderate", "severe"
+====================================================================================================

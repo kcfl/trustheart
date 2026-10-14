@@ -81,10 +81,17 @@ The FastAPI backend will start on `http://127.0.0.1:8000`. Health check: `http:/
 ```powershell
 cd "e:\iit mandi\trustheart\frontend"
 $env:Path = "C:\Program Files\nodejs;" + $env:Path
-npm.cmd install
+npm.cmd ci
 npm.cmd run dev
 ```
-The Vite development server will start on `http://localhost:5173` with proxying to `http://127.0.0.1:8000/api`.
+The Vite development server will start on `http://localhost:5173`. In development mode, Vite automatically proxies all `/api` requests to `http://127.0.0.1:8000`.
+To connect to an external or remote API, configure the optional environment variable `VITE_API_BASE_URL` (defaults to empty string for same-origin dev proxy).
+
+To typecheck and run unit tests:
+```powershell
+npm.cmd run typecheck
+npm.cmd test
+```
 
 #### Option B: Standalone Production Mode on Windows (Single Server)
 FastAPI automatically serves the compiled `frontend/dist` assets and SPA routes when present:
@@ -92,6 +99,7 @@ FastAPI automatically serves the compiled `frontend/dist` assets and SPA routes 
 # 1. Compile frontend production bundle
 cd "e:\iit mandi\trustheart\frontend"
 $env:Path = "C:\Program Files\nodejs;" + $env:Path
+npm.cmd ci
 npm.cmd run build
 
 # 2. Launch FastAPI serving both API and static frontend on port 8000

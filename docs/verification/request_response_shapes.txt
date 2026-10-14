@@ -1,0 +1,131 @@
+﻿====================================================================================================
+TRUSTHEART 3D — API REQUEST AND RESPONSE SHAPES
+====================================================================================================
+
+1. REQUEST SHAPE (`POST /api/predict`):
+----------------------------------------------------------------------------------------------------
+{
+  "mode": "quick" | "full",
+  "inputs": {
+    // Quick Mode (All 7 required):
+    "Age": number,                      // [0.0, 120.0]
+    "Sex": "Male" | "Female",           // string
+    "Typical Chest Pain": boolean,      // 0 or 1 / boolean
+    "Atypical": boolean,                // 0 or 1 / boolean
+    "Nonanginal": boolean,              // 0 or 1 / boolean
+    "DM": boolean,                      // 0 or 1 / boolean
+    "HTN": boolean,                     // 0 or 1 / boolean
+
+    // Full Mode (Additional 47 multimodal features, all optional - blank omitted):
+    // Demographics:
+    "Weight"?: number, "Length"?: number, "BMI"?: number,
+    // History & risk factors:
+    "Current Smoker"?: boolean, "EX-Smoker"?: boolean, "FH"?: boolean,
+    "Obesity"?: boolean, "CRF"?: boolean, "CVA"?: boolean, "Airway disease"?: boolean,
+    "Thyroid Disease"?: boolean, "CHF"?: boolean, "DLP"?: boolean,
+    // Vitals & exam:
+    "BP"?: number, "PR"?: number, "Edema"?: boolean, "Weak Peripheral Pulse"?: boolean,
+    "Lung rales"?: boolean, "Systolic Murmur"?: boolean, "Diastolic Murmur"?: boolean,
+    // Symptoms:
+    "Dyspnea"?: boolean, "Function Class"?: number, "LowTH Ang"?: boolean,
+    // ECG:
+    "Q Wave"?: boolean, "St Elevation"?: boolean, "St Depression"?: boolean,
+    "Tinversion"?: boolean, "LVH"?: boolean, "Poor R Progression"?: boolean,
+    "BBB"?: "N" | "LBBB" | "RBBB",
+    // Labs:
+    "FBS"?: number, "CR"?: number, "TG"?: number, "LDL"?: number, "HDL"?: number,
+    "BUN"?: number, "ESR"?: number, "HB"?: number, "K"?: number, "Na"?: number,
+    "WBC"?: number, "Lymph"?: number, "Neut"?: number, "PLT"?: number,
+    // Echo:
+    "EF-TTE"?: number, "Region RWMA"?: number,
+    "VHD"?: "N" | "mild" | "moderate" | "severe"
+  },
+  "case_id": number | null             // optional (0 to 302)
+}
+
+2. RESPONSE SHAPE (`POST /api/predict`):
+----------------------------------------------------------------------------------------------------
+{
+  "request_id": string,
+  "mode": "quick" | "full",
+  "model_version": string,
+  "predictions": {
+    "CAD": TargetPrediction,
+    "LAD": TargetPrediction,
+    "LCX": TargetPrediction,
+    "RCA": TargetPrediction
+  },
+  "consistency": {
+    "status": "ok" | "raised" | "lowered",
+    "lower": number,
+    "upper": number,
+    "p_cad_model": number,
+    "p_cad_adjusted": number
+  },
+  "trust": {
+    "similar_patients": [
+      {
+        "case_id": number,
+        "distance": number,
+        "age_band": string,
+        "sex": string,
+        "outcomes": { "CAD": number, "LAD": number, "LCX": number, "RCA": number }
+      }
+    ],
+    "evidence_auc": { "CAD": number, "LAD": number, "LCX": number, "RCA": number },
+    "lift": {
+      "CAD": { "paired_mean": number, "p2_5": number, "p97_5": number, "selection_identical_fraction": number, "note": string },
+      "LAD": { ... },
+      "LCX": { ... },
+      "RCA": { ... }
+    },
+    "bands_note": string
+  },
+  "imputed": string[],
+  "warnings": [
+    {
+      "code": string,
+      "message": string | null,
+      "feature": string | null,
+      "target": string | null,
+      "value": any,
+      "min": number | null,
+      "max": number | null
+    }
+  ],
+  "disclaimer": string,
+  "limitations": string[]
+}
+
+Where `TargetPrediction` is:
+{
+  "raw_probability": number,
+  "calibrated_probability": number,
+  "band": "lower" | "intermediate" | "higher",
+  "display_probability": number,
+  "display_band": "lower" | "intermediate" | "higher",
+  "adjusted": boolean,
+  "display_note": string | null,
+  "base": number,
+  "contributions": [
+    {
+      "feature": string,
+      "value": any,
+      "contribution": number,
+      "direction": "up" | "down",
+      "stability_tag": string | null,
+      "imputed": boolean
+    }
+  ],
+  "other_total": number,
+  "logit_model": number,
+  "model_info": {
+    "config_name": string,
+    "n_features": number,
+    "features_used": string[],
+    "source_space": "quick" | "auto"
+  },
+  "base_rate": number,
+  "base_rate_note": string
+}
+====================================================================================================

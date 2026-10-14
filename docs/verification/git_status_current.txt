@@ -1,0 +1,35 @@
+﻿ M NOTICE.md
+ M README.md
+A  frontend/.env.example
+M  frontend/.gitignore
+D  frontend/.oxlintrc.json
+A  frontend/CARD-REVEAL.md
+A  frontend/FOOTER-INTEGRATION.md
+A  frontend/HANDOFF-MANIFEST.json
+A  frontend/HORIZONTAL-TEXT-REVEAL.md
+A  frontend/IMPLEMENTATION.md
+A  frontend/PERFORMANCE.md
+A  frontend/PRELOADER.md
+A  frontend/PROGRESSIVE-BLUR.md
+A  frontend/PROJECT-CREDIT.md
+M  frontend/README.md
+A  frontend/SMOOTH-INPUT.md
+A  frontend/START_HERE_BACKEND.md
+A  frontend/THIRD_PARTY_NOTICES.md
+A  frontend/checks/README.md
+A  frontend/checks/browser-deps.log
+A  frontend/checks/browser-install.log
+A  frontend/checks/current-visual.mjs
+A  frontend/checks/footer-visual.mjs
+A  frontend/checks/preloader-diagnose.mjs
+A  frontend/checks/preloader-final.mjs
+A  frontend/checks/render-profile-after-final.json
+A  frontend/checks/render-profile-after.json
+A  frontend/checks/render-profile-before.json
+A  frontend/checks/render-profile.mjs
+A  frontend/checks/visual.mjs
+A  frontend/components.json
+A  frontend/docs/TrustHeart_3D_Frontend_PRD_README.md
+A  frontend/e2e/card-reveal.spec.ts
+A  frontend/e2e/footer.spec.ts
+A  frontend/e2e/glass-motion.spec.ts

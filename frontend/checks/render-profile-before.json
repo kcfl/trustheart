@@ -1,0 +1,21 @@
+{
+  "label": "before",
+  "environment": "Headless Chromium; sandbox software WebGL; 1440x1000; not a real-device FPS guarantee",
+  "idle1500ms": {
+    "rafCallbacks": 19,
+    "heartDraws": 0,
+    "nebulaDraws": 4
+  },
+  "programsCreatedByPauseResume": 2,
+  "scroll": {
+    "frames": 6,
+    "durationMs": 3266.5,
+    "medianMs": 433.40000000000146,
+    "p95Ms": 866.5999999999985,
+    "over50ms": 6,
+    "draws": {
+      "heart": 2,
+      "nebula": 7
+    }
+  }
+}

@@ -1,0 +1,16 @@
+import {chromium} from '@playwright/test';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:900}});
+await page.goto('http://127.0.0.1:5173/analysis');
+await page.waitForSelector('.startup-preloader[data-ready="true"]');
+await page.waitForTimeout(3100);
+await page.screenshot({path:'/home/user/TrustHeart-preloader-preview.png'});
+console.log('Desktop wordmark captured');
+await page.close();
+const mobile=await browser.newPage({viewport:{width:390,height:844}});
+await mobile.goto('http://127.0.0.1:5173/analysis');
+await mobile.waitForSelector('.startup-preloader[data-ready="true"]');
+await mobile.waitForTimeout(3100);
+await mobile.screenshot({path:'checks/preloader-mobile-final.png'});
+console.log('Mobile wordmark captured');
+await browser.close();

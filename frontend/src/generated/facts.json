@@ -1,0 +1,337 @@
+{
+  "cohort": {
+    "n_samples": 303,
+    "n_raw_attributes": 59,
+    "n_encoded_features": 56,
+    "uci_id": 411,
+    "uci_source": "https://archive.ics.uci.edu/dataset/411/extension+of+z+alizadeh+sani+dataset",
+    "demographics": {
+      "age_min": 30,
+      "age_max": 86,
+      "age_mean": 58.9,
+      "sex_counts": {
+        "Male": 176,
+        "Fmale": 127
+      }
+    },
+    "prevalences": {
+      "CAD": {
+        "count_positive": 216,
+        "count_normal": 87,
+        "total": 303,
+        "prevalence_pct": 71.29
+      },
+      "LAD": {
+        "count_positive": 177,
+        "count_normal": 126,
+        "total": 303,
+        "prevalence_pct": 58.42
+      },
+      "LCX": {
+        "count_positive": 119,
+        "count_normal": 184,
+        "total": 303,
+        "prevalence_pct": 39.27
+      },
+      "RCA": {
+        "count_positive": 114,
+        "count_normal": 189,
+        "total": 303,
+        "prevalence_pct": 37.62
+      }
+    }
+  },
+  "performance": {
+    "CAD": {
+      "auto": {
+        "roc_auc_mean": 0.9237,
+        "roc_auc_std": 0.0064,
+        "pr_auc_mean": 0.9681,
+        "pr_auc_std": 0.0037,
+        "brier_mean": 0.0978,
+        "brier_std": 0.0031,
+        "ece_mean": 0.0283,
+        "ece_std": 0.0078
+      },
+      "quick": {
+        "roc_auc_mean": 0.8979,
+        "roc_auc_std": 0.003,
+        "pr_auc_mean": 0.95,
+        "pr_auc_std": 0.0029,
+        "brier_mean": 0.1101,
+        "brier_std": 0.0014,
+        "ece_mean": 0.0392,
+        "ece_std": 0.0028
+      }
+    },
+    "LAD": {
+      "auto": {
+        "roc_auc_mean": 0.8364,
+        "roc_auc_std": 0.0044,
+        "pr_auc_mean": 0.8734,
+        "pr_auc_std": 0.0057,
+        "brier_mean": 0.1598,
+        "brier_std": 0.0021,
+        "ece_mean": 0.0494,
+        "ece_std": 0.0099
+      },
+      "quick": {
+        "roc_auc_mean": 0.7885,
+        "roc_auc_std": 0.0036,
+        "pr_auc_mean": 0.8026,
+        "pr_auc_std": 0.006,
+        "brier_mean": 0.1765,
+        "brier_std": 0.0019,
+        "ece_mean": 0.0576,
+        "ece_std": 0.0087
+      }
+    },
+    "LCX": {
+      "auto": {
+        "roc_auc_mean": 0.726,
+        "roc_auc_std": 0.0115,
+        "pr_auc_mean": 0.5942,
+        "pr_auc_std": 0.0209,
+        "brier_mean": 0.2049,
+        "brier_std": 0.0045,
+        "ece_mean": 0.0455,
+        "ece_std": 0.0083
+      },
+      "quick": {
+        "roc_auc_mean": 0.7278,
+        "roc_auc_std": 0.0083,
+        "pr_auc_mean": 0.5984,
+        "pr_auc_std": 0.0139,
+        "brier_mean": 0.2042,
+        "brier_std": 0.003,
+        "ece_mean": 0.046,
+        "ece_std": 0.0075
+      }
+    },
+    "RCA": {
+      "auto": {
+        "roc_auc_mean": 0.7357,
+        "roc_auc_std": 0.0072,
+        "pr_auc_mean": 0.6069,
+        "pr_auc_std": 0.0173,
+        "brier_mean": 0.1997,
+        "brier_std": 0.0027,
+        "ece_mean": 0.0716,
+        "ece_std": 0.0098
+      },
+      "quick": {
+        "roc_auc_mean": 0.7391,
+        "roc_auc_std": 0.0039,
+        "pr_auc_mean": 0.6091,
+        "pr_auc_std": 0.0144,
+        "brier_mean": 0.1986,
+        "brier_std": 0.0019,
+        "ece_mean": 0.0664,
+        "ece_std": 0.0107
+      }
+    }
+  },
+  "models": {
+    "CAD": {
+      "auto": {
+        "config": "full|LR|C=0.001",
+        "features": 55,
+        "platt_a": 12.3628,
+        "platt_b": 0.9704
+      },
+      "quick": {
+        "config": "compact|LR|C=0.001",
+        "features": 7,
+        "platt_a": 13.7899,
+        "platt_b": 0.9356
+      }
+    },
+    "LAD": {
+      "auto": {
+        "config": "full|LR|C=0.001",
+        "features": 55,
+        "platt_a": 8.914,
+        "platt_b": 0.3702
+      },
+      "quick": {
+        "config": "compact|LR|C=0.001",
+        "features": 7,
+        "platt_a": 11.4114,
+        "platt_b": 0.2925
+      }
+    },
+    "LCX": {
+      "auto": {
+        "config": "compact|LR|C=0.03",
+        "features": 7,
+        "platt_a": 1.3056,
+        "platt_b": -0.425
+      },
+      "quick": {
+        "config": "compact|LR|C=0.03",
+        "features": 7,
+        "platt_a": 1.3056,
+        "platt_b": -0.425
+      }
+    },
+    "RCA": {
+      "auto": {
+        "config": "compact|LR|C=0.001",
+        "features": 7,
+        "platt_a": 11.9557,
+        "platt_b": -0.5293
+      },
+      "quick": {
+        "config": "compact|LR|C=0.001",
+        "features": 7,
+        "platt_a": 11.9557,
+        "platt_b": -0.5293
+      }
+    }
+  },
+  "limitations": [
+    "Single-centre dataset of 303 angiography-referred patients from Tehran Heart Center.",
+    "Probabilities are mildly overconfident out of sample (demonstrated in nested CV).",
+    "What-if changes show model sensitivity, not clinical or treatment effect.",
+    "Decision support and educational demonstration only. Not a substitute for formal diagnostic angiography.",
+    "Probabilities are per-vessel stenosis risks (>=50% diameter stenosis), not anatomical lesion locations."
+  ],
+  "coherence": {
+    "git_commit": "e29ed066fe353a882b917c87f28857f11163cb27",
+    "git_dirty": false,
+    "timestamp_utc": "2026-10-13T23:42:41.602751+00:00",
+    "python_version": "3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]",
+    "n_repeats_nested": 10,
+    "inner_splits": 3,
+    "inner_repeats": 2,
+    "lr_c_grid": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0
+    ],
+    "package_versions": {
+      "scikit-learn": "1.9.1",
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scipy": "1.18.1",
+      "joblib": "1.6.0",
+      "matplotlib": "3.11.2"
+    },
+    "coherence_definition": "max(LAD, LCX, RCA) <= P(CAD) <= min(1, sum(LAD, LCX, RCA))",
+    "dataset_exception_note": "1 of 303 rows in the data (index 93) violates the definition",
+    "results": {
+      "auto": {
+        "n_repeats": 10,
+        "n_samples": 303,
+        "pct_below_lower": {
+          "mean": 22.706270627062707,
+          "std": 2.3737916759975675,
+          "min": 20.13201320132013,
+          "max": 26.072607260726073
+        },
+        "pct_above_upper": {
+          "mean": 0.957095709570957,
+          "std": 0.8998066027141267,
+          "min": 0.33003300330033003,
+          "max": 3.3003300330033
+        },
+        "pct_coherent": {
+          "mean": 76.33663366336634,
+          "std": 2.5233080178606353,
+          "min": 72.60726072607261,
+          "max": 79.53795379537954
+        },
+        "auc_before": {
+          "mean": 0.9236616645381013,
+          "std": 0.00639419540735967,
+          "min": 0.9095359727543635,
+          "max": 0.9298105576841209
+        },
+        "auc_after": {
+          "mean": 0.9257529799914858,
+          "std": 0.004600984287022559,
+          "min": 0.9168795232013623,
+          "max": 0.9326841209025117
+        },
+        "brier_before": {
+          "mean": 0.09781540398727806,
+          "std": 0.003114591313373512,
+          "min": 0.09509905628059502,
+          "max": 0.10544041662897101
+        },
+        "brier_after": {
+          "mean": 0.09481907290344324,
+          "std": 0.0025021435530148285,
+          "min": 0.0900947610089288,
+          "max": 0.09821920097771276
+        },
+        "auc_lower_bound_score": {
+          "mean": 0.9147562792677734,
+          "std": 0.004407641741654742,
+          "min": 0.9081524052788421,
+          "max": 0.921509152830992
+        },
+        "auc_diff": 0.002091315453384479,
+        "brier_diff": -0.002996331083834819
+      },
+      "quick": {
+        "n_repeats": 10,
+        "n_samples": 303,
+        "pct_below_lower": {
+          "mean": 15.907590759075907,
+          "std": 1.0643244552209308,
+          "min": 14.521452145214523,
+          "max": 18.151815181518153
+        },
+        "pct_above_upper": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pct_coherent": {
+          "mean": 84.09240924092408,
+          "std": 1.0643244552209277,
+          "min": 81.84818481848185,
+          "max": 85.47854785478548
+        },
+        "auc_before": {
+          "mean": 0.8979406130268199,
+          "std": 0.0030019983158399706,
+          "min": 0.8927469135802469,
+          "max": 0.9024851000425713
+        },
+        "auc_after": {
+          "mean": 0.8987122179650914,
+          "std": 0.0031035951972481356,
+          "min": 0.8942369093231162,
+          "max": 0.9029374201787995
+        },
+        "brier_before": {
+          "mean": 0.1101279161476143,
+          "std": 0.0014013776752654675,
+          "min": 0.10845557047338278,
+          "max": 0.1123944414932502
+        },
+        "brier_after": {
+          "mean": 0.1093383540088944,
+          "std": 0.001373854229943365,
+          "min": 0.10721934498734284,
+          "max": 0.11178665727986752
+        },
+        "auc_lower_bound_score": {
+          "mean": 0.8948914431673053,
+          "std": 0.0033917302718204033,
+          "min": 0.8891549595572584,
+          "max": 0.8991326096211153
+        },
+        "auc_diff": 0.0007716049382714418,
+        "brier_diff": -0.0007895621387199042
+      }
+    }
+  }
+}

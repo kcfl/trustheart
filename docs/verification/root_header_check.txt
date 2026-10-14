@@ -1,0 +1,12 @@
+﻿HTTP/1.1 405 Method Not Allowed
+date: Wed, 14 Oct 2026 16:17:57 GMT
+server: uvicorn
+allow: GET
+content-length: 31
+content-type: application/json
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'none'
+

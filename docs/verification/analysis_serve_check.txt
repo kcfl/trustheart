@@ -1,0 +1,25 @@
+﻿HTTP/1.1 200 OK
+date: Wed, 14 Oct 2026 16:18:38 GMT
+server: uvicorn
+content-type: text/html; charset=utf-8
+accept-ranges: bytes
+content-length: 853
+last-modified: Wed, 14 Oct 2026 16:13:08 GMT
+etag: "1004de04b60c01162a91e1005b7a0a31"
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#100619" />
+    <meta
+      name="description"
+      content="TrustHeart 3D ΓÇö Explore cardiac risk with transparent evidence and interactive anatomy. An educational research prototype."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

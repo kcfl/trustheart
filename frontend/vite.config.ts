@@ -1,21 +1,19 @@
-import { fileURLToPath } from 'node:url'
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-
-// https://vite.dev/config/
+import { defineConfig } from "vite";
+import { fileURLToPath, URL } from "node:url";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      three: fileURLToPath(new URL('./node_modules/three/build/three.module.js', import.meta.url)),
-    },
-  },
+  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
+  plugins: [react(), tailwindcss()],
   server: {
+    host: "0.0.0.0",
+    allowedHosts: true,
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8000',
+      "/api": {
+        target: "http://127.0.0.1:8000",
         changeOrigin: true,
       },
     },
   },
-})
+  build: { chunkSizeWarningLimit: 750 },
+});

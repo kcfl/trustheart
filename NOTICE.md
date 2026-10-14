@@ -52,11 +52,12 @@ The backend production container runs using the following runtime packages (list
 
 ## 3. Frontend Libraries & Attributions
 
-The interactive 3D web application frontend bundles the following open-source client libraries (see `frontend/package.json`):
+The interactive 3D web application frontend bundles the following open-source client libraries (see `frontend/package.json` and [`frontend/THIRD_PARTY_NOTICES.md`](frontend/THIRD_PARTY_NOTICES.md)):
 - **React** (`react`, `react-dom`): MIT License (Meta Platforms, Inc.).
 - **Three.js** (`three`, `@types/three`): MIT License (Mr.doob and Three.js authors).
 - **Lucide React** (`lucide-react`): ISC License (Lucide Contributors).
 - **Vite** (build tool): MIT License (Evan You and Vite Contributors).
+- **GSAP** & **Motion**: Animation and UI motion orchestration.
 
 All application-specific code and algorithmic trust layers in this repository are authored by the TrustHeart 3D team.
 

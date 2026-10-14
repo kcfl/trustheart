@@ -1,0 +1,11 @@
+import {chromium} from '@playwright/test';
+const b=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
+const p=await b.newPage({viewport:{width:1440,height:900}});p.on('pageerror',e=>console.log('ERROR',e.message));
+await p.goto('http://127.0.0.1:5173/');
+console.log('preloader count',await p.locator('.startup-preloader').count());
+await p.screenshot({path:'checks/preloader-before.png'});
+console.log(await p.locator('.rolling-letter-track').first().evaluate(e=>({style:e.getAttribute('style'),height:e.clientHeight,font:getComputedStyle(e).font, parentheight:e.parentElement.clientHeight})));
+await p.waitForTimeout(1300);await p.screenshot({path:'checks/preloader-mid-before.png'});
+await p.waitForTimeout(3900);
+console.log('stateafter',await p.evaluate(()=>({loader:!!document.querySelector('.startup-preloader'),app:!!document.querySelector('.app-shell'),inert:document.querySelector('.app-after-intro')?.inert,overflow:document.body.style.overflow})));
+await b.close();

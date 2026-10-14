@@ -1,0 +1,43 @@
+﻿Dockerfile COPY lines considered:
+  COPY frontend/package*.json -> 
+  COPY frontend -> 
+  COPY requirements-runtime.txt -> 
+  COPY backend -> backend
+  COPY ml -> ml
+  COPY models -> models
+  COPY data -> data
+  COPY (from=frontend-builder) app/frontend/dist -> frontend/dist
+---------------------------------------------------------------------------
+Checking 29 runtime files against .dockerignore and Dockerfile COPY:
+---------------------------------------------------------------------------
+PASS: backend/__init__.py (not ignored, COPY'd)
+PASS: backend/app/__init__.py (not ignored, COPY'd)
+PASS: backend/app/config.py (not ignored, COPY'd)
+PASS: backend/app/main.py (not ignored, COPY'd)
+PASS: backend/app/routes.py (not ignored, COPY'd)
+PASS: backend/app/schemas.py (not ignored, COPY'd)
+PASS: backend/app/security.py (not ignored, COPY'd)
+PASS: backend/app/service.py (not ignored, COPY'd)
+PASS: data/raw/extention of Z-Alizadeh sani dataset.xlsx (not ignored, COPY'd)
+PASS: frontend/dist/index.html (not ignored, COPY'd)
+PASS: ml/__init__.py (not ignored, COPY'd)
+PASS: ml/calibration.py (not ignored, COPY'd)
+PASS: ml/coherence.py (not ignored, COPY'd)
+PASS: ml/config.py (not ignored, COPY'd)
+PASS: ml/data.py (not ignored, COPY'd)
+PASS: ml/predict.py (not ignored, COPY'd)
+PASS: ml/similar.py (not ignored, COPY'd)
+PASS: models/auto_CAD.joblib (not ignored, COPY'd)
+PASS: models/auto_LAD.joblib (not ignored, COPY'd)
+PASS: models/auto_LCX.joblib (not ignored, COPY'd)
+PASS: models/auto_RCA.joblib (not ignored, COPY'd)
+PASS: models/feature_stats.json (not ignored, COPY'd)
+PASS: models/manifest.json (not ignored, COPY'd)
+PASS: models/nested_oof.npz (not ignored, COPY'd)
+PASS: models/quick_CAD.joblib (not ignored, COPY'd)
+PASS: models/quick_LAD.joblib (not ignored, COPY'd)
+PASS: models/quick_LCX.joblib (not ignored, COPY'd)
+PASS: models/quick_RCA.joblib (not ignored, COPY'd)
+PASS: models/trust_stats.json (not ignored, COPY'd)
+---------------------------------------------------------------------------
+ALL 29 RUNTIME FILES PASSED (context verified).
