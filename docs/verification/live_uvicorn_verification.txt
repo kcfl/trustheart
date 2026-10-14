@@ -1,32 +1,57 @@
-﻿HTTP/1.1 200 OK
-date: Wed, 14 Oct 2026 13:26:30 GMT
-server: uvicorn
-content-type: text/html; charset=utf-8
-accept-ranges: bytes
-content-length: 398
-last-modified: Wed, 14 Oct 2026 13:06:40 GMT
-etag: "13ac9004ff73c785659b69c61c49b5ce"
+﻿Started Uvicorn process PID: 24412
+=================================================================
+1. Invoke-WebRequest for /
+=================================================================
+Status Code: 200
 vary: Origin
 x-content-type-options: nosniff
 x-frame-options: DENY
 referrer-policy: no-referrer
 content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+Accept-Ranges: bytes
+Content-Length: 398
+Content-Type: text/html; charset=utf-8
+Date: Wed, 14 Oct 2026 13:30:12 GMT
+ETag: "13ac9004ff73c785659b69c61c49b5ce"
+Last-Modified: Wed, 14 Oct 2026 13:06:40 GMT
+Server: uvicorn
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TrustHeart 3D</title>
-    <script type="module" crossorigin src="/assets/index-D1nC0yk9.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-5ZNpv3x_.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+=================================================================
+2. Invoke-WebRequest for /assets/index-5ZNpv3x_.css
+=================================================================
+Status Code: 200
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+Accept-Ranges: bytes
+Content-Length: 19983
+Content-Type: text/css; charset=utf-8
+Date: Wed, 14 Oct 2026 13:30:12 GMT
+ETag: "c259cf1f94b0c20d15ac11d9bea8a73e"
+Last-Modified: Wed, 14 Oct 2026 13:06:40 GMT
+Server: uvicorn
+
+=================================================================
+3. Invoke-WebRequest for /api/health
+=================================================================
+Status Code: 200
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'none'
+Content-Length: 394
+Content-Type: application/json
+Date: Wed, 14 Oct 2026 13:30:12 GMT
+Server: uvicorn
+
+=================================================================
+4. curl.exe --path-as-is for /../models/manifest.json
+=================================================================
 HTTP/1.1 200 OK
-date: Wed, 14 Oct 2026 13:26:30 GMT
+date: Wed, 14 Oct 2026 13:30:12 GMT
 server: uvicorn
 content-type: text/html; charset=utf-8
 accept-ranges: bytes
@@ -52,8 +77,12 @@ content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'
     <div id="root"></div>
   </body>
 </html>
+
+=================================================================
+5. curl.exe --path-as-is for /%2e%2e/models/manifest.json
+=================================================================
 HTTP/1.1 200 OK
-date: Wed, 14 Oct 2026 13:26:30 GMT
+date: Wed, 14 Oct 2026 13:30:12 GMT
 server: uvicorn
 content-type: text/html; charset=utf-8
 accept-ranges: bytes
@@ -79,3 +108,36 @@ content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'
     <div id="root"></div>
   </body>
 </html>
+
+=================================================================
+6. curl.exe --path-as-is for /..\models\manifest.json
+=================================================================
+HTTP/1.1 200 OK
+date: Wed, 14 Oct 2026 13:30:12 GMT
+server: uvicorn
+content-type: text/html; charset=utf-8
+accept-ranges: bytes
+content-length: 398
+last-modified: Wed, 14 Oct 2026 13:06:40 GMT
+etag: "13ac9004ff73c785659b69c61c49b5ce"
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrustHeart 3D</title>
+    <script type="module" crossorigin src="/assets/index-D1nC0yk9.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-5ZNpv3x_.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+Stopped Uvicorn process PID: 24412
