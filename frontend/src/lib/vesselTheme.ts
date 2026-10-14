@@ -24,10 +24,10 @@ export const VESSEL_WORDING = 'Per-vessel probability, not lesion location'
  * - Neutral: clean slate (#94a3b8)
  */
 export const ACCESSIBLE_BAND_COLORS: Record<'lower' | 'intermediate' | 'higher' | 'neutral', string> = {
-  lower: '#2b83ba',
-  intermediate: '#e69f00',
-  higher: '#d55e00',
-  neutral: '#94a3b8',
+  lower: '#4C9BE8',
+  intermediate: '#F5B83D',
+  higher: '#D7263D',
+  neutral: '#8A94A6',
 }
 
 /**
@@ -118,3 +118,28 @@ export function formatVesselBandText(
     fullLabel: `${vessel} (${pct} - ${capBand})`,
   }
 }
+
+/**
+ * Builds a plain sentence explaining model CAD prediction and coherence adjustment
+ * using only API fields (p_cad_model, p_cad_adjusted, lower, upper).
+ */
+export function buildCoherenceSentence(consistency?: {
+  status: 'ok' | 'raised' | 'lowered'
+  lower: number
+  upper: number
+  p_cad_model: number
+  p_cad_adjusted: number
+} | null): string {
+  if (!consistency) return ''
+  const modelPct = (consistency.p_cad_model * 100).toFixed(1) + '%'
+  const adjPct = (consistency.p_cad_adjusted * 100).toFixed(1) + '%'
+
+  if (consistency.status === 'raised') {
+    return `Model estimate ${modelPct}. Raised to ${adjPct} so it is not lower than the highest vessel probability.`
+  }
+  if (consistency.status === 'lowered') {
+    return `Model estimate ${modelPct}. Lowered to ${adjPct} so it does not exceed the sum of vessel probabilities.`
+  }
+  return `Model estimate ${modelPct}. Within coherence bounds [${(consistency.lower * 100).toFixed(1)}%, ${(consistency.upper * 100).toFixed(1)}%].`
+}
+

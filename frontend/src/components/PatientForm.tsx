@@ -34,6 +34,26 @@ export function PatientForm({
     groups[grp].push(feat)
   }
 
+  const [focusedField, setFocusedField] = React.useState<string | null>(null)
+
+  const formatHintNumber = (num?: number | null): string => {
+    if (num === null || num === undefined || !Number.isFinite(num)) return '–'
+    return Number.isInteger(num) ? String(num) : Number(num.toFixed(1)).toString()
+  }
+
+  const getContinuousDisplayValue = (val: string, isFocused: boolean): string => {
+    if (val === 'unknown' || val === '') return ''
+    if (isFocused) return val
+    const num = Number(val)
+    if (Number.isFinite(num) && val.includes('.')) {
+      const parts = val.split('.')
+      if (parts[1] && parts[1].length > 2) {
+        return num.toFixed(2)
+      }
+    }
+    return val
+  }
+
   const renderControl = (feat: FeatureMetaItem) => {
     const val = formState[feat.name] ?? 'unknown'
     const errorMsg = fieldErrors[feat.name]
@@ -106,7 +126,8 @@ export function PatientForm({
     }
 
     if (feat.kind === 'continuous') {
-      const displayVal = val === 'unknown' ? '' : val
+      const isFocused = focusedField === feat.name
+      const displayVal = getContinuousDisplayValue(val, isFocused)
       return (
         <div className="input-with-hint">
           <input
@@ -117,10 +138,12 @@ export function PatientForm({
             className={`form-control ${errorMsg ? 'input-error' : ''}`}
             placeholder="Unknown (Impute)"
             value={displayVal}
+            onFocus={() => setFocusedField(feat.name)}
+            onBlur={() => setFocusedField(null)}
             onChange={(e) => onChangeField(feat.name, e.target.value)}
           />
           <span className="field-hint">
-            Range in training: {feat.training_min} – {feat.training_max}
+            Range in training: {formatHintNumber(feat.training_min)} – {formatHintNumber(feat.training_max)}
           </span>
         </div>
       )

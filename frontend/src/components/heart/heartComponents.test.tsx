@@ -161,8 +161,12 @@ describe('Heart & Vessel Components Test Suite', () => {
     // Heart-level aggregate badge
     expect(screen.getByText(/Overall CAD Risk & Coherence/i)).toBeInTheDocument()
     expect(screen.getAllByText(/20.4%/i).length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText(/Fréchet Coherence: RAISED/i)).toBeInTheDocument()
-    expect(screen.getByText(/Bounds: \[20.4%, 53.6%\]/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Model estimate 18.7%. Raised to 20.4% so it is not lower than the highest vessel probability/i
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Fréchet bounds: \[20.4%, 53.6%\]/i)).toBeInTheDocument()
   })
 
   it('VesselPanel shows the required fixed wording', () => {

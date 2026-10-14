@@ -10,6 +10,13 @@ import {
 } from './vesselTheme'
 
 describe('vesselTheme: Pure Function Tests', () => {
+  it('defines exact tokens for band colors', () => {
+    expect(ACCESSIBLE_BAND_COLORS.lower).toBe('#4C9BE8')
+    expect(ACCESSIBLE_BAND_COLORS.intermediate).toBe('#F5B83D')
+    expect(ACCESSIBLE_BAND_COLORS.higher).toBe('#D7263D')
+    expect(ACCESSIBLE_BAND_COLORS.neutral).toBe('#8A94A6')
+  })
+
   it('correctly maps probabilities to bands with default cutoffs (0.30, 0.60)', () => {
     expect(probabilityToBand(0.15)).toBe('lower')
     expect(probabilityToBand(0.299)).toBe('lower')

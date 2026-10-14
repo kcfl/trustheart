@@ -19,6 +19,7 @@ export function HeartView({
 }: HeartViewProps) {
   const [selectedVessel, setSelectedVessel] = useState<VesselTarget | null>(defaultVessel)
   const [hoveredVessel, setHoveredVessel] = useState<VesselTarget | null>(null)
+  const isNeutral = result === null
 
   return (
     <section
@@ -26,36 +27,43 @@ export function HeartView({
       data-testid="heart-view-section"
       aria-label="3D Heart Model and Coronary Risk Assessment"
     >
-      <div className="heart-view-grid">
-        {/* Left Column: 3D Canvas Scene + Keyboard accessible buttons */}
-        <div className="heart-visual-column">
-          <HeartScene
-            result={result}
-            bands={bands}
-            selectedVessel={selectedVessel}
-            hoveredVessel={hoveredVessel}
-            onSelectVessel={setSelectedVessel}
-            onHoverVessel={setHoveredVessel}
-          />
-
-          <VesselSelectorButtons
-            result={result}
-            bands={bands}
-            selectedVessel={selectedVessel}
-            onSelectVessel={setSelectedVessel}
-          />
+      {/* Status banner placed cleanly OUTSIDE the canvas box */}
+      {isNeutral && (
+        <div className="scene-neutral-banner" role="status">
+          <span className="hint-pill">Neutral Mode</span>
+          <span className="hint-body">
+            Run a prediction using the clinical inputs form to illuminate coronary vessel risk bands.
+          </span>
         </div>
+      )}
 
-        {/* Right Column: Vessel Risk Panel + Heart-Level CAD badge */}
-        <div className="heart-details-column">
-          <VesselPanel
-            result={result}
-            bands={bands}
-            selectedVessel={selectedVessel}
-            onSelectVessel={setSelectedVessel}
-          />
-        </div>
+      {/* Full card width canvas container */}
+      <div className="heart-canvas-card">
+        <HeartScene
+          result={result}
+          bands={bands}
+          selectedVessel={selectedVessel}
+          hoveredVessel={hoveredVessel}
+          onSelectVessel={setSelectedVessel}
+          onHoverVessel={setHoveredVessel}
+        />
       </div>
+
+      {/* Vessel selector buttons placed below canvas */}
+      <VesselSelectorButtons
+        result={result}
+        bands={bands}
+        selectedVessel={selectedVessel}
+        onSelectVessel={setSelectedVessel}
+      />
+
+      {/* Twin columns side by side: Overall CAD & Coherence alongside Vessel Risk Panel */}
+      <VesselPanel
+        result={result}
+        bands={bands}
+        selectedVessel={selectedVessel}
+        onSelectVessel={setSelectedVessel}
+      />
     </section>
   )
 }
