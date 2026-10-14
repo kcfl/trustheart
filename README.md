@@ -95,6 +95,8 @@ Open `http://localhost:8000` in your web browser.
 
 The project includes a multi-stage `Dockerfile` that builds the React frontend in `node:22-alpine` and serves both the API and frontend assets via FastAPI on `python:3.12-slim`.
 
+> **Notice**: The Dockerfile is untested in this environment as Docker is not installed on the host.
+
 #### Step 1: Build Docker Image
 From the repository root (`e:\iit mandi\trustheart`):
 ```powershell

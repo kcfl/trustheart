@@ -898,4 +898,107 @@ def test_23_body_size_limit_and_zero_body_logging(
     assert "inputs" not in log_text, "Request inputs dictionary was leaked into server logs!"
 
 
+# ---------------------------------------------------------------------------
+# Test 24: CSP Headers Per Route Type (HTML/Static vs API)
+# ---------------------------------------------------------------------------
+def test_24_csp_headers_per_route_type(client: TestClient) -> None:
+    """Test 24: CSP header differentiated by route type (frontend/assets vs API routes)."""
+    expected_frontend_csp = (
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; "
+        "frame-ancestors 'none'"
+    )
+    expected_api_csp = "default-src 'none'"
+
+    # 1. HTML root route /
+    r_root = client.get("/")
+    assert r_root.status_code == 200
+    assert r_root.headers.get("Content-Security-Policy") == expected_frontend_csp
+    assert r_root.headers.get("X-Content-Type-Options") == "nosniff"
+    assert r_root.headers.get("X-Frame-Options") == "DENY"
+    assert r_root.headers.get("Referrer-Policy") == "no-referrer"
+
+    # 2. Asset file from frontend/dist/assets
+    assets_dir = Path("frontend/dist/assets")
+    assert assets_dir.is_dir()
+    asset_files = [f for f in assets_dir.iterdir() if f.is_file()]
+    assert len(asset_files) > 0
+    asset_name = asset_files[0].name
+
+    r_asset = client.get(f"/assets/{asset_name}")
+    assert r_asset.status_code == 200
+    assert r_asset.headers.get("Content-Security-Policy") == expected_frontend_csp
+    assert r_asset.headers.get("X-Content-Type-Options") == "nosniff"
+    assert r_asset.headers.get("X-Frame-Options") == "DENY"
+    assert r_asset.headers.get("Referrer-Policy") == "no-referrer"
+
+    # 3. API route /api/health
+    r_api = client.get("/api/health")
+    assert r_api.status_code == 200
+    assert r_api.headers.get("Content-Security-Policy") == expected_api_csp
+    assert r_api.headers.get("X-Content-Type-Options") == "nosniff"
+    assert r_api.headers.get("X-Frame-Options") == "DENY"
+    assert r_api.headers.get("Referrer-Policy") == "no-referrer"
+
+
+# ---------------------------------------------------------------------------
+# Test 25: Raw ASGI Path Traversal Hardening
+# ---------------------------------------------------------------------------
+def test_25_raw_asgi_path_traversal_hardening() -> None:
+    """Test 25: Raw ASGI traversal requests never serve files outside dist."""
+    import asyncio
+
+    async def call_asgi(path: str) -> tuple[int, bytes]:
+        body = bytearray()
+        status_code = None
+        done = asyncio.Event()
+
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0"},
+            "method": "GET",
+            "path": path,
+            "raw_path": path.encode("utf-8"),
+            "query_string": b"",
+            "headers": [(b"host", b"testserver")],
+            "client": ("127.0.0.1", 12345),
+            "server": ("testserver", 80),
+        }
+
+        sent = False
+
+        async def recv() -> dict:
+            nonlocal sent
+            if not sent:
+                sent = True
+                return {"type": "http.request", "body": b"", "more_body": False}
+            await done.wait()
+            return {"type": "http.disconnect"}
+
+        async def send(message: dict) -> None:
+            nonlocal status_code
+            if message["type"] == "http.response.start":
+                status_code = message["status"]
+            elif message["type"] == "http.response.body":
+                body.extend(message.get("body", b""))
+                if not message.get("more_body", False):
+                    done.set()
+
+        await app(scope, recv, send)
+        return status_code, bytes(body)
+
+    traversal_paths = [
+        "/../models/manifest.json",
+        "/%2e%2e/models/manifest.json",
+        "/..\\models\\manifest.json",
+    ]
+
+    for p in traversal_paths:
+        status, response_body = asyncio.run(call_asgi(p))
+        # Assert body does not contain manifest content (e.g. git_commit or n_repeats_nested)
+        assert b"git_commit" not in response_body, f"Path traversal leaked manifest on {p}!"
+        assert b"n_repeats_nested" not in response_body, f"Path traversal leaked manifest on {p}!"
+
+
+
 

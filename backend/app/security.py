@@ -98,7 +98,20 @@ class SafeLoggingAndSecurityMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = "default-src 'none'"
+
+        path = request.url.path
+        if (
+            path.startswith("/api/")
+            or path == "/api"
+            or path in ("/docs", "/openapi.json", "/redoc")
+        ):
+            response.headers["Content-Security-Policy"] = "default-src 'none'"
+        else:
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+                "img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; "
+                "frame-ancestors 'none'"
+            )
 
         if request.url.path.startswith("/api/predict"):
             response.headers["Cache-Control"] = "no-store"

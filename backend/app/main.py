@@ -3,6 +3,7 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from pathlib import Path
+from urllib.parse import unquote
 from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -101,11 +102,18 @@ if FRONTEND_DIST.is_dir():
         ):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
 
-        target_file = FRONTEND_DIST / full_path
-        if full_path and target_file.is_file():
+        dist_resolved = FRONTEND_DIST.resolve()
+        clean_path = unquote(full_path).lstrip("/\\")
+        try:
+            target_file = (dist_resolved / clean_path).resolve()
+            is_inside_dist = target_file.is_relative_to(dist_resolved)
+        except (ValueError, RuntimeError):
+            is_inside_dist = False
+
+        if full_path and is_inside_dist and target_file.is_file():
             return FileResponse(target_file)
 
-        index_file = FRONTEND_DIST / "index.html"
+        index_file = dist_resolved / "index.html"
         if index_file.is_file():
             return FileResponse(index_file)
 

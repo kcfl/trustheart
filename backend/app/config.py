@@ -12,7 +12,7 @@ REPORTS_DIR: Path = Path(os.getenv("TRUSTHEART_REPORTS_DIR", "reports"))
 CORS_ORIGINS_RAW: str = (
     os.getenv("CORS_ORIGINS")
     or os.getenv("TRUSTHEART_ORIGINS")
-    or "http://localhost:5173"
+    or "http://localhost:5173,http://127.0.0.1:5173"
 )
 ALLOWED_ORIGINS: list[str] = [
     origin.strip() for origin in CORS_ORIGINS_RAW.split(",") if origin.strip()
