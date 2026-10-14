@@ -83,11 +83,12 @@ class SafeLoggingAndSecurityMiddleware(BaseHTTPMiddleware):
         current_limit = int(os.getenv("TRUSTHEART_RATE_LIMIT", str(self.rate_limit)))
 
         if len(q) >= current_limit:
+            _ = await request.body()
             retry_after = max(1, int(60.0 - (now - q[0])))
             return JSONResponse(
                 status_code=429,
                 content={"detail": "Rate limit exceeded. Please try again later."},
-                headers={"Retry-After": str(retry_after)},
+                headers={"Retry-After": str(retry_after), "Connection": "close"},
             )
 
         q.append(now)

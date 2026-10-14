@@ -1,0 +1,17 @@
+# Render Infrastructure Blueprint for TrustHeart 3D
+services:
+  - type: web
+    name: trustheart-3d
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: TRUSTHEART_TRUST_PROXY
+        value: "true"
+      # IMPORTANT: TRUSTHEART_TRUSTED_PROXY_HOPS must be verified after deployment
+      # against Render's reverse proxy infrastructure using scripts/smoke_deployed.py.
+      - key: TRUSTHEART_TRUSTED_PROXY_HOPS
+        value: "1"
+      - key: TRUSTHEART_RATE_LIMIT
+        value: "60"

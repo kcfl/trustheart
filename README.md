@@ -146,4 +146,29 @@ docker stop trustheart-app
 docker rm trustheart-app
 ```
 
+---
+
+## Deploy
+
+### Deploying to Render via Blueprint
+
+1. **Create Service on Render**:
+   - In the [Render Dashboard](https://dashboard.render.com), click **New** > **Blueprint**.
+   - Connect this GitHub repository.
+   - Render automatically reads [`render.yaml`](file:///e:/iit%20mandi/trustheart/render.yaml) to configure the web service using the multi-stage `Dockerfile`.
+2. **Environment Variables Configured in Blueprint**:
+   - `TRUSTHEART_TRUST_PROXY`: `true` (enables proxy header parsing).
+   - `TRUSTHEART_TRUSTED_PROXY_HOPS`: `1` (takes the 1st IP from the right of `X-Forwarded-For`; verify with `scripts/smoke_deployed.py` post-deploy).
+   - `TRUSTHEART_RATE_LIMIT`: `60` (requests per minute).
+   - *Note*: `PORT` is automatically injected by Render (no manual specification required).
+3. **Operational Notes & Architecture Limitations**:
+   - **Pre-deployment Status**: `Dockerfile` and `render.yaml` are untested until the first real deploy.
+   - **Worker Architecture**: Run with a **single worker only** because the IP sliding-window rate limiter is stored in-memory in `backend/app/security.py`. Multi-worker deployments would fragment rate limit tracking.
+   - **Cold Start & Model Load Time**: On Render's Free tier, services spin down after 15 minutes of inactivity. Cold starts take approximately 30–60 seconds to boot the container; once the Python process starts, model loading and artifact verification take **~2.2 seconds** before `/api/health` returns HTTP 200.
+4. **Post-Deployment Verification**:
+   Run the remote smoke test against the live Render URL:
+   ```powershell
+   python scripts/smoke_deployed.py https://<your-service-name>.onrender.com
+   ```
+
 
