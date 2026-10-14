@@ -2,10 +2,12 @@
 
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from fastapi import FastAPI, HTTPException, Request, status
+from pathlib import Path
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.app.config import ALLOWED_ORIGINS
 from backend.app.routes import router
@@ -79,3 +81,33 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
 
 # 4. Attach API routes
 app.include_router(router)
+
+# 5. Serve frontend/dist when it exists (production/SPA deployment)
+FRONTEND_DIST: Path = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+
+if FRONTEND_DIST.is_dir():
+    assets_dir = FRONTEND_DIST / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="frontend-assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_frontend(full_path: str) -> Response:
+        """Serve static assets or SPA index.html from frontend/dist."""
+        # Never intercept API, OpenAPI, or docs routes
+        if (
+            full_path.startswith("api/")
+            or full_path.startswith("api")
+            or full_path in ("docs", "redoc", "openapi.json")
+        ):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+
+        target_file = FRONTEND_DIST / full_path
+        if full_path and target_file.is_file():
+            return FileResponse(target_file)
+
+        index_file = FRONTEND_DIST / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+

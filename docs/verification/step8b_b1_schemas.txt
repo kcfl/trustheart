@@ -1,0 +1,93 @@
+{
+  "TrustBlock": {
+    "additionalProperties": false,
+    "description": "Trust and clinical evidence container.",
+    "properties": {
+      "bands_note": {
+        "default": "Bands are display categories, not clinical thresholds.",
+        "title": "Bands Note",
+        "type": "string"
+      },
+      "evidence_auc": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Evidence Auc",
+        "type": "object"
+      },
+      "evidence_estimate": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Evidence Estimate"
+      },
+      "lift": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/LiftItem"
+        },
+        "title": "Lift",
+        "type": "object"
+      },
+      "similar_patients": {
+        "items": {
+          "$ref": "#/components/schemas/SimilarPatientItem"
+        },
+        "title": "Similar Patients",
+        "type": "array"
+      }
+    },
+    "required": [
+      "similar_patients",
+      "evidence_auc",
+      "lift"
+    ],
+    "title": "TrustBlock",
+    "type": "object"
+  },
+  "SimilarPatientItem": {
+    "additionalProperties": false,
+    "description": "Clinically similar patient reference record.",
+    "properties": {
+      "age_band": {
+        "title": "Age Band",
+        "type": "string"
+      },
+      "case_id": {
+        "title": "Case Id",
+        "type": "integer"
+      },
+      "distance": {
+        "title": "Distance",
+        "type": "number"
+      },
+      "outcomes": {
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Outcomes",
+        "type": "object"
+      },
+      "sex": {
+        "title": "Sex",
+        "type": "string"
+      }
+    },
+    "required": [
+      "case_id",
+      "distance",
+      "age_band",
+      "sex",
+      "outcomes"
+    ],
+    "title": "SimilarPatientItem",
+    "type": "object"
+  }
+}

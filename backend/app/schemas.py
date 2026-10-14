@@ -23,6 +23,65 @@ class StrictBaseModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+# Hard physiologic/dataset validity ranges for continuous and ordinal features
+HARD_FEATURE_RANGES: dict[str, tuple[float, float]] = {
+    "Age": (0.0, 120.0),
+    "Weight": (10.0, 400.0),
+    "Length": (50.0, 260.0),
+    "BMI": (10.0, 100.0),
+    "BP": (30.0, 300.0),
+    "PR": (30.0, 250.0),
+    "FBS": (20.0, 1200.0),
+    "CR": (0.1, 30.0),
+    "TG": (10.0, 3000.0),
+    "LDL": (5.0, 1000.0),
+    "HDL": (5.0, 300.0),
+    "BUN": (1.0, 300.0),
+    "ESR": (0.0, 200.0),
+    "HB": (3.0, 25.0),
+    "K": (1.0, 10.0),
+    "Na": (90.0, 200.0),
+    "WBC": (500.0, 150000.0),
+    "Lymph": (0.0, 100.0),
+    "Neut": (0.0, 100.0),
+    "PLT": (5.0, 2500.0),
+    "EF-TTE": (5.0, 95.0),
+    "Region RWMA": (0.0, 4.0),
+    "Function Class": (0.0, 3.0),
+}
+
+BINARY_FEATURES: set[str] = {
+    "DM",
+    "HTN",
+    "Current Smoker",
+    "EX-Smoker",
+    "FH",
+    "Obesity",
+    "CRF",
+    "CVA",
+    "Airway disease",
+    "Thyroid Disease",
+    "CHF",
+    "DLP",
+    "Edema",
+    "Weak Peripheral Pulse",
+    "Lung rales",
+    "Systolic Murmur",
+    "Diastolic Murmur",
+    "Typical Chest Pain",
+    "Dyspnea",
+    "Atypical",
+    "Nonanginal",
+    "LowTH Ang",
+    "Q Wave",
+    "St Elevation",
+    "St Depression",
+    "Tinversion",
+    "LVH",
+    "Poor R Progression",
+}
+
+
 # ---------------------------------------------------------------------------
 # Request Schemas
 # ---------------------------------------------------------------------------
@@ -54,39 +113,67 @@ class PredictRequest(StrictBaseModel):
         if unknown:
             raise ValueError(f"Unknown feature name(s): {unknown}")
 
-        # 4. Validate values and non-finite floats
+        # 4. Validate feature values and types
         for feat, val in v.items():
             if val is None:
                 continue
-            if isinstance(val, (int, float)):
+
+            # Binary features
+            if feat in BINARY_FEATURES:
+                if isinstance(val, bool):
+                    continue
+                if isinstance(val, (int, float)):
+                    if math.isnan(val) or math.isinf(val):
+                        raise ValueError(f"Non-finite value for binary feature '{feat}': {val}")
+                    if val not in (0, 1, 0.0, 1.0):
+                        raise ValueError(
+                            f"Value {val} for binary feature '{feat}' is invalid. Expected 0 or 1 (or boolean)."
+                        )
+                else:
+                    raise ValueError(
+                        f"Unsupported type {type(val).__name__} for binary feature '{feat}'. Expected boolean or 0/1."
+                    )
+
+            # Continuous and ordinal numeric features
+            elif feat in HARD_FEATURE_RANGES:
+                if isinstance(val, bool):
+                    raise ValueError(f"Feature '{feat}' must be numeric, got boolean.")
+                if not isinstance(val, (int, float)):
+                    raise ValueError(f"Feature '{feat}' must be a numeric value, got {type(val).__name__}.")
                 if math.isnan(val) or math.isinf(val):
                     raise ValueError(f"Non-finite value for feature '{feat}': {val}")
-            elif isinstance(val, str):
-                # Check categorical / ordinal inputs
-                if feat == "Sex" and val not in ["Male", "Female", "Fmale"]:
+                min_val, max_val = HARD_FEATURE_RANGES[feat]
+                if val < min_val or val > max_val:
                     raise ValueError(
-                        f"Invalid Sex '{val}'. Expected 'Male' or 'Female'."
+                        f"Value {val} for feature '{feat}' is outside valid range [{min_val}, {max_val}]."
                     )
-                elif feat == "VHD" and val.strip().lower() not in VHD_ORDINAL_MAPPING:
+
+            # Categorical string features
+            elif feat == "Sex":
+                if isinstance(val, str):
+                    if val not in ["Male", "Female", "Fmale"]:
+                        raise ValueError(f"Invalid Sex '{val}'. Expected 'Male' or 'Female'.")
+                elif isinstance(val, bool):
+                    continue
+                elif isinstance(val, (int, float)) and val in (0, 1, 0.0, 1.0):
+                    continue
+                else:
+                    raise ValueError(f"Invalid Sex value '{val}'. Expected 'Male', 'Female', or 0/1.")
+
+            elif feat == "VHD":
+                if not isinstance(val, str) or val.strip().lower() not in VHD_ORDINAL_MAPPING:
                     raise ValueError(
                         f"Invalid VHD '{val}'. Expected one of: {list(VHD_ORDINAL_MAPPING.keys())}"
                     )
-                elif feat == "BBB" and val not in ["N", "LBBB", "RBBB"]:
+
+            elif feat == "BBB":
+                if not isinstance(val, str) or val.strip() not in ["N", "LBBB", "RBBB"]:
                     raise ValueError(
                         f"Invalid BBB '{val}'. Expected 'N', 'LBBB', or 'RBBB'."
                     )
-            elif not isinstance(val, bool):
-                raise ValueError(
-                    f"Unsupported type {type(val)} for feature '{feat}'."
-                )
 
-        # 4. Hard range check on Age (0 to 120)
-        if "Age" in v and v["Age"] is not None:
-            age_val = v["Age"]
-            if not isinstance(age_val, (int, float)) or isinstance(age_val, bool):
-                raise ValueError("Age must be a numeric value.")
-            if age_val < 0 or age_val > 120:
-                raise ValueError(f"Age {age_val} is outside hard limit [0, 120].")
+            else:
+                raise ValueError(f"Unsupported feature '{feat}' with value {val}.")
 
         return v
 

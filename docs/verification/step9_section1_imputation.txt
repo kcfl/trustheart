@@ -1,0 +1,37 @@
+﻿VHD unique values found: ['N', 'mild', 'Severe', 'Moderate']
+BBB unique values found: ['N', 'LBBB', 'RBBB']
+Dropped constant column(s) (1): ['Exertional CP']
+=== 1. DEMO SAMPLE 2 (label: median, Case ID 125) ===
+Actual patient inputs Region RWMA: 1.0
+CAD Top 10 contributions in Plain Median Sample:
+   1. Typical Chest Pain       : val=True  , contrib=  0.8586, imputed=False
+   2. Atypical                 : val=False , contrib=  0.4634, imputed=False
+   3. Age                      : val=52.0  , contrib= -0.4022, imputed=False
+   4. HTN                      : val=True  , contrib=  0.4015, imputed=False
+   5. K                        : val=3.7   , contrib= -0.3422, imputed=False
+   6. EF-TTE                   : val=55.0  , contrib= -0.3238, imputed=False
+   7. FBS                      : val=71.0  , contrib= -0.3088, imputed=False
+   8. DM                       : val=False , contrib= -0.2798, imputed=False
+   9. Tinversion               : val=False , contrib= -0.2648, imputed=False
+  10. Current Smoker           : val=True  , contrib=  0.2572, imputed=False
+
+=== 2. FULL_MEDIAN_3MISSING (Case ID 125 with 3 missing) ===
+CAD Top 10 contributions in 3-Missing Sample:
+   1. Typical Chest Pain       : val=True  , contrib=  0.8586, imputed=False
+   2. Atypical                 : val=False , contrib=  0.4634, imputed=False
+   3. Age                      : val=52.0  , contrib= -0.4022, imputed=False
+   4. HTN                      : val=True  , contrib=  0.4015, imputed=False
+   5. K                        : val=3.7   , contrib= -0.3422, imputed=False
+   6. FBS                      : val=71.0  , contrib= -0.3088, imputed=False
+   7. Region RWMA              : val=0.0   , contrib= -0.2932, imputed=True
+   8. DM                       : val=False , contrib= -0.2798, imputed=False
+   9. Tinversion               : val=False , contrib= -0.2648, imputed=False
+  10. Current Smoker           : val=True  , contrib=  0.2572, imputed=False
+
+=== 3. MATHEMATICAL DEMONSTRATION ===
+Feature: Region RWMA
+Training Mean: 0.620462, Std / Scale: 1.130661, Coef w: 0.043225, Platt a: 12.362754
+Case 1 (Measured value = 1.0): z = (1.0 - 0.6205) / 1.1307 = 0.3357 -> contrib = 0.1794
+Case 2 (Imputed median = 0.0): z = (0.0 - 0.6205) / 1.1307 = -0.5488 -> contrib = -0.2932
+Absolute magnitude shift: |0.1794| (0.1794) -> |-0.2932| (0.2932)
+This increased absolute magnitude from 0.1794 to 0.2932, shifting Region RWMA from rank 15 to rank 7.

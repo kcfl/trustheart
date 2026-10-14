@@ -49,19 +49,84 @@ The script runs the following sequence and halts immediately if any step fails:
 
 ## Running the Application
 
-To run TrustHeart 3D locally, open two PowerShell terminals:
+### 1. Windows Local Execution
 
-### Terminal 1: Backend API (FastAPI)
+#### Option A: Development Mode (Two Terminals)
+
+**Terminal 1 — Backend API (FastAPI):**
 ```powershell
 cd "e:\iit mandi\trustheart"
-powershell -ExecutionPolicy Bypass -File scripts\run_api.ps1
+$env:Path = "C:\Program Files\nodejs;" + $env:Path
+.\.venv\Scripts\Activate.ps1
+# Run API server on port 8000
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+# Alternatively via script:
+# powershell -ExecutionPolicy Bypass -File scripts\run_api.ps1
 ```
 The FastAPI backend will start on `http://127.0.0.1:8000`. Health check: `http://127.0.0.1:8000/api/health`.
 
-### Terminal 2: Frontend UI (Vite + React)
+**Terminal 2 — Frontend UI (Vite + React):**
 ```powershell
 cd "e:\iit mandi\trustheart\frontend"
-npm run dev
+$env:Path = "C:\Program Files\nodejs;" + $env:Path
+npm.cmd install
+npm.cmd run dev
 ```
-The Vite development server will start on `http://localhost:5173` with proxying to the backend API via `/api`.
+The Vite development server will start on `http://localhost:5173` with proxying to `http://127.0.0.1:8000/api`.
+
+#### Option B: Standalone Production Mode on Windows (Single Server)
+FastAPI automatically serves the compiled `frontend/dist` assets and SPA routes when present:
+```powershell
+# 1. Compile frontend production bundle
+cd "e:\iit mandi\trustheart\frontend"
+$env:Path = "C:\Program Files\nodejs;" + $env:Path
+npm.cmd run build
+
+# 2. Launch FastAPI serving both API and static frontend on port 8000
+cd "e:\iit mandi\trustheart"
+.\.venv\Scripts\Activate.ps1
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+Open `http://localhost:8000` in your web browser.
+
+---
+
+### 2. Docker Execution (Multi-Stage Container)
+
+The project includes a multi-stage `Dockerfile` that builds the React frontend in `node:22-alpine` and serves both the API and frontend assets via FastAPI on `python:3.12-slim`.
+
+#### Step 1: Build Docker Image
+From the repository root (`e:\iit mandi\trustheart`):
+```powershell
+docker build -t trustheart-3d:latest .
+```
+
+#### Step 2: Run Docker Container
+Run the container mapping port 8000:
+```powershell
+docker run -d `
+  --name trustheart-app `
+  -p 8000:8000 `
+  -e CORS_ORIGINS="http://localhost:5173,http://localhost:8000" `
+  trustheart-3d:latest
+```
+
+#### Step 3: Verify Health and Access
+```powershell
+# Check container logs
+docker logs trustheart-app
+
+# Check health endpoint
+curl http://localhost:8000/api/health
+
+# Open in browser
+Start-Process "http://localhost:8000"
+```
+
+#### Step 4: Stop and Remove Container
+```powershell
+docker stop trustheart-app
+docker rm trustheart-app
+```
+
 

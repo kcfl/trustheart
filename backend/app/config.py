@@ -9,11 +9,13 @@ MODELS_DIR: Path = Path(os.getenv("TRUSTHEART_MODELS_DIR", "models"))
 REPORTS_DIR: Path = Path(os.getenv("TRUSTHEART_REPORTS_DIR", "reports"))
 
 # Security and networking configuration
-TRUSTHEART_ORIGINS_RAW: str = os.getenv(
-    "TRUSTHEART_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+CORS_ORIGINS_RAW: str = (
+    os.getenv("CORS_ORIGINS")
+    or os.getenv("TRUSTHEART_ORIGINS")
+    or "http://localhost:5173"
 )
 ALLOWED_ORIGINS: list[str] = [
-    origin.strip() for origin in TRUSTHEART_ORIGINS_RAW.split(",") if origin.strip()
+    origin.strip() for origin in CORS_ORIGINS_RAW.split(",") if origin.strip()
 ]
 
 # Request body limit: 20 KB

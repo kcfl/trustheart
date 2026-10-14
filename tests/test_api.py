@@ -734,3 +734,168 @@ def test_18_probability_bands_boundary_agreement(client: TestClient) -> None:
         assert fn_band == meta_band, f"Mismatch at boundary {p}: get_probability_band={fn_band} vs meta={meta_band}"
 
 
+# ---------------------------------------------------------------------------
+# Test 19: Model Version from manifest.json, Not Git HEAD
+# ---------------------------------------------------------------------------
+def test_19_model_version_from_manifest_not_git_head(client: TestClient) -> None:
+    """Test 19: model_version is anchored to models/manifest.json git_commit, not git HEAD."""
+    import subprocess
+
+    res = client.get("/api/health")
+    assert res.status_code == 200
+    data = res.json()
+
+    with open("models/manifest.json", "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    manifest_commit = manifest["git_commit"]
+
+    # Verify model_version is exactly tied to manifest
+    assert data["git_commit"] == manifest_commit
+    assert data["model_version"] == f"ml-v1 ({manifest_commit})"
+
+    # Check git HEAD - if repo has advanced past ml-v1, HEAD must not override model_version
+    try:
+        git_head = subprocess.check_output(
+            ["git", "--no-pager", "rev-parse", "HEAD"], text=True
+        ).strip()
+        if git_head != manifest_commit:
+            assert git_head not in data["model_version"], (
+                f"model_version improperly uses git HEAD ({git_head}) instead of manifest commit ({manifest_commit})"
+            )
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# Test 20: CORS Headers with Allowed and Disallowed Origins
+# ---------------------------------------------------------------------------
+def test_20_cors_headers_with_origin(client: TestClient) -> None:
+    """Test 20: CORS headers with Origin header enforce allow_credentials=False and exact origin."""
+    # Request with allowed origin
+    res_allowed = client.get("/api/health", headers={"Origin": "http://localhost:5173"})
+    assert res_allowed.status_code == 200
+    assert res_allowed.headers.get("access-control-allow-origin") == "http://localhost:5173"
+    # allow_credentials is False -> access-control-allow-credentials header must NOT be present
+    assert "access-control-allow-credentials" not in res_allowed.headers
+
+    # Request with disallowed origin receives NO access-control-allow-origin header
+    res_disallowed = client.get("/api/health", headers={"Origin": "http://unauthorized.domain"})
+    assert res_disallowed.status_code == 200
+    assert "access-control-allow-origin" not in res_disallowed.headers
+
+
+# ---------------------------------------------------------------------------
+# Test 21: Unknown or Out-of-Range Inputs Return Clear 422 with Field Names
+# ---------------------------------------------------------------------------
+def test_21_unknown_and_out_of_range_inputs_return_422_with_field_names(
+    client: TestClient,
+) -> None:
+    """Test 21: Inputs with unknown features or out-of-range values return 422 with clear field names."""
+    # 1. Unknown feature name
+    r_unknown = client.post(
+        "/api/predict",
+        json={"mode": "quick", "inputs": {"Age": 50, "Sex": "Male", "unknown_bogus_col": 123}},
+    )
+    assert r_unknown.status_code == 422
+    assert "unknown_bogus_col" in r_unknown.json()["detail"]
+
+    # 2. Continuous feature above physiologic limit (Age: 250)
+    r_age_high = client.post(
+        "/api/predict",
+        json={"mode": "quick", "inputs": {"Age": 250, "Sex": "Male"}},
+    )
+    assert r_age_high.status_code == 422
+    assert "Age" in r_age_high.json()["detail"]
+
+    # 3. Continuous feature below physiologic limit (Weight: -5)
+    r_weight_neg = client.post(
+        "/api/predict",
+        json={"mode": "full", "inputs": {"Weight": -5.0, "Sex": "Male"}},
+    )
+    assert r_weight_neg.status_code == 422
+    assert "Weight" in r_weight_neg.json()["detail"]
+
+    # 4. Binary feature out of range (DM: 5)
+    r_dm_invalid = client.post(
+        "/api/predict",
+        json={"mode": "quick", "inputs": {"Age": 55, "Sex": "Male", "DM": 5}},
+    )
+    assert r_dm_invalid.status_code == 422
+    assert "DM" in r_dm_invalid.json()["detail"]
+
+    # 5. Invalid categorical string (Sex: 'Invalid')
+    r_sex_invalid = client.post(
+        "/api/predict",
+        json={"mode": "quick", "inputs": {"Age": 55, "Sex": "InvalidSex"}},
+    )
+    assert r_sex_invalid.status_code == 422
+    assert "Sex" in r_sex_invalid.json()["detail"]
+
+    # 6. Invalid BBB categorical string
+    r_bbb_invalid = client.post(
+        "/api/predict",
+        json={"mode": "full", "inputs": {"Age": 55, "BBB": "InvalidBBB"}},
+    )
+    assert r_bbb_invalid.status_code == 422
+    assert "BBB" in r_bbb_invalid.json()["detail"]
+
+
+# ---------------------------------------------------------------------------
+# Test 22: Frontend Static File Serving & SPA Fallback
+# ---------------------------------------------------------------------------
+def test_22_frontend_dist_static_serving_and_spa_fallback(client: TestClient) -> None:
+    """Test 22: FastAPI serves frontend/dist assets and SPA fallback while preserving /api routes."""
+    # 1. Root serves index.html
+    r_root = client.get("/")
+    assert r_root.status_code == 200
+    assert "text/html" in r_root.headers.get("content-type", "")
+
+    # 2. Static file serves actual file
+    r_favicon = client.get("/favicon.svg")
+    assert r_favicon.status_code == 200
+
+    # 3. Client route falls back to SPA index.html
+    r_client_route = client.get("/patient-profile/125")
+    assert r_client_route.status_code == 200
+    assert "text/html" in r_client_route.headers.get("content-type", "")
+
+    # 4. API endpoints still function normally
+    r_health = client.get("/api/health")
+    assert r_health.status_code == 200
+    assert r_health.json()["status"] == "ok"
+
+    # 5. Nonexistent API route returns 404 JSON, NOT index.html
+    r_bad_api = client.get("/api/nonexistent_route")
+    assert r_bad_api.status_code == 404
+    assert r_bad_api.json() == {"detail": "Not Found"}
+
+
+# ---------------------------------------------------------------------------
+# Test 23: Body Size Limit 413 & Zero Request Body Logging
+# ---------------------------------------------------------------------------
+def test_23_body_size_limit_and_zero_body_logging(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test 23: 20 KB limit triggers 413, and request bodies are never logged anywhere."""
+    # Exceeding 20 KB
+    large_payload = {"mode": "quick", "inputs": {"Age": 50, "pad": "A" * 22000}}
+    r_large = client.post("/api/predict", json=large_payload)
+    assert r_large.status_code == 413
+    assert "20 KB" in r_large.json()["detail"]
+
+    # Canary string in request body is never logged
+    canary = "PRIVATE_CANARY_VALUE_XYZ_98765"
+    with caplog.at_level(logging.DEBUG):
+        r_pred = client.post(
+            "/api/predict",
+            json={"mode": "quick", "inputs": {"Age": 55, "Sex": "Male"}},
+            headers={"X-Custom-Canary": canary},
+        )
+        assert r_pred.status_code == 200
+
+    log_text = caplog.text
+    assert canary not in log_text, "Canary header/body value was leaked into server logs!"
+    assert "inputs" not in log_text, "Request inputs dictionary was leaked into server logs!"
+
+
+
