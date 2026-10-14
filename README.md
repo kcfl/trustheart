@@ -99,7 +99,26 @@ TrustHeart 3D supports two distinct prediction workflows:
 
 ### B. Via HTTP API (`POST /api/predict`)
 
-**Quick Mode Example**:
+**Quick Mode Example (PowerShell)**:
+```powershell
+$body = @'
+{
+  "mode": "quick",
+  "inputs": {
+    "Age": 59.0,
+    "Sex": "Male",
+    "Typical Chest Pain": false,
+    "Atypical": true,
+    "Nonanginal": false,
+    "DM": false,
+    "HTN": false
+  }
+}
+'@
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/predict" -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 5
+```
+
+**Quick Mode Example (curl / bash)**:
 ```bash
 curl -X POST http://127.0.0.1:8000/api/predict \
   -H "Content-Type: application/json" \
