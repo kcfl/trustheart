@@ -403,9 +403,9 @@ class ModelService:
                 numeric_inputs[feat] = float(val) if val is not None else 0.0
 
         # 6. Compute predictions, logit contributions, and bands per target
-        target_predictions: dict[str, TargetPrediction] = {}
         raw_p_map: dict[str, float] = {}
         cal_p_map: dict[str, float] = {}
+        intermediate_targets: dict[str, dict[str, Any]] = {}
 
         for target in TARGETS:
             artifact = self.models[(space, target)]
@@ -516,17 +516,17 @@ class ModelService:
             )
             base_rate = float(self.targets_df[target].mean())
 
-            target_predictions[target] = TargetPrediction(
-                raw_probability=raw_p,
-                calibrated_probability=cal_p,
-                band=band,
-                base=base,
-                contributions=top_10,
-                other_total=other_total,
-                logit_model=logit_cal,
-                model_info=model_info,
-                base_rate=base_rate,
-            )
+            intermediate_targets[target] = {
+                "raw_probability": raw_p,
+                "calibrated_probability": cal_p,
+                "band": band,
+                "base": base,
+                "contributions": top_10,
+                "other_total": other_total,
+                "logit_model": logit_cal,
+                "model_info": model_info,
+                "base_rate": base_rate,
+            }
 
         # 7. Apply Fréchet Coherence Bounds to CAD
         lower_bound, upper_bound = frechet_bounds(
@@ -543,6 +543,43 @@ class ModelService:
             p_cad_model=float(cal_p_map["CAD"]),
             p_cad_adjusted=float(p_cad_adj.item() if hasattr(p_cad_adj, "item") else p_cad_adj),
         )
+
+        # Assemble final TargetPrediction objects with display fields
+        target_predictions: dict[str, TargetPrediction] = {}
+        for target in TARGETS:
+            inter = intermediate_targets[target]
+            if target == "CAD":
+                display_p = consistency.p_cad_adjusted
+                display_b = get_probability_band(display_p)
+                is_adj = bool(consistency.status != "ok")
+                disp_note = (
+                    "Adjusted to stay logically consistent with the vessel probabilities "
+                    "(CAD is defined as at least one stenotic vessel)."
+                    if is_adj
+                    else None
+                )
+            else:
+                display_p = inter["calibrated_probability"]
+                display_b = get_probability_band(display_p)
+                is_adj = False
+                disp_note = None
+
+            target_predictions[target] = TargetPrediction(
+                raw_probability=inter["raw_probability"],
+                calibrated_probability=inter["calibrated_probability"],
+                band=inter["band"],
+                display_probability=display_p,
+                display_band=display_b,
+                adjusted=is_adj,
+                display_note=disp_note,
+                base=inter["base"],
+                contributions=inter["contributions"],
+                other_total=inter["other_total"],
+                logit_model=inter["logit_model"],
+                model_info=inter["model_info"],
+                base_rate=inter["base_rate"],
+            )
+
 
         # 8. Build Trust Block (similar patients, LOO evidence, lift)
         # Determine available columns (non-imputed features of the mode)

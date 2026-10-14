@@ -14,7 +14,7 @@ import pytest
 from fastapi.testclient import TestClient
 from scipy.special import expit, logit
 
-from backend.app.config import FULL_HUMAN_FEATURES, QUICK_FEATURES
+from backend.app.config import FULL_HUMAN_FEATURES, QUICK_FEATURES, get_probability_band
 from backend.app.main import app
 from backend.app.security import reset_rate_limiter
 from backend.app.service import ModelService, get_model_service
@@ -618,3 +618,72 @@ def test_15_startup_fails_closed_on_tampering(
     # Expect initialization to fail closed with a RuntimeError
     with pytest.raises(RuntimeError, match="Integrity check failed"):
         ModelService(models_dir=temp_models)
+
+
+# ---------------------------------------------------------------------------
+# Test 16: Display Fields and Fréchet Adjustment Verification
+# ---------------------------------------------------------------------------
+def test_16_display_fields_and_p10_adjustment(client: TestClient) -> None:
+    """Test 16: Display fields match specifications, CAD adjustment and p10 raised status in both modes."""
+    samples_res = client.get("/api/samples")
+    assert samples_res.status_code == 200
+    samples = samples_res.json()["samples"]
+
+    p10_sample = next(s for s in samples if s["label"] == "p10")
+
+    for mode in ["quick", "full"]:
+        for sample in samples:
+            res = client.post("/api/predict", json={"mode": mode, "inputs": sample["inputs"]})
+            assert res.status_code == 200
+            data = res.json()
+            preds = data["predictions"]
+            consistency = data["consistency"]
+
+            # Vessels: display == calibrated, adjusted == False, display_note is None
+            for v in ["LAD", "LCX", "RCA"]:
+                assert preds[v]["display_probability"] == preds[v]["calibrated_probability"]
+                assert preds[v]["display_band"] == get_probability_band(preds[v]["display_probability"])
+                assert preds[v]["adjusted"] is False
+                assert preds[v]["display_note"] is None
+
+            # CAD: display == consistency.p_cad_adjusted, adjusted == (status != 'ok')
+            assert math.isclose(preds["CAD"]["display_probability"], consistency["p_cad_adjusted"], abs_tol=1e-9)
+            assert preds["CAD"]["display_band"] == get_probability_band(preds["CAD"]["display_probability"])
+            assert preds["CAD"]["adjusted"] == (consistency["status"] != "ok")
+            if preds["CAD"]["adjusted"]:
+                assert preds["CAD"]["display_note"] == (
+                    "Adjusted to stay logically consistent with the vessel probabilities "
+                    "(CAD is defined as at least one stenotic vessel)."
+                )
+            else:
+                assert preds["CAD"]["display_note"] is None
+
+        # Specific check for p10 sample in BOTH modes
+        p10_res = client.post("/api/predict", json={"mode": mode, "inputs": p10_sample["inputs"]})
+        assert p10_res.status_code == 200
+        p10_data = p10_res.json()
+        p10_cad = p10_data["predictions"]["CAD"]
+        p10_cons = p10_data["consistency"]
+
+        assert p10_cons["status"] == "raised", f"Expected 'raised' for p10 in {mode} mode, got {p10_cons['status']}"
+        assert p10_cad["adjusted"] is True
+        assert p10_cad["display_probability"] != p10_cad["calibrated_probability"]
+        assert p10_cad["display_probability"] == p10_cons["p_cad_adjusted"]
+
+
+# ---------------------------------------------------------------------------
+# Test 17: OpenAPI Contract Drift
+# ---------------------------------------------------------------------------
+def test_17_openapi_contract_drift() -> None:
+    """Test 17: docs/openapi.json matches the active FastAPI app schema exactly."""
+    openapi_path = Path("docs/openapi.json")
+    assert openapi_path.is_file(), "docs/openapi.json missing! Run scripts/dump_openapi.py"
+
+    with open(openapi_path, "r", encoding="utf-8") as f:
+        disk_schema = json.load(f)
+
+    active_schema = app.openapi()
+    assert disk_schema == active_schema, (
+        "docs/openapi.json differs from app.openapi()! Run scripts/dump_openapi.py to update."
+    )
+

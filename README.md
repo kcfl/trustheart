@@ -44,3 +44,24 @@ The script runs the following sequence and halts immediately if any step fails:
 ### 4. Expected Runtime
 - **Runtime**: Approximately 8 to 14 minutes on a multi-core machine (using joblib with all available CPU cores).
 - **Determinism**: All results are fully deterministic given the fixed random seeds (`SEED = 42`, `CV_SEED = 42`) and the exact package versions specified in `requirements.lock`.
+
+---
+
+## Running the Application
+
+To run TrustHeart 3D locally, open two PowerShell terminals:
+
+### Terminal 1: Backend API (FastAPI)
+```powershell
+cd "e:\iit mandi\trustheart"
+powershell -ExecutionPolicy Bypass -File scripts\run_api.ps1
+```
+The FastAPI backend will start on `http://127.0.0.1:8000`. Health check: `http://127.0.0.1:8000/api/health`.
+
+### Terminal 2: Frontend UI (Vite + React)
+```powershell
+cd "e:\iit mandi\trustheart\frontend"
+npm run dev
+```
+The Vite development server will start on `http://localhost:5173` with proxying to the backend API via `/api`.
+

@@ -1,0 +1,1125 @@
+{
+  "components": {
+    "schemas": {
+      "ConsistencyInfo": {
+        "additionalProperties": false,
+        "description": "Fr\u00e9chet coherence analysis results for CAD vs vessel probabilities.",
+        "properties": {
+          "lower": {
+            "title": "Lower",
+            "type": "number"
+          },
+          "p_cad_adjusted": {
+            "title": "P Cad Adjusted",
+            "type": "number"
+          },
+          "p_cad_model": {
+            "title": "P Cad Model",
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "raised",
+              "lowered"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "upper": {
+            "title": "Upper",
+            "type": "number"
+          }
+        },
+        "required": [
+          "status",
+          "lower",
+          "upper",
+          "p_cad_model",
+          "p_cad_adjusted"
+        ],
+        "title": "ConsistencyInfo",
+        "type": "object"
+      },
+      "ContributionItem": {
+        "additionalProperties": false,
+        "description": "Feature contribution entry in logit space.",
+        "properties": {
+          "contribution": {
+            "title": "Contribution",
+            "type": "number"
+          },
+          "direction": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "imputed": {
+            "default": false,
+            "title": "Imputed",
+            "type": "boolean"
+          },
+          "stability_tag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stability Tag"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": [
+          "feature",
+          "value",
+          "contribution",
+          "direction"
+        ],
+        "title": "ContributionItem",
+        "type": "object"
+      },
+      "FeatureMetaItem": {
+        "additionalProperties": false,
+        "description": "Single feature descriptor for /api/meta.",
+        "properties": {
+          "allowed_values": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Values"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "in_quick": {
+            "title": "In Quick",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "binary",
+              "continuous",
+              "ordinal",
+              "categorical"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "training": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Training",
+            "type": "object"
+          },
+          "training_max": {
+            "title": "Training Max",
+            "type": "number"
+          },
+          "training_median": {
+            "title": "Training Median",
+            "type": "number"
+          },
+          "training_min": {
+            "title": "Training Min",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "null"
+          }
+        },
+        "required": [
+          "name",
+          "label",
+          "kind",
+          "group",
+          "training_min",
+          "training_max",
+          "training_median",
+          "training",
+          "in_quick"
+        ],
+        "title": "FeatureMetaItem",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "description": "Health check response schema.",
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "git_commit": {
+            "title": "Git Commit",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "models_verified": {
+            "title": "Models Verified",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "model_version",
+          "git_commit",
+          "models_verified",
+          "disclaimer"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "LiftItem": {
+        "additionalProperties": false,
+        "description": "Full feature set lift over quick screening.",
+        "properties": {
+          "note": {
+            "default": "repeat interval, descriptive",
+            "title": "Note",
+            "type": "string"
+          },
+          "p2_5": {
+            "title": "P2 5",
+            "type": "number"
+          },
+          "p97_5": {
+            "title": "P97 5",
+            "type": "number"
+          },
+          "paired_mean": {
+            "title": "Paired Mean",
+            "type": "number"
+          },
+          "selection_identical_fraction": {
+            "title": "Selection Identical Fraction",
+            "type": "number"
+          }
+        },
+        "required": [
+          "paired_mean",
+          "p2_5",
+          "p97_5",
+          "selection_identical_fraction"
+        ],
+        "title": "LiftItem",
+        "type": "object"
+      },
+      "MetaResponse": {
+        "additionalProperties": false,
+        "description": "Complete metadata response schema.",
+        "properties": {
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureMetaItem"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "modes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ModeDefinition"
+            },
+            "title": "Modes",
+            "type": "object"
+          }
+        },
+        "required": [
+          "modes",
+          "features"
+        ],
+        "title": "MetaResponse",
+        "type": "object"
+      },
+      "ModeDefinition": {
+        "additionalProperties": false,
+        "description": "Mode specification descriptor.",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "n_features": {
+            "title": "N Features",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "n_features",
+          "features"
+        ],
+        "title": "ModeDefinition",
+        "type": "object"
+      },
+      "ModelExportResponse": {
+        "additionalProperties": false,
+        "description": "Full browser-reproducible model export schema.",
+        "properties": {
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "targets": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TargetModelExport"
+            },
+            "title": "Targets",
+            "type": "object"
+          }
+        },
+        "required": [
+          "mode",
+          "targets"
+        ],
+        "title": "ModelExportResponse",
+        "type": "object"
+      },
+      "ModelInfo": {
+        "additionalProperties": false,
+        "description": "Configuration and feature metadata for a fitted target model.",
+        "properties": {
+          "config_name": {
+            "title": "Config Name",
+            "type": "string"
+          },
+          "features_used": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features Used",
+            "type": "array"
+          },
+          "n_features": {
+            "title": "N Features",
+            "type": "integer"
+          },
+          "source_space": {
+            "enum": [
+              "quick",
+              "auto"
+            ],
+            "title": "Source Space",
+            "type": "string"
+          }
+        },
+        "required": [
+          "config_name",
+          "n_features",
+          "features_used",
+          "source_space"
+        ],
+        "title": "ModelInfo",
+        "type": "object"
+      },
+      "PredictRequest": {
+        "additionalProperties": false,
+        "description": "Prediction request schema.",
+        "properties": {
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "title": "Inputs",
+            "type": "object"
+          },
+          "mode": {
+            "enum": [
+              "quick",
+              "full"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "inputs"
+        ],
+        "title": "PredictRequest",
+        "type": "object"
+      },
+      "PredictResponse": {
+        "additionalProperties": false,
+        "description": "Top-level prediction response schema.",
+        "properties": {
+          "consistency": {
+            "$ref": "#/components/schemas/ConsistencyInfo"
+          },
+          "disclaimer": {
+            "default": "Decision support / educational use only. Predictions are per-vessel probabilities from a small single-centre dataset and are not a lesion location. Not a substitute for formal diagnostic imaging or clinical judgement.",
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "imputed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Imputed",
+            "type": "array"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "quick",
+              "full"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "oof_estimate": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oof Estimate"
+          },
+          "oof_estimate_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oof Estimate Note"
+          },
+          "predictions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TargetPrediction"
+            },
+            "title": "Predictions",
+            "type": "object"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "trust": {
+            "$ref": "#/components/schemas/TrustBlock"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/PredictWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "request_id",
+          "mode",
+          "model_version",
+          "predictions",
+          "consistency",
+          "trust",
+          "imputed",
+          "warnings"
+        ],
+        "title": "PredictResponse",
+        "type": "object"
+      },
+      "PredictWarning": {
+        "additionalProperties": false,
+        "description": "Validation or reliability warning.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "feature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feature"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "PredictWarning",
+        "type": "object"
+      },
+      "SamplePatient": {
+        "additionalProperties": false,
+        "description": "Demo sample patient record.",
+        "properties": {
+          "case_id": {
+            "title": "Case Id",
+            "type": "integer"
+          },
+          "ground_truth": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Ground Truth",
+            "type": "object"
+          },
+          "ground_truth_note": {
+            "default": "dataset angiography labels, demo only",
+            "title": "Ground Truth Note",
+            "type": "string"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "title": "Inputs",
+            "type": "object"
+          },
+          "label": {
+            "enum": [
+              "p10",
+              "median",
+              "p90",
+              "lcx_positive_near_median"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "label_text": {
+            "title": "Label Text",
+            "type": "string"
+          },
+          "oof_estimate": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Oof Estimate",
+            "type": "object"
+          },
+          "oof_estimate_note": {
+            "default": "out-of-fold: this patient was not in the training data of the model that produced it",
+            "title": "Oof Estimate Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "case_id",
+          "label",
+          "label_text",
+          "inputs",
+          "ground_truth",
+          "oof_estimate"
+        ],
+        "title": "SamplePatient",
+        "type": "object"
+      },
+      "SamplesResponse": {
+        "additionalProperties": false,
+        "description": "Demo samples collection response.",
+        "properties": {
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/SamplePatient"
+            },
+            "title": "Samples",
+            "type": "array"
+          }
+        },
+        "required": [
+          "samples"
+        ],
+        "title": "SamplesResponse",
+        "type": "object"
+      },
+      "SimilarPatientItem": {
+        "additionalProperties": false,
+        "description": "Clinically similar patient reference record.",
+        "properties": {
+          "age_band": {
+            "title": "Age Band",
+            "type": "string"
+          },
+          "case_id": {
+            "title": "Case Id",
+            "type": "integer"
+          },
+          "distance": {
+            "title": "Distance",
+            "type": "number"
+          },
+          "outcomes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Outcomes",
+            "type": "object"
+          },
+          "sex": {
+            "title": "Sex",
+            "type": "string"
+          }
+        },
+        "required": [
+          "case_id",
+          "distance",
+          "age_band",
+          "sex",
+          "outcomes"
+        ],
+        "title": "SimilarPatientItem",
+        "type": "object"
+      },
+      "TargetModelExport": {
+        "additionalProperties": false,
+        "description": "Exported pipeline parameters for a single target.",
+        "properties": {
+          "coef": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Coef",
+            "type": "array"
+          },
+          "defaults": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Defaults",
+            "type": "object"
+          },
+          "feature_list": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Feature List",
+            "type": "array"
+          },
+          "intercept": {
+            "title": "Intercept",
+            "type": "number"
+          },
+          "platt_a": {
+            "title": "Platt A",
+            "type": "number"
+          },
+          "platt_b": {
+            "title": "Platt B",
+            "type": "number"
+          },
+          "scaler_mean": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Scaler Mean",
+            "type": "array"
+          },
+          "scaler_scale": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Scaler Scale",
+            "type": "array"
+          }
+        },
+        "required": [
+          "feature_list",
+          "scaler_mean",
+          "scaler_scale",
+          "coef",
+          "intercept",
+          "platt_a",
+          "platt_b",
+          "defaults"
+        ],
+        "title": "TargetModelExport",
+        "type": "object"
+      },
+      "TargetPrediction": {
+        "additionalProperties": false,
+        "description": "Predicted risk and explainability breakdown for a single target.",
+        "properties": {
+          "adjusted": {
+            "title": "Adjusted",
+            "type": "boolean"
+          },
+          "band": {
+            "enum": [
+              "lower",
+              "intermediate",
+              "higher"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "base": {
+            "title": "Base",
+            "type": "number"
+          },
+          "base_rate": {
+            "title": "Base Rate",
+            "type": "number"
+          },
+          "base_rate_note": {
+            "default": "dataset average (angiography-referred patients); not a population prevalence",
+            "title": "Base Rate Note",
+            "type": "string"
+          },
+          "calibrated_probability": {
+            "title": "Calibrated Probability",
+            "type": "number"
+          },
+          "contributions": {
+            "items": {
+              "$ref": "#/components/schemas/ContributionItem"
+            },
+            "title": "Contributions",
+            "type": "array"
+          },
+          "display_band": {
+            "enum": [
+              "lower",
+              "intermediate",
+              "higher"
+            ],
+            "title": "Display Band",
+            "type": "string"
+          },
+          "display_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Note"
+          },
+          "display_probability": {
+            "title": "Display Probability",
+            "type": "number"
+          },
+          "logit_model": {
+            "title": "Logit Model",
+            "type": "number"
+          },
+          "model_info": {
+            "$ref": "#/components/schemas/ModelInfo"
+          },
+          "other_total": {
+            "title": "Other Total",
+            "type": "number"
+          },
+          "raw_probability": {
+            "title": "Raw Probability",
+            "type": "number"
+          }
+        },
+        "required": [
+          "raw_probability",
+          "calibrated_probability",
+          "band",
+          "display_probability",
+          "display_band",
+          "adjusted",
+          "base",
+          "contributions",
+          "other_total",
+          "logit_model",
+          "model_info",
+          "base_rate"
+        ],
+        "title": "TargetPrediction",
+        "type": "object"
+      },
+      "TrustBlock": {
+        "additionalProperties": false,
+        "description": "Trust and clinical evidence container.",
+        "properties": {
+          "bands_note": {
+            "default": "Bands are display categories, not clinical thresholds.",
+            "title": "Bands Note",
+            "type": "string"
+          },
+          "evidence_auc": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Evidence Auc",
+            "type": "object"
+          },
+          "evidence_estimate": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Estimate"
+          },
+          "lift": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/LiftItem"
+            },
+            "title": "Lift",
+            "type": "object"
+          },
+          "similar_patients": {
+            "items": {
+              "$ref": "#/components/schemas/SimilarPatientItem"
+            },
+            "title": "Similar Patients",
+            "type": "array"
+          }
+        },
+        "required": [
+          "similar_patients",
+          "evidence_auc",
+          "lift"
+        ],
+        "title": "TrustBlock",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Multimodal CAD and vessel stenosis prediction backend with Fr\u00e9chet coherence and clinical trust layer.",
+    "title": "TrustHeart 3D API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "description": "Check backend operational health, model verification status, and clinical disclaimer.",
+        "operationId": "get_health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Health",
+        "tags": [
+          "trustheart"
+        ]
+      }
+    },
+    "/api/meta": {
+      "get": {
+        "description": "Retrieve mode definitions (quick: 7, full: 55) and feature schemas with training stats.",
+        "operationId": "get_metadata_api_meta_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Metadata",
+        "tags": [
+          "trustheart"
+        ]
+      }
+    },
+    "/api/model-export": {
+      "get": {
+        "description": "Export standardized weights, intercept, Platt parameters, and defaults for browser prediction.",
+        "operationId": "get_model_export_api_model_export_get",
+        "parameters": [
+          {
+            "description": "Model mode ('quick' or 'full')",
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "quick",
+              "description": "Model mode ('quick' or 'full')",
+              "enum": [
+                "quick",
+                "full"
+              ],
+              "title": "Mode",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelExportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Model Export",
+        "tags": [
+          "trustheart"
+        ]
+      }
+    },
+    "/api/predict": {
+      "post": {
+        "description": "Run validated prediction with Platt calibration, Fr\u00e9chet coherence bounds, and trust stats.",
+        "operationId": "predict_api_predict_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PredictRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Predict",
+        "tags": [
+          "trustheart"
+        ]
+      }
+    },
+    "/api/samples": {
+      "get": {
+        "description": "Retrieve 4 representative deterministic demo patient profiles from out-of-fold data.",
+        "operationId": "get_samples_api_samples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Samples",
+        "tags": [
+          "trustheart"
+        ]
+      }
+    }
+  }
+}

@@ -188,8 +188,22 @@ Performs multi-artery stenosis inference, applies Fréchet probability bounds to
 ```
 
 #### Response Structure
-- **`predictions`**: Per-target calibrated probabilities, display risk band (`lower`, `intermediate`, `higher`), linear logit `base`, top 10 feature contributions with direction and stability tags, `model_info` (`config_name`, `n_features`, `features_used` with BBB as one name, `source_space`), and `base_rate` (training prevalence from dataset labels with `base_rate_note`: "dataset average (angiography-referred patients); not a population prevalence").
-  - Mathematical identity: $\text{base} + \sum (\text{contributions}) + \text{other\_total} = \text{logit}(p)$.
+- **`predictions`**: Per-target predictions for `CAD`, `LAD`, `LCX`, `RCA`:
+  - `raw_probability`: Pre-calibration probability output from the base model.
+  - `calibrated_probability`: Post-calibration probability via isotonic/sigmoid calibration.
+  - `band`: Model probability risk band (`lower`, `intermediate`, `higher`).
+  - `display_probability`: Displayed clinical risk probability.
+    - For vessels (`LAD`, `LCX`, `RCA`): equals `calibrated_probability`.
+    - For `CAD`: equals `consistency.p_cad_adjusted` (coherence-adjusted to satisfy Fréchet bounds).
+  - `display_band`: Probability band evaluated on `display_probability` (`lower`, `intermediate`, `higher`).
+  - `adjusted`: Boolean flag indicating if probability was modified by Fréchet coherence bounds (`false` for vessels; `true` for CAD when `consistency.status != "ok"`).
+  - `display_note`: Clinical annotation explaining adjustment (for CAD when adjusted: `"Adjusted to stay logically consistent with the vessel probabilities (CAD is defined as at least one stenotic vessel)."`; otherwise `null`).
+  - `base`: Linear logit intercept $w_0$ for decomposition.
+  - `contributions`: Top 10 feature contributions $w_i (x_i - \mu_i)$ in logit space with direction and stability tags.
+  - `other_total`: Sum of all remaining feature contributions in logit space.
+  - `logit_model`: Calibrated logit score satisfying $\text{base} + \sum (\text{contributions}) + \text{other\_total} = \text{logit\_model}$.
+  - `model_info`: Model provenance (`config_name`, `n_features`, `features_used` with BBB as one name, `source_space`).
+  - `base_rate`: Training prevalence from dataset labels with `base_rate_note` ("dataset average (angiography-referred patients); not a population prevalence").
 - **`consistency`**: Fréchet coherence bounds $\max(P(\text{LAD}), P(\text{LCX}), P(\text{RCA})) \le P(\text{CAD}) \le \min(1, \sum P(\text{vessels}))$, clipping status (`ok`, `raised`, `lowered`), model CAD score, and final adjusted CAD score.
 - **`trust`**: Similar historical patients (5 cases, Euclidean distance on standardized z-scores), empirical k-NN evidence estimate (k=15), leave-one-out AUC, and nested CV lift intervals.
 - **`imputed`**: List of omitted features filled via training medians. If > 30% are imputed, a `low_reliability` warning is added.

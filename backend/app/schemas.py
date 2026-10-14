@@ -221,6 +221,10 @@ class TargetPrediction(StrictBaseModel):
     raw_probability: float
     calibrated_probability: float
     band: Literal["lower", "intermediate", "higher"]
+    display_probability: float
+    display_band: Literal["lower", "intermediate", "higher"]
+    adjusted: bool
+    display_note: str | None = None
     base: float
     contributions: list[ContributionItem]
     other_total: float
